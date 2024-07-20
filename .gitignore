@@ -1,0 +1,17 @@
+*.log
+
+# ignore
+**/.idea
+**/.vscode
+**/.DS_Store
+**/logs
+**/adhoc
+**/coverage.txt
+
+# for test purpose
+go.work
+go.work.sum
+
+# gitlab ci
+.cache
+.golangci.yml
