@@ -1,6 +1,7 @@
 package test
 
 import (
+	"Ai-HireSphere/common/zapx"
 	"Ai-HireSphere/common/zlog"
 	"Ai-HireSphere/utils"
 	"context"
@@ -11,7 +12,7 @@ import (
 
 func TestZap(t *testing.T) {
 	path := utils.GetRootPath("")
-	var zapConfig = zlog.ZapConfig{
+	var zapConfig = zapx.ZapConfig{
 		Format:   "terminal",
 		Level:    "debug",
 		Colour:   true,
@@ -29,7 +30,7 @@ func TestZap(t *testing.T) {
 		Colour:     true,
 	}
 
-	logger := zlog.GetLogger(zapConfig)
+	logger := zapx.GetLogger(zapConfig)
 	zlog.SetZlog(zlogConfig)
 	zlog.InitLogger(logger)
 	zlog.SetPrefix(zlog.SetBlackColour("[test]", 42) + "\t")
