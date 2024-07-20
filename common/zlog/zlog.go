@@ -180,6 +180,8 @@ func addCaller(_logger *zap.Logger) (zap.Logger, string, []interface{}) {
 	}
 	return *logger, format + "\t", _v
 }
+
+// debug message 会传给前端最后
 func addDebugMessage(ctx context.Context, message string) {
 	if debug() {
 		if log, ok := ctx.Value(logger_key_log).(*[]string); ok {
