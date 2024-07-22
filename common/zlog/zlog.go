@@ -117,8 +117,13 @@ func withContext(ctx context.Context) *zap.Logger {
 
 func Infof(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
-	v = append(vCaller, v...)
-	_logger.Info(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+	if !formatJson() {
+		v = append(vCaller, v...)
+		_logger.Info(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+
+	} else {
+		_logger.Info(fmt.Sprintf(format, v...))
+	}
 }
 
 func Errorf(format string, v ...interface{}) {
