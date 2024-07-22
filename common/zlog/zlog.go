@@ -10,12 +10,12 @@ import (
 
 const (
 	logger_formate_json = "json"
-	logger_key_log      = "debug"
-	logger_key_caller   = "caller"
 
-	loggerKey   = "logger"
-	loggerExKey = "loggerEx"
-
+	loggerDebugKey  = "debug"
+	loggerCallerKey = "caller"
+	loggerKey       = "logger"
+	loggerExKey     = "loggerEx"
+	loggerPrefixKey = "loggerPrefixKey"
 	// 分隔符
 	formatSeparator = "%v\t"
 )
@@ -27,7 +27,6 @@ type ZlogConfig struct {
 	Path       string
 	CallerSkip int
 	NewLine    bool
-	Prefix     string
 	Colour     bool
 }
 
@@ -41,8 +40,11 @@ func SetZlog(config ZlogConfig) {
 		newLine = ""
 	}
 }
-func SetPrefix(prefix string) {
-	zlogConfig.Prefix = prefix
+func SetPrefix(ctx context.Context, prefix string) context.Context {
+
+	ctx = context.WithValue(ctx, loggerPrefixKey, prefix)
+
+	return ctx
 }
 
 // SetColour 设置字体颜色 30黑 31红 32绿 33黄 34蓝 35紫 36青 37白
@@ -84,6 +86,9 @@ func needCaller() bool {
 //	@param fields
 //	@return context.Context
 func AddField(ctx context.Context, fields ...zapcore.Field) context.Context {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	if formatJson() {
 		ctx = context.WithValue(ctx, loggerKey, withContext(ctx).With(fields...))
 	} else {
@@ -96,7 +101,10 @@ func AddField(ctx context.Context, fields ...zapcore.Field) context.Context {
 		}
 	}
 	if debug() {
-		ctx = context.WithValue(ctx, logger_key_log, &[]string{})
+		if _, ok := ctx.Value(loggerDebugKey).([]string); !ok {
+			context.WithValue(ctx, loggerDebugKey, []string{})
+		}
+
 	}
 	return ctx
 }
@@ -119,7 +127,7 @@ func Infof(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
 	if !formatJson() {
 		v = append(vCaller, v...)
-		_logger.Info(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+		_logger.Info(fmt.Sprintf(formatCaller+newLine+format, v...))
 
 	} else {
 		_logger.Info(fmt.Sprintf(format, v...))
@@ -130,31 +138,31 @@ func Errorf(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
 	v = append(vCaller, v...)
 
-	_logger.Error(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+	_logger.Error(fmt.Sprintf(formatCaller+newLine+format, v...))
 }
 
 func Warnf(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
 	v = append(vCaller, v...)
-	_logger.Warn(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+	_logger.Warn(fmt.Sprintf(formatCaller+newLine+format, v...))
 }
 
 func Debugf(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
 	v = append(vCaller, v...)
-	_logger.Debug(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+	_logger.Debug(fmt.Sprintf(formatCaller+newLine+format, v...))
 }
 
 func Panicf(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
 	v = append(vCaller, v...)
-	_logger.Panic(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+	_logger.Panic(fmt.Sprintf(formatCaller+newLine+format, v...))
 }
 
 func Fatalf(format string, v ...interface{}) {
 	_logger, formatCaller, vCaller := addCaller(logger)
 	v = append(vCaller, v...)
-	_logger.Fatal(fmt.Sprintf(formatCaller+newLine+zlogConfig.Prefix+format, v...))
+	_logger.Fatal(fmt.Sprintf(formatCaller+newLine+format, v...))
 }
 
 func addExField(ctx context.Context) (string, []interface{}) {
@@ -180,18 +188,18 @@ func addCaller(_logger *zap.Logger) (zap.Logger, string, []interface{}) {
 	file = file[len(zlogConfig.Path)+1:]
 	_v = append(_v, file, line)
 	if formatJson() {
-		_logger = _logger.With(zap.String(logger_key_caller, fmt.Sprintf(format, file, line)))
+		_logger = _logger.With(zap.String(loggerCallerKey, fmt.Sprintf(format, file, line)))
 		return *_logger, "", []interface{}{}
 	}
 	return *logger, format + "\t", _v
 }
 func addDebugMessage(ctx context.Context, message string) {
 	if debug() {
-		if log, ok := ctx.Value(logger_key_log).(*[]string); ok {
+		if log, ok := ctx.Value(loggerDebugKey).(*[]string); ok {
 			*log = append(*log, message)
 			go func() {}()
 		} else {
-			ctx = context.WithValue(ctx, logger_key_log, []string{message})
+			ctx = context.WithValue(ctx, loggerDebugKey, []string{message})
 		}
 	}
 }
@@ -205,7 +213,10 @@ func InfofCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(format, v...))
 	_v := append(vField, v...)
 	v = append(vCaller, _v...)
-	_logger.Info(fmt.Sprintf(formatCaller+formatField+newLine+zlogConfig.Prefix+format, v...))
+	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
+		format = prefix + "\t" + format
+	}
+	_logger.Info(fmt.Sprintf(formatCaller+formatField+newLine+format, v...))
 }
 
 func ErrorfCtx(ctx context.Context, format string, v ...interface{}) {
@@ -215,7 +226,10 @@ func ErrorfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(format, v...))
 	_v := append(vField, v...)
 	v = append(vCaller, _v...)
-	_logger.Error(fmt.Sprintf(formatCaller+formatField+newLine+zlogConfig.Prefix+format, v...))
+	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
+		format = prefix + "\t" + format
+	}
+	_logger.Error(fmt.Sprintf(formatCaller+formatField+newLine+format, v...))
 }
 
 func WarnfCtx(ctx context.Context, format string, v ...interface{}) {
@@ -225,7 +239,10 @@ func WarnfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(format, v...))
 	_v := append(vField, v...)
 	v = append(vCaller, _v...)
-	_logger.Warn(fmt.Sprintf(formatCaller+formatField+newLine+zlogConfig.Prefix+format, v...))
+	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
+		format = prefix + "\t" + format
+	}
+	_logger.Warn(fmt.Sprintf(formatCaller+formatField+newLine+format, v...))
 }
 
 func DebugfCtx(ctx context.Context, format string, v ...interface{}) {
@@ -235,7 +252,10 @@ func DebugfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(format, v...))
 	_v := append(vField, v...)
 	v = append(vCaller, _v...)
-	_logger.Debug(fmt.Sprintf(formatCaller+formatField+newLine+zlogConfig.Prefix+format, v...))
+	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
+		format = prefix + format
+	}
+	_logger.Debug(fmt.Sprintf(formatCaller+formatField+newLine+format, v...))
 }
 
 func PanicfCtx(ctx context.Context, format string, v ...interface{}) {
@@ -245,7 +265,10 @@ func PanicfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(format, v...))
 	_v := append(vField, v...)
 	v = append(vCaller, _v...)
-	_logger.Panic(fmt.Sprintf(formatCaller+formatField+newLine+zlogConfig.Prefix+format, v...))
+	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
+		format = prefix + "\t" + format
+	}
+	_logger.Panic(fmt.Sprintf(formatCaller+formatField+newLine+format, v...))
 }
 
 func FatalfCtx(ctx context.Context, format string, v ...interface{}) {
@@ -255,5 +278,8 @@ func FatalfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(format, v...))
 	_v := append(vField, v...)
 	v = append(vCaller, _v...)
-	_logger.Fatal(fmt.Sprintf(formatCaller+formatField+newLine+zlogConfig.Prefix+format, v...))
+	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
+		format = prefix + "\t" + format
+	}
+	_logger.Fatal(fmt.Sprintf(formatCaller+formatField+newLine+format, v...))
 }

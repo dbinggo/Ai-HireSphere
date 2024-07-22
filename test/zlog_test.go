@@ -14,32 +14,32 @@ import (
 func TestZap(t *testing.T) {
 	path := utils.GetRootPath("")
 	var zapConfig = zapx.ZapConfig{
-		Format:   "terminal",
+		Format:   "json",
 		Level:    "debug",
-		Colour:   true,
+		Colour:   false,
 		FilePath: path + "/common/zlog/test/",
 		File:     true,
 		Terminal: true,
 	}
 	var zlogConfig = zlog.ZlogConfig{
-		Format:     "terminal",
+		Format:     "json",
 		Debug:      true,
 		Caller:     true,
 		Path:       path,
 		CallerSkip: 2,
-		NewLine:    true,
-		Colour:     true,
+		NewLine:    false,
+		Colour:     false,
 	}
 
 	logger := zapx.GetLogger(zapConfig)
 	zlog.SetZlog(zlogConfig)
 	zlog.InitLogger(logger)
-	zlog.SetPrefix(zlog.SetBlackColour("[test]", 42) + "\t")
+	ctx := zlog.SetPrefix(context.Background(), zlog.SetBlackColour("[test]", 42)+"\t")
 	zlog.Infof("test info")
 	zlog.Warnf("test warn")
 	zlog.Errorf("test error")
 	zlog.Debugf("test debug")
-	ctx := zlog.AddField(context.Background(), zap.String("traceId", zlog.SetColour("123456", 31)))
+	ctx = zlog.AddField(ctx, zap.String("traceId", zlog.SetColour("123456", 31)))
 	zlog.InfofCtx(ctx, "test info")
 	zlog.WarnfCtx(ctx, "test warn")
 	zlog.ErrorfCtx(ctx, "test error")
