@@ -9,6 +9,8 @@ import (
 
 const callerSkipOffset = 3
 
+var formatSeparator = "%v" + getT()
+
 type ZapWriter struct {
 	logger *zap.Logger
 }
