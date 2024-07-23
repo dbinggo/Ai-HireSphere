@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Ai-HireSphere/utils"
 	"flag"
 	"fmt"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", "etc/user.yaml", "the config file")
+var configFile = flag.String("f", utils.GetRootPath("/app/api/etc/foo.yaml"), "the config file")
 
 func main() {
 	flag.Parse()
