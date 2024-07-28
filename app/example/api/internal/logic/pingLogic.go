@@ -1,11 +1,10 @@
 package logic
 
 import (
+	"Ai-HireSphere/app/example/api/internal/svc"
 	"context"
-	"fmt"
 	"github.com/zeromicro/go-zero/core/trace"
 
-	"Ai-HireSphere/app/api/internal/svc"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,7 +27,7 @@ func (l *PingLogic) Ping() error {
 	logx.Info("ping")
 	traceId := trace.TraceIDFromContext(l.ctx)
 	spanId := trace.SpanIDFromContext(l.ctx)
-	fmt.Printf("traceId: %s, spanId: %s", traceId, spanId)
+	logx.Infof("traceId: %s, spanId: %s", traceId, spanId)
 
 	return nil
 }

@@ -2,9 +2,8 @@
 package handler
 
 import (
+	"Ai-HireSphere/app/example/api/internal/svc"
 	"net/http"
-
-	"Ai-HireSphere/app/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )
