@@ -1,0 +1,8 @@
+syntax = "v1"
+
+// 定义 HTTP 服务
+service foo {
+	@handler ping
+	get /ping
+}
+
