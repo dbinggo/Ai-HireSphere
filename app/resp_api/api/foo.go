@@ -1,21 +1,19 @@
 package main
 
 import (
+	"Ai-HireSphere/app/resp_api/api/internal/config"
+	"Ai-HireSphere/app/resp_api/api/internal/handler"
+	"Ai-HireSphere/app/resp_api/api/internal/svc"
 	"Ai-HireSphere/common/xcode"
-	"Ai-HireSphere/utils"
 	"flag"
 	"fmt"
 	"github.com/zeromicro/go-zero/rest/httpx"
-
-	"Ai-HireSphere/app/api/internal/config"
-	"Ai-HireSphere/app/api/internal/handler"
-	"Ai-HireSphere/app/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", utils.GetRootPath("/app/api/etc/foo.yaml"), "the config file")
+var configFile = flag.String("f", "app/resp_api/etc/foo.yaml", "the config file")
 
 func main() {
 	flag.Parse()
