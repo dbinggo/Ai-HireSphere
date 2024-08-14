@@ -12,14 +12,14 @@ import (
 
 const (
 	logger_formate_json = "json"
+	loggerKey           = "zapLogger"
+	loggerFieldKey      = "field"
+	loggerDebugKey      = "debug"
+	loggerCallerKey     = "caller"
+	loggerSpanKey       = "span"
+	loggerTraceKey      = "trace"
 
-	loggerFieldKey  = "field"
-	loggerDebugKey  = "debug"
-	loggerCallerKey = "caller"
-	loggerSpanKey   = "span"
-	loggerTraceKey  = "trace"
-
-	loggerPrefixKey = "prefix"
+	//loggerPrefixKey = "prefix"
 	// 分隔符
 
 )
@@ -32,27 +32,46 @@ type ZlogConfig struct {
 	CallerSkip int
 	NewLine    bool
 	Colour     bool
+	Prefix     string
 }
 
 var logger *zap.Logger
 var zlogConfig *ZlogConfig = &ZlogConfig{}
 var newLine = "\n"
+var prefix = ""
 
 func SetZlog(config ZlogConfig) {
 	zlogConfig = &config
 	if !config.NewLine {
 		newLine = ""
 	}
-}
-func SetPrefix(ctx *context.Context, prefix string) context.Context {
-	if *ctx == nil {
-		*ctx = context.Background()
+	if config.Format == logger_formate_json {
+		prefix = "[" + config.Prefix + "]"
+	} else {
+		prefix = "[" + config.Prefix + "]\t"
 	}
-	*ctx = context.WithValue(*ctx, loggerPrefixKey, prefix)
-	return *ctx
+
 }
+
+// 使用 goZero的serviceName 作为前缀
+//
+//	func SetPrefix(ctx *context.Context, prefix string) context.Context {
+//		if *ctx == nil {
+//			*ctx = context.Background()
+//		}
+//		*ctx = context.WithValue(*ctx, loggerPrefixKey, prefix)
+//		return *ctx
+//	}
 func getLogger() zap.Logger {
 	return *logger
+}
+func WithContext(ctx context.Context) zap.Logger {
+	if ctx == nil || ctx.Value(loggerKey) == nil {
+		ctx = context.WithValue(context.Background(), loggerKey, *logger)
+		return *logger
+	} else {
+		return ctx.Value(loggerKey).(zap.Logger)
+	}
 }
 
 type colour int
@@ -90,7 +109,6 @@ func formatJson() bool {
 	return zlogConfig.Format == logger_formate_json
 }
 func debug() bool {
-
 	return zlogConfig.Debug
 }
 func needColour() bool {
@@ -257,14 +275,7 @@ func addExField(ctx context.Context, _logger *zap.Logger) (zap.Logger, string) {
 
 }
 func addPrefix(ctx context.Context, _logger *zap.Logger) (zap.Logger, string) {
-	if prefix, ok := ctx.Value(loggerPrefixKey).(string); ok {
-		if formatJson() {
-			_logger = _logger.With(zap.String(loggerPrefixKey, prefix))
-			return *_logger, ""
-		}
-		return *logger, prefix + getT()
-	}
-	return *logger, ""
+	return *_logger, prefix
 
 }
 
@@ -341,5 +352,3 @@ func FatalfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(prefix+format, v...))
 	_logger.Fatal(fmt.Sprintf(caller+traceId+spanId+field+newLine+prefix+format, v...))
 }
-
-// todo 实现logx的接口

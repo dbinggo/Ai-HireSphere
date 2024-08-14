@@ -10,6 +10,7 @@ require (
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gorm.io/gorm v1.25.11
 )
 
 require (

@@ -28,7 +28,6 @@ func (l *PingLogic) Ping() error {
 	logx.Info("ping")
 	logx.WithContext(l.ctx).Info("ping")
 	l.Logger.Infof("ping")
-	zlog.SetPrefix(&l.ctx, zlog.SetColour(zlog.SetBlackColour("[ping]", zlog.ColourBlue), zlog.ColourRed))
 	zlog.InfofCtx(l.ctx, "ping")
 	zlog.InfofCtx(l.ctx, "for test")
 	zlog.InfofCtx(l.ctx, "for test")

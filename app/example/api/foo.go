@@ -26,7 +26,7 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
-	zlog.Develop()
+	zlog.InitLogger(c.RestConf)
 	logx.Infof("Starting server at %s:%d...", c.Host, c.Port)
 	server.Start()
 }

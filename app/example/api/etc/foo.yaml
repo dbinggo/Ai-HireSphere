@@ -7,3 +7,8 @@ Port: 8888
 #  Sampler: 1.0
 #  Batcher: jaeger
 
+Log:
+    ServiceName: foo
+    Encoding: plain
+    Caller: true
+    Mode: console
