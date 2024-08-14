@@ -7,12 +7,14 @@ import (
 	"Ai-HireSphere/common/xcode/types"
 )
 
+// 成功返回的格式
 type OKResponse struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
+// 自定义api错误返回格式
 func ErrHandler(err error) (int, any) {
 	code := CodeFromError(err)
 
@@ -22,6 +24,7 @@ func ErrHandler(err error) (int, any) {
 	}
 }
 
+// 自定义api成功返回格式
 func OKHandler(_ context.Context, value any) any {
 	return OKResponse{
 		Code:    OK.Code(),
