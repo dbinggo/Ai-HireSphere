@@ -13,7 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", utils.GetRootPath("/app/example/etc/foo.yaml"), "the config file")
+var configFile = flag.String("f", utils.GetRootPath("/app/example/api/etc/foo.yaml"), "the config file")
 
 func main() {
 	flag.Parse()

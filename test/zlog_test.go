@@ -34,7 +34,7 @@ func TestZap(t *testing.T) {
 	logger := zapx.GetLogger(zapConfig)
 	zlog.SetZlog(zlogConfig)
 	zlog.InitLogger(logger)
-	ctx := zlog.SetPrefix(context.Background(), zlog.SetBlackColour("[test]", 42))
+	ctx := zlog.SetPrefix(nil, zlog.SetBlackColour("[test]", 42))
 	zlog.Infof("test info")
 	zlog.Warnf("test warn")
 	zlog.Errorf("test error")

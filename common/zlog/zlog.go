@@ -44,29 +44,45 @@ func SetZlog(config ZlogConfig) {
 		newLine = ""
 	}
 }
-func SetPrefix(ctx context.Context, prefix string) context.Context {
-	ctx = context.WithValue(ctx, loggerPrefixKey, prefix)
-	return ctx
+func SetPrefix(ctx *context.Context, prefix string) context.Context {
+	if *ctx == nil {
+		*ctx = context.Background()
+	}
+	*ctx = context.WithValue(*ctx, loggerPrefixKey, prefix)
+	return *ctx
 }
 func getLogger() zap.Logger {
 	return *logger
 }
 
+type colour int
+
+const (
+	ColourBlack colour = iota
+	ColourRed
+	ColourGreen
+	ColourYellow
+	ColourBlue
+	ColourPurple
+	ColourCyan
+	ColourWhite
+)
+
 // SetColour 设置字体颜色 30黑 31红 32绿 33黄 34蓝 35紫 36青 37白
-func SetColour(text string, colour int) string {
+func SetColour(text string, colour colour) string {
 	if !needColour() {
 		return text
 	}
-	return fmt.Sprintf("\u001b[%dm%s\u001b[0m", colour, text)
+	return fmt.Sprintf("\u001b[;%dm%s\u001b[m", 30+colour, text)
 
 }
 
 // SetBlackColour 设置背景颜色 40黑 41红 42绿 43黄 44蓝 45紫 46青 47白
-func SetBlackColour(text string, colour int) string {
+func SetBlackColour(text string, colour colour) string {
 	if !needColour() {
 		return text
 	}
-	return fmt.Sprintf("\u001b[%dm%s\u001b[0m", colour, text)
+	return fmt.Sprintf("\u001b[;%dm%s\u001b[0m", 40+colour, text)
 
 }
 func formatJson() bool {
@@ -126,7 +142,7 @@ func AddField(ctx context.Context, fields ...zapcore.Field) context.Context {
 	}
 	return ctx
 }
-func InitLogger(zapLogger *zap.Logger) {
+func initLogger(zapLogger *zap.Logger) {
 	logger = zapLogger
 }
 
@@ -325,3 +341,5 @@ func FatalfCtx(ctx context.Context, format string, v ...interface{}) {
 	addDebugMessage(ctx, fmt.Sprintf(prefix+format, v...))
 	_logger.Fatal(fmt.Sprintf(caller+traceId+spanId+field+newLine+prefix+format, v...))
 }
+
+// todo 实现logx的接口

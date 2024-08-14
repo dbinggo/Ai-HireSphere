@@ -42,7 +42,7 @@ func Product() {
 	}
 	logger := zapx.GetLogger(zapConfig)
 	SetZlog(zlogConfig)
-	InitLogger(logger)
+	initLogger(logger)
 
 	zapWriter := NewZapWriter(logger)
 	logx.SetWriter(zapWriter)
@@ -83,7 +83,7 @@ func Develop() {
 	}
 	logger := zapx.GetLogger(zapConfig)
 	SetZlog(zlogConfig)
-	InitLogger(logger)
+	initLogger(logger)
 
 	zapWriter := NewZapWriter(logger)
 	logx.SetWriter(zapWriter)
