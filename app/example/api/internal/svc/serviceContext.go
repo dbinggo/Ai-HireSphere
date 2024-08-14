@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"Ai-HireSphere/app/api/internal/config"
+	"Ai-HireSphere/app/example/api/internal/config"
 )
 
 type ServiceContext struct {
