@@ -10,5 +10,5 @@ Port: 8888
 Log:
     ServiceName: foo
     Encoding: plain
-    Caller: true
-    Mode: console
+    Mode: file
+    Path: logs/foo

@@ -34,7 +34,8 @@ func main() {
     s.AddUnaryInterceptors(interceptors.ServerErrorInterceptor())
 
 	defer s.Stop()
-
+    //注册自定义日志
+    zlog.InitLogger(c.RestConf)
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

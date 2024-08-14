@@ -43,14 +43,14 @@ func GetLogger(config ZapConfig) *zap.Logger {
 		//本开发模式旨在将正常信息及以上的log记录在文件中，方便查看
 		fileInfoConfig := newZapConfig().
 			setEncoder(needColour, encoder).
-			setFileWriteSyncer(config.FilePath + "info.log").
+			setFileWriteSyncer(config.FilePath + "/info.log").
 			setLevelEnabler(level).
 			getConfig()
 		fileInfoCore := fileInfoConfig.getCore()
 		//本开发模式旨在将error及以上的log记录在文件中，方便查看
 		fileErrorConfig := newZapConfig().
 			setEncoder(needColour, encoder).
-			setFileWriteSyncer(config.FilePath + "error.log").
+			setFileWriteSyncer(config.FilePath + "/error.log").
 			setLevelEnabler(zapcore.ErrorLevel).
 			getConfig()
 		fileErrorCore := fileErrorConfig.getCore()

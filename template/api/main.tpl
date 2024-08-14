@@ -21,10 +21,11 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 
-	//注册自定义响应
+	// 注册自定义响应
     httpx.SetErrorHandler(xcode.ErrHandler)
     httpx.SetOkHandler(xcode.OKHandler)
-
+    // 注册自定义日志
+    zlog.InitLogger(c.RestConf)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }
