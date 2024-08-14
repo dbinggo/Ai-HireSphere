@@ -1,6 +1,5 @@
 package xcode
 
-// 通用Code
 var (
 	OK                 = add(200, "OK")
 	NoLogin            = add(101, "NOT_LOGIN")
