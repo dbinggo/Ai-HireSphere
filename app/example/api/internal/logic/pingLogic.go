@@ -2,6 +2,7 @@ package logic
 
 import (
 	"Ai-HireSphere/app/example/api/internal/svc"
+	"Ai-HireSphere/common/repository"
 	"Ai-HireSphere/common/zlog"
 	"context"
 	"github.com/zeromicro/go-zero/core/trace"
@@ -13,6 +14,7 @@ type PingLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+	repo   repository.RepoBroker
 }
 
 func NewPingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PingLogic {
@@ -20,6 +22,7 @@ func NewPingLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PingLogic {
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
+		repo:   repository.Repo,
 	}
 }
 
