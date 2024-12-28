@@ -1,0 +1,14 @@
+syntax = "v1"
+
+type (
+	Resp {
+		Data string `json:"data"`
+	}
+)
+
+// 定义 HTTP 服务
+service foo {
+	@handler ping
+	get /ping returns (Resp)
+}
+
