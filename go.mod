@@ -5,6 +5,7 @@ go 1.22.3
 require (
 	github.com/golang/protobuf v1.5.4
 	github.com/pkg/errors v0.9.1
+	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a
 	github.com/zeromicro/go-zero v1.6.6
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.64.0

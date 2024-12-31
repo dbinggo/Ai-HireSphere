@@ -12,3 +12,6 @@ Log:
     Encoding: plain
     Mode: file
     Path: logs/foo
+
+postgres:
+    name:

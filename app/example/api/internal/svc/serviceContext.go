@@ -9,7 +9,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	rpc = Newrpc(options...)
 	return &ServiceContext{
 		Config: c,
+		BD:     db,
 	}
 }
