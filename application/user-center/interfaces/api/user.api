@@ -1,0 +1,23 @@
+syntax = "v1"
+
+type (
+	RegisterReq {
+		Way  string `json:"way"`
+		Data string `json:"data"`
+	}
+	RegisterResp {
+		Token  string `json:"token"`
+		UserId int64  `json:"userId"`
+	}
+)
+
+// 定义服务前缀
+// 定义 HTTP 服务
+@server (
+	prefix: /v1/user
+)
+service user {
+	@handler Register
+	post /register (RegisterReq) returns (RegisterResp)
+}
+

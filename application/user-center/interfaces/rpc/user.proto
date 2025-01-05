@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./types";
+
+message Id {
+  int64 id = 1;
+}
+
+message UserInfo {
+  int64  id = 1;
+  string UserName = 2;
+  string Email = 3;
+  string Phone = 4;
+  string Role = 5;
+  string Sex = 6;
+
+}
+
+service User {
+  rpc FindUserById(Id) returns(UserInfo);
+}

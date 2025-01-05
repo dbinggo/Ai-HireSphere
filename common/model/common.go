@@ -6,9 +6,8 @@ import (
 )
 
 // 本类文件提供给最基础的增删改查语句，便于扩展
-
 type CommonModel struct {
-	ID        uint `gorm:"primarykey"`
+	ID        int64 `gorm:"primarykey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
@@ -17,22 +16,52 @@ type ICommonModel interface {
 	TableName() string
 }
 
-func _getOne[T ICommonModel](tx *gorm.DB, where interface{}) (T, error) {
+// 数据库接口适配器，提供最基本CURD能力
+type IDBAdapter[T ICommonModel] interface {
+	GetOne(db *gorm.DB, where ...interface{}) (T, error)
+	GetMulti(db *gorm.DB, where ...interface{}) ([]T, error)
+	Create(db *gorm.DB, data T) (T, error)
+	UpdateOne(db *gorm.DB, data T, selects ...string) (T, error)
+	Delete(db *gorm.DB, ids ...[]int) error
+}
+
+type CommonAdapter[T ICommonModel] struct{}
+
+func (c CommonModel) TableName() string {
+	panic("不应该调用这个方法，子类应该重写这个方法")
+}
+func (c *CommonAdapter[T]) GetOne(db *gorm.DB, where ...interface{}) (T, error) {
+	return _getOne[T](db, where)
+}
+func (c *CommonAdapter[T]) GetMulti(db *gorm.DB, where ...interface{}) ([]T, error) {
+	return _getMulti[T](db, where)
+}
+func (c *CommonAdapter[T]) Create(db *gorm.DB, data T) (T, error) {
+	return _create[T](db, data)
+}
+func (c *CommonAdapter[T]) UpdateOne(db *gorm.DB, data T, selects ...string) (T, error) {
+	return _updateOne[T](db, data, selects...)
+}
+func (c *CommonAdapter[T]) Delete(db *gorm.DB, ids ...[]int) error {
+	return _delete[T](db, ids...)
+}
+
+func _getOne[T ICommonModel](tx *gorm.DB, where ...interface{}) (T, error) {
 	var ret T
 	err := tx.Model(&ret).Where(where).First(&ret).Error
 	return ret, err
 }
 
-func _getMulti[T ICommonModel](tx *gorm.DB, tableName string, where interface{}) ([]T, error) {
+func _getMulti[T ICommonModel](tx *gorm.DB, where ...interface{}) ([]T, error) {
 	var ret []T
 	var name T
 	err := tx.Model(&name).Where(where).Find(&ret).Error
 	return ret, err
 }
 
-func _create[T ICommonModel](tx *gorm.DB, data T) error {
+func _create[T ICommonModel](tx *gorm.DB, data T) (T, error) {
 	err := tx.Model(&data).Create(&data).Error
-	return err
+	return data, err
 }
 
 func _updateOne[T ICommonModel](tx *gorm.DB, data T, selects ...string) (T, error) {

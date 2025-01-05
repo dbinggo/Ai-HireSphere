@@ -1,10 +1,10 @@
 package test
 
 import (
-	"Ai-HireSphere/common/xzap"
+	"Ai-HireSphere/common/utils"
+	"Ai-HireSphere/common/zapx"
 	"Ai-HireSphere/common/zlog"
 	"Ai-HireSphere/common/zlog/zeroLogger"
-	"Ai-HireSphere/utils"
 	"context"
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.uber.org/zap"
@@ -14,7 +14,7 @@ import (
 
 func TestZap(t *testing.T) {
 	path := utils.GetRootPath("")
-	var zapConfig = xzap.ZapConfig{
+	var zapConfig = zapx.ZapConfig{
 		Format:   "terminal",
 		Level:    "debug",
 		Colour:   true,
@@ -32,7 +32,7 @@ func TestZap(t *testing.T) {
 		Colour:     true,
 	}
 
-	logger := xzap.GetLogger(zapConfig)
+	logger := zapx.GetLogger(zapConfig)
 	zlog.SetZlog(zlogConfig)
 	zlog.InitLogger(logger)
 	ctx := zlog.SetPrefix(nil, zlog.SetBlackColour("[test]", 42))
@@ -49,7 +49,7 @@ func TestZap(t *testing.T) {
 func TestZapX(t *testing.T) {
 	path := utils.GetRootPath("")
 	// zap 配置
-	var zapConfig = xzap.ZapConfig{
+	var zapConfig = zapx.ZapConfig{
 		// 是否为 json格式
 		Format: "terminal",
 		// bug 等级
@@ -81,7 +81,7 @@ func TestZapX(t *testing.T) {
 		// 是否开启颜色功能
 		Colour: true,
 	}
-	logger := xzap.GetLogger(zapConfig)
+	logger := zapx.GetLogger(zapConfig)
 	zlog.SetZlog(zlogConfig)
 	zlog.InitLogger(logger)
 

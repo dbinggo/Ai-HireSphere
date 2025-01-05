@@ -13,45 +13,60 @@
 6. ...
 
 ## 项目目录结构
-本项目遵
+本项目遵循ddd项目架构 基于go-zero框架搭建 微服务应用
 ```text
 .
-├── Dockerfile          # Dockerfile
-├── LICENSE             # License
-├── README.md           # README   
-├── app                 # Application Layer
-├── common              # Common Layer
-│   ├── interceptors    # Interceptor
-│   ├── model           # Model
-│   ├── xcode           
-│   ├── xgorm
-│   ├── xzap
-│   └── zlog
-├── docker-compose.yaml
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── README_ZH.md
+├── application         //微服务应用层
+│   └── user-center     // 用户中心
+├── common              // 公共模块
+│   ├── call            // rpc调用类
+│   ├── codex           // 响应包装
+│   ├── decorator       // CQRS装饰器，本阶段暂未使用
+│   ├── gormx           // gorm操作类
+│   ├── interceptors    // 拦截器
+│   ├── model           // 数据库表类
+│   ├── utils           // 工具类
+│   ├── zapx            // zap日志类
+│   └── zlog            // 日志服务
+├── docker-compose.yaml         // 一键环境安装
+├── docs                        // 文档
 ├── go.mod
 ├── go.sum
-├── internal
-│   └── repository
 ├── logs
-│   └── foo
-├── scripts
-│   └── goctl.sh
-├── temp.txt
-├── template
-│   ├── api
-│   ├── docker
-│   ├── gateway
-│   ├── kube
-│   ├── model
-│   ├── mongo
-│   ├── newapi
-│   └── rpc
-├── test
-│   ├── gorm_test.go
-│   └── zlog_test.go
-└── utils
-    └── path.go
+├── scripts                 // 脚本类
+├── template                // go-zero模板 后续移植github公共仓库
+├── test                    // 测试类
+└── utils   
+    └── path.go             
 ```
+对于每个微服务 我们的目录结构为
+```text
+
+.
+├── README.md          //微服务说明
+├── app                //应用层
+│   └── user.go  // 应用
+├── domain          // 领域层
+│   ├── events      // 领域事件
+│   ├── irepository // 仓储层接口
+│   ├── model       // 领域模型
+│   └── services    // 领域服务
+├── infrastructure      // 基础设施层
+│   ├── driver          // 驱动层
+│   └── repository      // 仓储层
+└── interfaces          // 接口层
+    ├── api             // API层
+    └── rpc             // RPC层
+
+
+
+```
+
+
 ## 开发之前
 
 ### 1. **使能git钩子**
@@ -140,32 +155,24 @@ fix: fix a bug
 3. 除非你知道自己在做什么，否则不要使用`git push --force`。
 
 ## Todo List
-- [ ] Project Initialization
-    - [ ] Project Initialization
-    - [ ] Project Directory Structure
-    - [ ] Project Configuration File
-    - [ ] Project Global Variables and Constants
-    - [ ] Project Log Configuration
-    - [ ] Project Initialization File
-- [ ] Gin Module Setup
-    - [ ] Gin Framework Setup
-    - [ ] Gin Routing Setup
-    - [ ] Gin Middleware Setup
-    - [ ] Gin Parameter Binding
-    - [ ] Gin Response Data Encapsulation
-- [ ] Login and Registration Module
-    - [ ] Login and Logout functionality
-    - [ ] Auto-login within 30 days
-    - [ ] Force logout
-    - [ ] Display commonly used devices
-- [ ] Team Homepage Module
-    - [ ] Personal Center
-    - [ ] Points Overview
-    - [ ] Message Module
-    - [ ] Feishu Multi-dimensional Table
-- [ ] Team Information Module
-    - [ ] Like personal information
-    - [ ] User list
-    - [ ] Add new user
-    - [ ] Admin team structure management
-    - [ ] View and edit user information details
+### 项目一期
+- [ ] 用户中心
+  - [ ] 用户登陆
+  - [ ] 用户注册
+  - [ ] 用户搜索
+- [ ] 面试中心
+  - [ ] 简历上传
+  - [ ] 简历搜索
+  - [ ] 简历筛选
+  - [ ] AI面试(纯文本形式)
+  - [ ] 题库展示
+  - [ ] 格式化批量上传题库
+- [ ] AI调研
+
+### 项目二期
+- [ ] 用户中心
+  - [ ] 用户积分
+  - [ ] 积分消耗
+  - [ ] 积分购买
+- [ ] 面试中心
+  - [ ] AI面试(语音形式/视频形式)
