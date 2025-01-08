@@ -15,3 +15,4 @@ go.work.sum
 # gitlab ci
 .cache
 .golangci.yml
+private/*
