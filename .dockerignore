@@ -1,0 +1,5 @@
+# .dockerignore
+.githooks/
+.git/
+.gitignore
+README.md

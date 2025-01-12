@@ -3,3 +3,6 @@
 goctl api go -api *.api -dir ./  --style=go_zero --home=../../../../template
 # 使用template模版生成rpc代码(请在proto文件所在的目录下执行，并把*改成对应proto文件名字)
 goctl rpc protoc *.proto --go_out=./ --go-grpc_out=./  --zrpc_out=./ --style=goZero --home=../../../../template
+
+# 使用template模版生成docker代码 需要跑到指定文件目录下执行 api目录或者rpc目录
+goctl docker --go user.go --exe user-rpc --home=../../../../template --version:1.23

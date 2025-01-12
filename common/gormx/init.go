@@ -1,6 +1,7 @@
 package gormx
 
 import (
+	"Ai-HireSphere/common/model"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -66,9 +67,15 @@ func Open(cfg Config, logger gormLogger.Interface) (*gorm.DB, error) {
 	db, err := gorm.Open(open, &gorm.Config{Logger: logger})
 	return db, err
 }
-
+func autoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(&model.TUser{})
+}
 func MustOpen(cfg Config, logger gormLogger.Interface) *gorm.DB {
 	db, err := Open(cfg, logger)
+	if err != nil {
+		panic(err)
+	}
+	err = autoMigrate(db)
 	if err != nil {
 		panic(err)
 	}

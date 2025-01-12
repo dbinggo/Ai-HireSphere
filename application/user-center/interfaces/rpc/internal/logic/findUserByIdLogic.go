@@ -23,7 +23,18 @@ func NewFindUserByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 }
 
 func (l *FindUserByIdLogic) FindUserById(in *userClient.Id) (*userClient.UserInfo, error) {
-	// todo: add your logic here and delete this line
 
-	return &userClient.UserInfo{}, nil
+	info, err := l.svcCtx.UserApp.FindUserById(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userClient.UserInfo{
+		Id:       info.Id,
+		UserName: info.UserName,
+		Email:    info.Email,
+		Phone:    info.Phone,
+		Role:     string(info.Role),
+		Sex:      string(info.Sex),
+	}, nil
 }

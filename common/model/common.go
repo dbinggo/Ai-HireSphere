@@ -27,9 +27,6 @@ type IDBAdapter[T ICommonModel] interface {
 
 type CommonAdapter[T ICommonModel] struct{}
 
-func (c CommonModel) TableName() string {
-	panic("不应该调用这个方法，子类应该重写这个方法")
-}
 func (c *CommonAdapter[T]) GetOne(db *gorm.DB, where ...interface{}) (T, error) {
 	return _getOne[T](db, where)
 }

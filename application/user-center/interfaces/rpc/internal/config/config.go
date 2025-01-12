@@ -1,11 +1,12 @@
 package config
 
 import (
-	"github.com/zeromicro/go-zero/rest"
+	"Ai-HireSphere/common/gormx"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type Config struct {
 	zrpc.RpcServerConf
-	RestConf rest.RestConf
+
+	Mysql gormx.Mysql
 }

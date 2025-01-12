@@ -5,10 +5,10 @@ import (
 	"Ai-HireSphere/common/zapx"
 	"Ai-HireSphere/common/zlog/zeroLogger"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/core/service"
 )
 
-func InitLogger(rest rest.RestConf) {
+func InitLogger(rest service.ServiceConf) {
 	path := utils.GetRootPath("")
 	// zap 配置
 	var zapConfig = zapx.ZapConfig{
@@ -41,7 +41,7 @@ func InitLogger(rest rest.RestConf) {
 		NewLine: rest.Log.Encoding == "plain",
 		// 是否开启颜色功能
 		Colour: rest.Log.Encoding == "plain" && rest.Log.Mode == "console",
-		Prefix: rest.ServiceConf.Name,
+		Prefix: rest.Name,
 	}
 	logger := zapx.GetLogger(zapConfig)
 	SetZlog(zlogConfig)

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Ai-HireSphere/application/user-center/interfaces/rpc/user"
+	"Ai-HireSphere/application/user-center/interfaces/rpc/types"
 	"Ai-HireSphere/common/interceptors"
 	"Ai-HireSphere/common/zlog"
 	"flag"
@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/user.yaml", "the config file")
+var configFile = flag.String("f", "./etc/user.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -27,7 +27,7 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		user.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
+		types.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
@@ -39,7 +39,7 @@ func main() {
 
 	defer s.Stop()
 	//注册自定义日志
-	zlog.InitLogger(c.RestConf)
+	zlog.InitLogger(c.ServiceConf)
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

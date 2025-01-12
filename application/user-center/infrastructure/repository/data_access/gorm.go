@@ -13,7 +13,7 @@ type GormOpts struct {
 var _ idataaccess.IDataAccess[GormOpts] = (*GormOpts)(nil)
 
 func NewGormOpts(db *gorm.DB) *GormOpts {
-	return &GormOpts{}
+	return &GormOpts{db: db}
 }
 
 func (o *GormOpts) WithTx(tx *gorm.DB) *GormOpts {
