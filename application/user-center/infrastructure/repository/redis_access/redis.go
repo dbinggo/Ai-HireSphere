@@ -21,8 +21,16 @@ func NewRedisOpts(cli *redis.Client) *RedisOpts {
 	}
 }
 
-// Set ... notice that value should be marshalizable.
 func (o *RedisOpts) Set(ctx context.Context, key string, value any, expiration time.Duration) error {
+	return o.cli.Set(ctx, key, value, expiration).Err()
+}
+
+func (o *RedisOpts) Get(ctx context.Context, key string) (interface{}, error) {
+	return o.cli.Get(ctx, key).Result()
+}
+
+// HSet ... notice that value should be marshalizable.
+func (o *RedisOpts) HSet(ctx context.Context, key string, value any, expiration time.Duration) error {
 	var (
 		b   []byte
 		err error
@@ -40,8 +48,8 @@ func (o *RedisOpts) Set(ctx context.Context, key string, value any, expiration t
 	return nil
 }
 
-// Get ... notice that receiver should be a pointer to the designated instance (mostly map or struct) that will store the fetched value.
-func (o *RedisOpts) Get(ctx context.Context, key string, receiver any) error {
+// HGet ... notice that receiver should be a pointer to the designated instance (mostly map or struct) that will store the fetched value.
+func (o *RedisOpts) HGet(ctx context.Context, key string, receiver any) error {
 	var (
 		str string
 		err error

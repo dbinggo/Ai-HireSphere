@@ -9,7 +9,9 @@ import (
 type IRedisAccess interface {
 	// 基础方法
 	Set(ctx context.Context, key string, value any, expiration time.Duration) error
-	Get(ctx context.Context, key string, receiver any) error
+	Get(ctx context.Context, key string) (any, error)
+	HSet(ctx context.Context, key string, value any, expiration time.Duration) error
+	HGet(ctx context.Context, key string, receiver any) error
 	ExistsKeyRedis(ctx context.Context, key string) (bool, error)
 	SetKeyTTLInRedis(ctx context.Context, key string, expiration time.Duration) (bool, error)
 	Del(ctx context.Context, key string) error

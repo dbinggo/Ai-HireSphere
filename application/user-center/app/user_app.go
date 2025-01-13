@@ -23,16 +23,14 @@ type IUserApp interface {
 }
 type UserApp struct {
 	// 这里主要是依赖
-	Repo        irepository.IRepoBroker
-	UserService services.IUserService
-	UserRpc     userClient.User
+	Repo    irepository.IRepoBroker
+	UserRpc userClient.User
 }
 
-func NewUserApp(repo irepository.IRepoBroker, userService services.IUserService, userRpc userClient.User) *UserApp {
+func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.User) *UserApp {
 	return &UserApp{
-		Repo:        repo,
-		UserService: userService,
-		UserRpc:     userRpc,
+		Repo:    repo,
+		UserRpc: userRpc,
 	}
 }
 
@@ -47,7 +45,8 @@ func NewUserApp(repo irepository.IRepoBroker, userService services.IUserService,
 //	@return error
 func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayType, user *entity.User) (string, error) {
 	// 这里是对领域服务的调用和编排
-	return u.UserService.RegisterUser(user, way)
+	s := services.NewUserService(u.Repo, u.UserRpc)
+	return s.RegisterUser(user, way)
 }
 
 // FindUserById
@@ -62,6 +61,6 @@ func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, err
 	return u.Repo.FindUserById(ctx, id)
 }
 
-func (u *UserApp) LoginUser(ctc context.Context) {
-
+func (u *UserApp) LoginUser(ctc context.Context, user *entity.User) (string, error) {
+	return "", nil
 }

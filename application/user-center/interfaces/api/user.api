@@ -1,16 +1,5 @@
 syntax = "v1"
 
-type (
-	RegisterReq {
-		Way  string `json:"way"`
-		Data string `json:"data"`
-	}
-	RegisterResp {
-		Token  string `json:"token"`
-		UserId int64  `json:"userId"`
-	}
-)
-
 // 定义服务前缀
 // 定义 HTTP 服务
 @server (
@@ -20,4 +9,35 @@ service user {
 	@handler Register
 	post /register (RegisterReq) returns (RegisterResp)
 }
+
+@server (
+	prefix: /v1/base
+)
+service user {
+	@handler CaptchaSend
+	post /captcha/send (CaptchaSendReq)
+
+	@handler CaptchaVerify
+	post /captcha/verify (CaptchaVerifyReq)
+}
+
+type (
+	RegisterReq {
+		Way  string `json:"way"`
+		Data string `json:"data"`
+	}
+	RegisterResp {
+		Token  string `json:"token"`
+		UserId int64  `json:"userId"`
+	}
+	CaptchaSendReq {
+		way    string `json:"way"`
+		target string `json:"target"`
+	}
+	CaptchaVerifyReq {
+		way    string `json:"way"`
+		target string `json:"target"`
+		code   string `json:"code"`
+	}
+)
 

@@ -20,4 +20,20 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithPrefix("/v1/user"),
 	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/captcha/send",
+				Handler: CaptchaSendHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/captcha/verify",
+				Handler: CaptchaVerifyHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/v1/base"),
+	)
 }
