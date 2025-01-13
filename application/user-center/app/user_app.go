@@ -17,6 +17,9 @@ type IUserApp interface {
 	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, user *entity.User) (string, error)
 	// 查询用户
 	FindUserById(ctx context.Context, id int64) (*entity.User, error)
+	// 用户登陆
+	LoginUser(ctx context.Context, user *entity.User) (string, error)
+	// 登录用户
 }
 type UserApp struct {
 	// 这里主要是依赖
@@ -57,4 +60,8 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 //	@return error
 func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, error) {
 	return u.Repo.FindUserById(ctx, id)
+}
+
+func (u *UserApp) LoginUser(ctc context.Context) {
+
 }
