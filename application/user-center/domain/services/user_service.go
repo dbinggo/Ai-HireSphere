@@ -6,7 +6,6 @@ import (
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/common/call/userClient"
 	"Ai-HireSphere/common/model/enums"
-	"Ai-HireSphere/common/utils/jwt"
 	"context"
 )
 
@@ -62,6 +61,6 @@ func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType
 	if err != nil {
 		return token, err
 	}
-	return jwt.GenerateToken(user.Id)
+	return user.GenerateToken()
 
 }
