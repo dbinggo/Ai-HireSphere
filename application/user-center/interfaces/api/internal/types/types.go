@@ -12,9 +12,21 @@ type CaptchaVerifyReq struct {
 	Code   string `json:"code"`
 }
 
+type LoginReq struct {
+	Way  string `json:"way"`
+	Data string `json:"data"`
+	Code string `json:"code"`
+}
+
+type LoginResp struct {
+	Token  string `json:"token"`
+	UserId int64  `json:"userId"`
+}
+
 type RegisterReq struct {
 	Way  string `json:"way"`
 	Data string `json:"data"`
+	Code string `json:"code"`
 }
 
 type RegisterResp struct {

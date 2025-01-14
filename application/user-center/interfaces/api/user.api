@@ -8,6 +8,9 @@ syntax = "v1"
 service user {
 	@handler Register
 	post /register (RegisterReq) returns (RegisterResp)
+
+	@handler Login
+	post /login (LoginReq) returns (LoginResp)
 }
 
 @server (
@@ -25,8 +28,18 @@ type (
 	RegisterReq {
 		Way  string `json:"way"`
 		Data string `json:"data"`
+		Code string `json:"code"`
 	}
 	RegisterResp {
+		Token  string `json:"token"`
+		UserId int64  `json:"userId"`
+	}
+	LoginReq {
+		Way  string `json:"way"`
+		Data string `json:"data"`
+		Code string `json:"code"`
+	}
+	LoginResp {
 		Token  string `json:"token"`
 		UserId int64  `json:"userId"`
 	}

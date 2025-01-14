@@ -29,7 +29,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 
 	way, user := dto.RegisterReq(req)
 
-	res, err := l.svcCtx.UserApp.RegisterUser(l.ctx, way, user)
+	res, err := l.svcCtx.UserApp.RegisterUser(l.ctx, way, user, req.Code)
 
 	if err != nil {
 		return nil, err
