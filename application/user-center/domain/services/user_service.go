@@ -56,6 +56,7 @@ func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType
 	case enums.UserRegisterWayTypeEmail:
 		data = user.Email
 	case enums.UserRegisterWayTypePhone:
+		data = user.Phone
 	}
 	user, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
 	if err != nil {
