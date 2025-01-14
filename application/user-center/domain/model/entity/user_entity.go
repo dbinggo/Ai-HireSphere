@@ -14,6 +14,7 @@ type User struct {
 	Id       int64
 	Sex      enums.UserSex
 	Role     enums.UserRole
+	Avatar   string
 	UserName string
 	Email    string
 	Phone    string

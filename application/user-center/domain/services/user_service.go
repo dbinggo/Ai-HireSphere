@@ -6,6 +6,7 @@ import (
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/common/call/userClient"
 	"Ai-HireSphere/common/model/enums"
+	"Ai-HireSphere/common/utils/jwt"
 	"context"
 )
 
@@ -16,6 +17,7 @@ import (
 // @Description: 对外提供的接口
 type IUserService interface {
 	RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error)
+	LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error)
 }
 
 type UserService struct {
@@ -46,4 +48,20 @@ func (s *UserService) RegisterUser(user *entity.User, way enums.UserRegisterWayT
 	// 生成token
 	token, err = user.GenerateToken()
 	return token, err
+}
+
+func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error) {
+	// 调用仓储查找这个user
+	data := ""
+	switch way {
+	case enums.UserRegisterWayTypeEmail:
+		data = user.Email
+	case enums.UserRegisterWayTypePhone:
+	}
+	user, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
+	if err != nil {
+		return token, err
+	}
+	return jwt.GenerateToken(user.Id)
+
 }

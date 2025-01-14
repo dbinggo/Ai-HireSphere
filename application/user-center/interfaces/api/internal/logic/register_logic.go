@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"Ai-HireSphere/application/user-center/interfaces/api/internal/dto"
+	"Ai-HireSphere/common/model/enums"
 	"context"
 
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/svc"
@@ -26,18 +26,10 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
 	// todo: add your logic here and delete this line
-
-	way, user := dto.RegisterReq(req)
-
-	res, err := l.svcCtx.UserApp.RegisterUser(l.ctx, way, user, req.Code)
-
-	if err != nil {
-		return nil, err
-	}
+	res, err := l.svcCtx.UserApp.RegisterUser(l.ctx, enums.UserRegisterWayType(req.Way), req.Data, req.Code)
 
 	return &types.RegisterResp{
-		Token:  res,
-		UserId: user.Id,
-	}, nil
+		Token: res,
+	}, err
 
 }

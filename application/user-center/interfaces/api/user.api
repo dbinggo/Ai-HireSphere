@@ -11,6 +11,9 @@ service user {
 
 	@handler Login
 	post /login (LoginReq) returns (LoginResp)
+
+	@handler UserInfo
+	get /data returns (UserInfo)
 }
 
 @server (
@@ -31,8 +34,7 @@ type (
 		Code string `json:"code"`
 	}
 	RegisterResp {
-		Token  string `json:"token"`
-		UserId int64  `json:"userId"`
+		Token string `json:"token"`
 	}
 	LoginReq {
 		Way  string `json:"way"`
@@ -40,8 +42,7 @@ type (
 		Code string `json:"code"`
 	}
 	LoginResp {
-		Token  string `json:"token"`
-		UserId int64  `json:"userId"`
+		Token string `json:"token"`
 	}
 	CaptchaSendReq {
 		way    string `json:"way"`
@@ -51,6 +52,15 @@ type (
 		way    string `json:"way"`
 		target string `json:"target"`
 		code   string `json:"code"`
+	}
+	UserInfo {
+		id       int64  `json:"id"`
+		username string `json:"username"`
+		avatar   string `json:"avatar"`
+		role     string `json:"role"`
+		phone    string `json:"phone"`
+		email    string `json:"email"`
+		sex      int    `json:"sex"`
 	}
 )
 

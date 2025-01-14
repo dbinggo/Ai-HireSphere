@@ -14,11 +14,11 @@ import (
 
 type IUserApp interface {
 	// 注册用户
-	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, user *entity.User) (string, error)
+	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error)
 	// 查询用户
 	FindUserById(ctx context.Context, id int64) (*entity.User, error)
 	// 用户登陆
-	LoginUser(ctx context.Context, user *entity.User) (string, error)
+	LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error)
 	// 登录用户
 }
 type UserApp struct {
@@ -43,9 +43,30 @@ func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.User) *UserApp 
 //	@param user
 //	@return string
 //	@return error
-func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayType, user *entity.User) (string, error) {
+func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error) {
 	// 这里是对领域服务的调用和编排
+	// 首先校验code正确性
+
+	// 基础校验校验验证码
+	if err := services.NewBaseCaptcha(ctx, u.Repo, nil).CaptchaCheck(enums.CaptchaWayTypeRegister, data, code); err != nil {
+		return "", err
+	}
+	// 用户服务注册
 	s := services.NewUserService(u.Repo, u.UserRpc)
+
+	// 创建一个user
+	user := &entity.User{
+		Role: enums.UserRoleTypeUser,
+	}
+
+	switch way {
+	case enums.UserRegisterWayTypeEmail:
+		user.Email = data
+	case enums.UserRegisterWayTypePhone:
+		user.Phone = data
+	}
+
+	// 用户注册服务
 	return s.RegisterUser(user, way)
 }
 
@@ -61,6 +82,21 @@ func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, err
 	return u.Repo.FindUserById(ctx, id)
 }
 
-func (u *UserApp) LoginUser(ctc context.Context, user *entity.User) (string, error) {
-	return "", nil
+func (u *UserApp) LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error) {
+
+	// 基础校验校验验证码
+	if err := services.NewBaseCaptcha(ctx, u.Repo, nil).CaptchaCheck(enums.CaptchaWayTypeLogin, data, code); err != nil {
+		return "", err
+	}
+
+	user := &entity.User{}
+	switch way {
+	case enums.UserRegisterWayTypeEmail:
+		user.Email = data
+	case enums.UserRegisterWayTypePhone:
+		user.Phone = data
+
+	}
+
+	return services.NewUserService(u.Repo, u.UserRpc).LoginUser(user, way)
 }

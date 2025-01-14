@@ -19,8 +19,7 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	Token  string `json:"token"`
-	UserId int64  `json:"userId"`
+	Token string `json:"token"`
 }
 
 type RegisterReq struct {
@@ -30,6 +29,15 @@ type RegisterReq struct {
 }
 
 type RegisterResp struct {
-	Token  string `json:"token"`
-	UserId int64  `json:"userId"`
+	Token string `json:"token"`
+}
+
+type UserInfo struct {
+	Id       int64  `json:"id"`
+	Username string `json:"username"`
+	Avatar   string `json:"avatar"`
+	Role     string `json:"role"`
+	Phone    string `json:"phone"`
+	Email    string `json:"email"`
+	Sex      int    `json:"sex"`
 }

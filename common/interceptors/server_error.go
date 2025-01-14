@@ -11,7 +11,7 @@ import (
 /*
 call server拦截器
 使用说明：
-请看app/resp_api/call/user.go
+请看app/resp_api/call/user_data.go
 
 	s.AddUnaryInterceptors(interceptors.ServerErrorInterceptor())
 	注册一下拦截器就OK了
