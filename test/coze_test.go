@@ -2,7 +2,7 @@ package test
 
 import (
 	"Ai-HireSphere/common/coze"
-	"Ai-HireSphere/utils"
+	"Ai-HireSphere/common/utils"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"

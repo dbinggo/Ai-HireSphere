@@ -1,7 +1,7 @@
 package coze
 
 import (
-	"Ai-HireSphere/utils"
+	"Ai-HireSphere/common/utils"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -62,7 +62,11 @@ func (api *CozeDocApi) CreateDoc(files []utils.FileBase) error {
 
 	headerByte, _ := json.Marshal(header)
 	headerMap := make(map[string]string)
-	json.Unmarshal(headerByte, &headerMap)
+	err := json.Unmarshal(headerByte, &headerMap)
+	if err != nil {
+		return err
+	}
+
 	bodyByte, _ := json.Marshal(body)
 
 	request, err := http.NewRequest("POST", createDocUrl, strings.NewReader(string(bodyByte)))
