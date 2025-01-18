@@ -1,17 +1,17 @@
 package zlog
 
 import (
-	"Ai-HireSphere/common/xzap"
+	"Ai-HireSphere/common/utils"
+	"Ai-HireSphere/common/zapx"
 	"Ai-HireSphere/common/zlog/zeroLogger"
-	"Ai-HireSphere/utils"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/core/service"
 )
 
-func InitLogger(rest rest.RestConf) {
+func InitLogger(rest service.ServiceConf) {
 	path := utils.GetRootPath("")
 	// zap 配置
-	var zapConfig = xzap.ZapConfig{
+	var zapConfig = zapx.ZapConfig{
 		// 是否为 json格式
 		Format: rest.Log.Encoding,
 		// bug 等级
@@ -41,9 +41,9 @@ func InitLogger(rest rest.RestConf) {
 		NewLine: rest.Log.Encoding == "plain",
 		// 是否开启颜色功能
 		Colour: rest.Log.Encoding == "plain" && rest.Log.Mode == "console",
-		Prefix: rest.ServiceConf.Name,
+		Prefix: rest.Name,
 	}
-	logger := xzap.GetLogger(zapConfig)
+	logger := zapx.GetLogger(zapConfig)
 	SetZlog(zlogConfig)
 	initLogger(logger)
 	var zapWriter logx.Writer
@@ -60,7 +60,7 @@ func InitLogger(rest rest.RestConf) {
 func Product() {
 	path := utils.GetRootPath("")
 	// zap 配置
-	var zapConfig = xzap.ZapConfig{
+	var zapConfig = zapx.ZapConfig{
 		// 是否为 json格式
 		Format: "json",
 		// bug 等级
@@ -91,7 +91,7 @@ func Product() {
 		// 是否开启颜色功能
 		Colour: false,
 	}
-	logger := xzap.GetLogger(zapConfig)
+	logger := zapx.GetLogger(zapConfig)
 	SetZlog(zlogConfig)
 	initLogger(logger)
 
@@ -103,7 +103,7 @@ func Product() {
 func Develop() {
 	path := utils.GetRootPath("")
 	// zap 配置
-	var zapConfig = xzap.ZapConfig{
+	var zapConfig = zapx.ZapConfig{
 		// 是否为 json格式
 		Format: "plain",
 		// bug 等级
@@ -134,7 +134,7 @@ func Develop() {
 		// 是否开启颜色功能
 		Colour: true,
 	}
-	logger := xzap.GetLogger(zapConfig)
+	logger := zapx.GetLogger(zapConfig)
 	SetZlog(zlogConfig)
 	initLogger(logger)
 

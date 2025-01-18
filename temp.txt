@@ -1,0 +1,40 @@
+.
+├── Dockerfile
+├── LICENSE
+├── README.md
+├── app
+│   ├── example
+│   └── resp_api
+├── common
+│   ├── interceptors
+│   ├── model
+│   ├── xcode
+│   ├── xgorm
+│   ├── xzap
+│   └── zlog
+├── docker-compose.yaml
+├── go.mod
+├── go.sum
+├── internal
+│   └── repository
+├── logs
+│   └── foo
+├── scripts
+│   └── goctl.sh
+├── temp.txt
+├── template
+│   ├── api
+│   ├── docker
+│   ├── gateway
+│   ├── kube
+│   ├── model
+│   ├── mongo
+│   ├── newapi
+│   └── rpc
+├── test
+│   ├── gorm_test.go
+│   └── zlog_test.go
+└── utils
+    └── path.go
+
+27 directories, 11 files

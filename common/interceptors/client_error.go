@@ -3,7 +3,7 @@ package interceptors
 import (
 	"context"
 
-	"Ai-HireSphere/common/xcode"
+	"Ai-HireSphere/common/codex"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -11,7 +11,7 @@ import (
 )
 
 /*
-rpc client拦截器
+call client拦截器
 使用说明：
 在api层的svc中new rpc服务时，加入这个拦截器即可，示例如下：
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -31,7 +31,7 @@ func ClientErrorInterceptor() grpc.UnaryClientInterceptor {
 		err := invoker(ctx, method, req, reply, cc, opts...)
 		if err != nil {
 			grpcStatus, _ := status.FromError(err)
-			xc := xcode.GrpcStatusToXCode(grpcStatus)
+			xc := codex.GrpcStatusToXCode(grpcStatus)
 			err = errors.WithMessage(xc, grpcStatus.Message())
 		}
 
