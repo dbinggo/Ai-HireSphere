@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
+//go:generate goctl api go -api *.api -dir ./  --style=go_zero --home=../../../../template
+//go:generate goctl api plugin -plugin goctl-swagger="swagger -filename user.json" -api user.api -dir ../../../../docs
 var configFile = flag.String("f", "etc/user.yaml", "the config file")
 
 func main() {

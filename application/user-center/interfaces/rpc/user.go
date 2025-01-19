@@ -17,6 +17,8 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+//go:generate goctl rpc protoc *.proto --go_out=./ --go-grpc_out=./  --zrpc_out=./ --style=goZero --home=../../../../template
+
 var configFile = flag.String("f", "./etc/user.yaml", "the config file")
 
 func main() {

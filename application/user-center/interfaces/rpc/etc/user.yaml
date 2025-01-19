@@ -1,6 +1,22 @@
 Name: user.rpc
 ListenOn: 0.0.0.0:8080
+Mode: dev
 Etcd:
   Hosts:
-  - 127.0.0.1:2379
+  - 123.207.73.185:2379
   Key: user.rpc
+Log:
+  Model: console
+  ServiceName: user.rpc
+  Level: debug
+  Encoding: json
+Mysql:
+  Username: user_ai_hiresphere
+  Password: ai_hiresphere
+  Host: 123.207.73.185
+  Port: 3306
+  Dbname: db_ai_hiresphere
+Redis:
+  Addr: 123.207.73.185:6379
+  Password: ai_hiresphere
+  DB: 0

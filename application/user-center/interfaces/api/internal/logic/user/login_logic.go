@@ -1,6 +1,7 @@
 package user
 
 import (
+	"Ai-HireSphere/common/model/enums"
 	"context"
 
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/svc"
@@ -24,7 +25,9 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
-	// todo: add your logic here and delete this line
 
-	return
+	res, err := l.svcCtx.UserApp.LoginUser(l.ctx, enums.UserRegisterWayType(req.Way), req.Data, req.Code)
+
+	resp.Token = res
+	return resp, err
 }
