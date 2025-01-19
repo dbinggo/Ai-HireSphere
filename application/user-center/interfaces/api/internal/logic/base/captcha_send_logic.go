@@ -1,4 +1,4 @@
-package logic
+package base
 
 import (
 	"Ai-HireSphere/common/model/enums"
@@ -25,7 +25,6 @@ func NewCaptchaSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Captc
 }
 
 func (l *CaptchaSendLogic) CaptchaSend(req *types.CaptchaSendReq) error {
-	// fixme 强转可能会出错 后续考虑增加参数校验
 
 	return l.svcCtx.BaseApp.CaptchaSend(l.ctx, enums.CaptchaWayType(req.Way), req.Target)
 }

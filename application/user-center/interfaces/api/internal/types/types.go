@@ -2,42 +2,42 @@
 package types
 
 type CaptchaSendReq struct {
-	Way    string `json:"way"`
-	Target string `json:"target"`
+	Way    string `json:"way"`    // 验证码用途 register，login
+	Target string `json:"target"` // 手机号或者邮箱
 }
 
 type CaptchaVerifyReq struct {
-	Way    string `json:"way"`
-	Target string `json:"target"`
-	Code   string `json:"code"`
+	Way    string `json:"way"`    // 验证码用途 register，login
+	Target string `json:"target"` // 手机号或者邮箱
+	Code   string `json:"code"`   // 验证码 6位数字
 }
 
 type LoginReq struct {
-	Way  string `json:"way"`
-	Data string `json:"data"`
-	Code string `json:"code"`
+	Way  string `json:"way"`  // 登录方式 email或者phone
+	Data string `json:"data"` // 登录账号 手机号或者邮箱
+	Code string `json:"code"` // 验证码 6位数字
 }
 
 type LoginResp struct {
-	Token string `json:"token"`
+	Token string `json:"token"` // token
 }
 
 type RegisterReq struct {
-	Way  string `json:"way"`
-	Data string `json:"data"`
-	Code string `json:"code"`
+	Way  string `json:"way"`  // 登录方式 email或者phone
+	Data string `json:"data"` // 登录账号 手机号或者邮箱
+	Code string `json:"code"` // 验证码 6位数字
 }
 
 type RegisterResp struct {
-	Token string `json:"token"`
+	Token string `json:"token"` // token
 }
 
 type UserInfo struct {
-	Id       int64  `json:"id"`
-	Username string `json:"username"`
-	Avatar   string `json:"avatar"`
-	Role     string `json:"role"`
-	Phone    string `json:"phone"`
-	Email    string `json:"email"`
-	Sex      int    `json:"sex"`
+	Id       int64  `json:"id"`       // 用户id
+	Username string `json:"username"` // 用户名
+	Avatar   string `json:"avatar"`   // 用户头像地址
+	Role     string `json:"role"`     // 用户角色 admin，user
+	Phone    string `json:"phone"`    // 用户手机号
+	Email    string `json:"email"`    // 用户邮箱
+	Sex      int    `json:"sex"`      // 用户性别 0未知，1男，2女
 }
