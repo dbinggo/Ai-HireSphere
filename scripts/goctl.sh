@@ -6,3 +6,11 @@ goctl rpc protoc *.proto --go_out=./ --go-grpc_out=./  --zrpc_out=./ --style=goZ
 
 # 使用template模版生成docker代码 需要跑到指定文件目录下执行 api目录或者rpc目录
 goctl docker --go user.go --exe user-rpc --home=../../../../template --version:1.23
+
+
+# 生成swigger 用于导入apifox
+# 插件下载
+GOPROXY=https://goproxy.cn/,direct go install github.com/zeromicro/goctl-swagger@latest
+
+# 插件生成
+goctl api plugin -plugin goctl-swagger="swagger -filename user.json" -api user.api -dir ../../../../docs

@@ -1,0 +1,308 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/base/captcha/send": {
+      "post": {
+        "summary": "发送验证码",
+        "operationId": "CaptchaSend",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CaptchaSendReq"
+            }
+          }
+        ],
+        "tags": [
+          "base"
+        ]
+      }
+    },
+    "/v1/base/captcha/verify": {
+      "post": {
+        "summary": "验证验证码",
+        "operationId": "CaptchaVerify",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CaptchaVerifyReq"
+            }
+          }
+        ],
+        "tags": [
+          "base"
+        ]
+      }
+    },
+    "/v1/user/data": {
+      "get": {
+        "summary": "获取用户信息",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserInfo"
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/v1/user/login": {
+      "post": {
+        "summary": "登录",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/LoginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/v1/user/register": {
+      "post": {
+        "summary": "注册",
+        "operationId": "Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/RegisterResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegisterReq"
+            }
+          }
+        ],
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "CaptchaSendReq": {
+      "type": "object",
+      "properties": {
+        "way": {
+          "type": "string",
+          "description": " 验证码用途 register，login"
+        },
+        "target": {
+          "type": "string",
+          "description": " 手机号或者邮箱"
+        }
+      },
+      "title": "CaptchaSendReq",
+      "required": [
+        "way",
+        "target"
+      ]
+    },
+    "CaptchaVerifyReq": {
+      "type": "object",
+      "properties": {
+        "way": {
+          "type": "string",
+          "description": " 验证码用途 register，login"
+        },
+        "target": {
+          "type": "string",
+          "description": " 手机号或者邮箱"
+        },
+        "code": {
+          "type": "string",
+          "description": " 验证码 6位数字"
+        }
+      },
+      "title": "CaptchaVerifyReq",
+      "required": [
+        "way",
+        "target",
+        "code"
+      ]
+    },
+    "LoginReq": {
+      "type": "object",
+      "properties": {
+        "way": {
+          "type": "string",
+          "description": " 登录方式 email或者phone"
+        },
+        "data": {
+          "type": "string",
+          "description": " 登录账号 手机号或者邮箱"
+        },
+        "code": {
+          "type": "string",
+          "description": " 验证码 6位数字"
+        }
+      },
+      "title": "LoginReq",
+      "required": [
+        "way",
+        "data",
+        "code"
+      ]
+    },
+    "LoginResp": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": " token"
+        }
+      },
+      "title": "LoginResp",
+      "required": [
+        "token"
+      ]
+    },
+    "RegisterReq": {
+      "type": "object",
+      "properties": {
+        "way": {
+          "type": "string",
+          "description": " 登录方式 email或者phone"
+        },
+        "data": {
+          "type": "string",
+          "description": " 登录账号 手机号或者邮箱"
+        },
+        "code": {
+          "type": "string",
+          "description": " 验证码 6位数字"
+        }
+      },
+      "title": "RegisterReq",
+      "required": [
+        "way",
+        "data",
+        "code"
+      ]
+    },
+    "RegisterResp": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": " token"
+        }
+      },
+      "title": "RegisterResp",
+      "required": [
+        "token"
+      ]
+    },
+    "UserInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 用户id"
+        },
+        "username": {
+          "type": "string",
+          "description": " 用户名"
+        },
+        "avatar": {
+          "type": "string",
+          "description": " 用户头像地址"
+        },
+        "role": {
+          "type": "string",
+          "description": " 用户角色 admin，user"
+        },
+        "phone": {
+          "type": "string",
+          "description": " 用户手机号"
+        },
+        "email": {
+          "type": "string",
+          "description": " 用户邮箱"
+        },
+        "sex": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 用户性别 0未知，1男，2女"
+        }
+      },
+      "title": "UserInfo",
+      "required": [
+        "id",
+        "username",
+        "avatar",
+        "role",
+        "phone",
+        "email",
+        "sex"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}
