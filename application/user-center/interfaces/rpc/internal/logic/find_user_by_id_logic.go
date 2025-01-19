@@ -1,10 +1,11 @@
 package logic
 
 import (
-	"Ai-HireSphere/common/call/userClient"
 	"context"
 
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/svc"
+	"Ai-HireSphere/common/call/types"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -22,19 +23,8 @@ func NewFindUserByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Find
 	}
 }
 
-func (l *FindUserByIdLogic) FindUserById(in *userClient.Id) (*userClient.UserInfo, error) {
+func (l *FindUserByIdLogic) FindUserById(in *types.Id) (*types.UserInfo, error) {
+	// todo: add your logic here and delete this line
 
-	info, err := l.svcCtx.UserApp.FindUserById(l.ctx, in.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	return &userClient.UserInfo{
-		Id:       info.Id,
-		UserName: info.UserName,
-		Email:    info.Email,
-		Phone:    info.Phone,
-		Role:     string(info.Role),
-		Sex:      string(info.Sex),
-	}, nil
+	return &types.UserInfo{}, nil
 }

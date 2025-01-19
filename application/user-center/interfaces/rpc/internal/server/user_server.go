@@ -9,7 +9,7 @@ import (
 
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/logic"
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/svc"
-	"Ai-HireSphere/application/user-center/interfaces/rpc/types"
+	"Ai-HireSphere/common/call/types"
 )
 
 type UserServer struct {

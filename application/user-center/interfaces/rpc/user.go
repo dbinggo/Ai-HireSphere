@@ -1,7 +1,6 @@
 package main
 
 import (
-	"Ai-HireSphere/application/user-center/interfaces/rpc/types"
 	"Ai-HireSphere/common/interceptors"
 	"Ai-HireSphere/common/zlog"
 	"flag"
@@ -10,6 +9,8 @@ import (
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/config"
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/server"
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/svc"
+	"Ai-HireSphere/common/call/types"
+
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -17,9 +18,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-//go:generate goctl rpc protoc *.proto --go_out=./ --go-grpc_out=./  --zrpc_out=./ --style=goZero --home=../../../../template
-
-var configFile = flag.String("f", "./etc/user.yaml", "the config file")
+var configFile = flag.String("f", "etc/user.yaml", "the config file")
 
 func main() {
 	flag.Parse()
