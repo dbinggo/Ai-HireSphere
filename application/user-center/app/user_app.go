@@ -4,9 +4,10 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/application/user-center/domain/services"
-	"Ai-HireSphere/common/call/userClient"
+	userClient "Ai-HireSphere/common/call/user_client"
 	"Ai-HireSphere/common/model/enums"
 	"context"
+	"github.com/dbinggo/gerr"
 )
 
 // 定义service
@@ -14,11 +15,11 @@ import (
 
 type IUserApp interface {
 	// 注册用户
-	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error)
+	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, gerr.Error)
 	// 查询用户
-	FindUserById(ctx context.Context, id int64) (*entity.User, error)
+	FindUserById(ctx context.Context, id int64) (*entity.User, gerr.Error)
 	// 用户登陆
-	LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error)
+	LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, gerr.Error)
 	// 登录用户
 }
 type UserApp struct {
@@ -43,7 +44,7 @@ func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.User) *UserApp 
 //	@param user
 //	@return string
 //	@return error
-func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error) {
+func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, gerr.Error) {
 	// 这里是对领域服务的调用和编排
 	// 首先校验code正确性
 
@@ -78,11 +79,11 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 //	@param id
 //	@return entity.User
 //	@return error
-func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, error) {
+func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, gerr.Error) {
 	return u.Repo.FindUserById(ctx, id)
 }
 
-func (u *UserApp) LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error) {
+func (u *UserApp) LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, gerr.Error) {
 
 	// 基础校验校验验证码
 	if err := services.NewBaseCaptcha(ctx, u.Repo, nil).CaptchaCheck(enums.CaptchaWayTypeLogin, data, code); err != nil {

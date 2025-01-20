@@ -16,7 +16,7 @@ import (
 )
 
 // 通过断言，强制编译器确认XCode接口是否完全被Status实现
-var _ XCode = (*Status)(nil)
+var _ CodeX = (*Status)(nil)
 
 // 这里是为了能传入proto流中
 type Status struct {
@@ -91,7 +91,7 @@ func FromCode(code Code) *Status {
 }
 
 // 这里开始把不确定的msg类型转化成自定义code和message（也就是转化为status啦），进一步提取数据
-func FromProto(pbMsg proto.Message) XCode {
+func FromProto(pbMsg proto.Message) CodeX {
 	msg, ok := pbMsg.(*types.Status)
 	if ok {
 		if len(msg.Message) == 0 || msg.Message == strconv.FormatInt(int64(msg.Code), 10) {
@@ -133,9 +133,9 @@ func toXCode(grpcStatus *status.Status) Code {
 }
 
 // error转化为xcode
-func CodeFromError(err error) XCode {
+func CodeFromError(err error) CodeX {
 	err = errors.Cause(err)
-	if code, ok := err.(XCode); ok {
+	if code, ok := err.(CodeX); ok {
 		return code
 	}
 
@@ -152,7 +152,7 @@ func CodeFromError(err error) XCode {
 // error转换为status
 func FromError(err error) *status.Status {
 	err = errors.Cause(err)
-	if code, ok := err.(XCode); ok {
+	if code, ok := err.(CodeX); ok {
 		grpcStatus, e := gRPCStatusFromXCode(code)
 		if e == nil {
 			return grpcStatus
@@ -172,7 +172,7 @@ func FromError(err error) *status.Status {
 	return grpcStatus
 }
 
-func gRPCStatusFromXCode(code XCode) (*status.Status, error) {
+func gRPCStatusFromXCode(code CodeX) (*status.Status, error) {
 	var sts *Status
 	switch v := code.(type) {
 	case *Status:
@@ -193,7 +193,7 @@ func gRPCStatusFromXCode(code XCode) (*status.Status, error) {
 }
 
 // 把status转化回xcode
-func GrpcStatusToXCode(gstatus *status.Status) XCode {
+func GrpcStatusToXCode(gstatus *status.Status) CodeX {
 	//这里初步提取detail中的数据
 	details := gstatus.Details()
 	for i := len(details) - 1; i >= 0; i-- {

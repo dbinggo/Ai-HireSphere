@@ -5,7 +5,7 @@ import (
 	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
 	"Ai-HireSphere/application/user-center/infrastructure/repository"
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/config"
-	"Ai-HireSphere/common/call/userClient"
+	userClient "Ai-HireSphere/common/call/user_client"
 	"Ai-HireSphere/common/gormx"
 	"github.com/zeromicro/go-zero/zrpc"
 )

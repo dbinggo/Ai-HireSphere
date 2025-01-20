@@ -22,6 +22,14 @@ github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ3
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/dbinggo/gerr v0.0.0-20250116060049-7646b05d7526 h1:62W1CMael0LO7AgQubISMdNSY34lxwpDrcH0ksgojHQ=
+github.com/dbinggo/gerr v0.0.0-20250116060049-7646b05d7526/go.mod h1:i+mD1coRyap2yrTWsb9oEeBIxcULYGAenqo2DDaQqxM=
+github.com/dbinggo/gerr v0.0.0-20250120160809-4c3cd2ead961 h1:+uDckh1FUNHYVQQrAj+btEJhIfpFAqj1OldCvsUfB10=
+github.com/dbinggo/gerr v0.0.0-20250120160809-4c3cd2ead961/go.mod h1:i+mD1coRyap2yrTWsb9oEeBIxcULYGAenqo2DDaQqxM=
+github.com/dbinggo/gerr v0.0.0-20250120161726-648d631f0a84 h1:QRVxBIDFNscIBg8Vx91C7ltK+NcfYmr8SDVZIkE+Ey4=
+github.com/dbinggo/gerr v0.0.0-20250120161726-648d631f0a84/go.mod h1:i+mD1coRyap2yrTWsb9oEeBIxcULYGAenqo2DDaQqxM=
+github.com/dbinggo/gerr v0.0.0-20250120163223-84032a84c098 h1:lk+/QyHNlbv4wfMzeW+roIohGQPVx6r7Vq0Hqi9UW08=
+github.com/dbinggo/gerr v0.0.0-20250120163223-84032a84c098/go.mod h1:w8aEEJMmpeMm7gyTIWTQnZLFOsUcRvFSr+RDQzg28R0=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/emicklei/go-restful/v3 v3.11.0 h1:rAQeMHw1c7zTmncogyy8VvRZwtkmkZ4FxERmMY4rD+g=

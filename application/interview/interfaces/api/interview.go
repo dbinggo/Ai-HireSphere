@@ -1,8 +1,11 @@
 package main
 
 import (
+	"Ai-HireSphere/common/codex"
+	"Ai-HireSphere/common/zlog"
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"Ai-HireSphere/application/interview/interfaces/api/internal/config"
 	"Ai-HireSphere/application/interview/interfaces/api/internal/handler"
@@ -27,8 +30,8 @@ func main() {
 	handler.RegisterHandlers(server, ctx)
 
 	// 注册自定义响应
-	httpx.SetErrorHandler(xcode.ErrHandler)
-	httpx.SetOkHandler(xcode.OKHandler)
+	httpx.SetErrorHandler(codex.ErrHandler)
+	httpx.SetOkHandler(codex.OKHandler)
 	// 注册自定义日志
 	zlog.InitLogger(c.ServiceConf)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)

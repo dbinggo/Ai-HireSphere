@@ -4,9 +4,10 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
-	"Ai-HireSphere/common/call/userClient"
+	userClient "Ai-HireSphere/common/call/user_client"
 	"Ai-HireSphere/common/model/enums"
 	"context"
+	"github.com/dbinggo/gerr"
 )
 
 // 本层为用户服务层
@@ -15,8 +16,8 @@ import (
 // IUserService
 // @Description: 对外提供的接口
 type IUserService interface {
-	RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error)
-	LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error)
+	RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error)
+	LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error)
 }
 
 type UserService struct {
@@ -49,7 +50,7 @@ func (s *UserService) RegisterUser(user *entity.User, way enums.UserRegisterWayT
 	return token, err
 }
 
-func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error) {
+func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error) {
 	// 调用仓储查找这个user
 	data := ""
 	switch way {

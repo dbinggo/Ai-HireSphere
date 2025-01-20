@@ -4,7 +4,9 @@ import (
 	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/common/model"
+	"Ai-HireSphere/common/model/enums"
 	"context"
+	"github.com/dbinggo/gerr"
 )
 
 // IResumeGorm is an interface that defines the methods for accessing data from MySQL
@@ -17,24 +19,44 @@ var _ idataaccess.IUserGorm = (*GormOpts)(nil)
 type userGorm struct {
 }
 
-func (o *GormOpts) SaveUser(ctx context.Context, user *entity.User) (*entity.User, error) {
+func (o *GormOpts) SaveUser(ctx context.Context, user *entity.User) (*entity.User, gerr.Error) {
 	u := o.userEntryToModel(user)
 	u, err := u.Create(o.db, u)
 	if err != nil {
-		return nil, err
+		err = gerr.DefaultSysErr()
+		return nil, err.(gerr.Error)
 	}
 	return o.userModelToEntry(u), nil
 }
 
-func (o *GormOpts) FindUserById(ctx context.Context, id int64) (*entity.User, error) {
+func (o *GormOpts) FindUserById(ctx context.Context, id int64) (*entity.User, gerr.Error) {
 	z, err := (&model.TUser{}).GetOne(o.db, "id = ?", id)
 	if err != nil {
-		return nil, err
+		err = gerr.DefaultSysErr()
+		return nil, err.(gerr.Error)
 	}
 	return o.userModelToEntry(z), nil
 }
 
-// todo 待完善
+func (o *GormOpts) FindUserByLoginType(ctx context.Context, loginType enums.UserRegisterWayType, data string) (*entity.User, gerr.Error) {
+	if loginType == enums.UserRegisterWayTypeEmail {
+		z, err := (&model.TUser{}).GetOne(o.db, "email = ?", data)
+		if err != nil {
+			err = gerr.DefaultSysErr()
+			return nil, err.(gerr.Error)
+		}
+		return o.userModelToEntry(z), nil
+	} else {
+		z, err := (&model.TUser{}).GetOne(o.db, "phone = ?", data)
+		if err != nil {
+			err = gerr.DefaultSysErr()
+			return nil, err.(gerr.Error)
+		}
+		return o.userModelToEntry(z), nil
+	}
+	return nil, gerr.DefaultSysErr()
+}
+
 func (o *GormOpts) userModelToEntry(user model.TUser) *entity.User {
 	return &entity.User{}
 }

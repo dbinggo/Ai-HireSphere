@@ -1,6 +1,6 @@
 module Ai-HireSphere
 
-go 1.22.3
+go 1.23.3
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
@@ -26,6 +26,7 @@ require (
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dbinggo/gerr v0.0.0-20250120163223-84032a84c098 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect

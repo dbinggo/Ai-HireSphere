@@ -8,6 +8,7 @@ import (
 	"Ai-HireSphere/common/zlog"
 	"context"
 	"errors"
+	"github.com/dbinggo/gerr"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
@@ -16,9 +17,9 @@ import (
 
 type IBaseService interface {
 	// 验证码发送
-	CaptchaSend(way enums.CaptchaWayType, key string) error
+	CaptchaSend(way enums.CaptchaWayType, key string) gerr.Error
 	// 验证码校验
-	CaptchaCheck(way enums.CaptchaWayType, key, code string) error
+	CaptchaCheck(way enums.CaptchaWayType, key, code string) gerr.Error
 }
 
 type BaseService struct {
@@ -43,7 +44,7 @@ func NewBaseCaptcha(ctx context.Context, rdb ireidsaccess.IRedisAccess, sms isms
 //	@param way
 //	@param key
 //	@return error
-func (b *BaseService) CaptchaSend(way enums.CaptchaWayType, key string) error {
+func (b *BaseService) CaptchaSend(way enums.CaptchaWayType, key string) gerr.Error {
 	// 先存再发送
 	capcha := &entity.Captcha{
 		Way: way,
@@ -68,12 +69,18 @@ func (b *BaseService) CaptchaSend(way enums.CaptchaWayType, key string) error {
 //	@receiver b
 //	@param captcha
 //	@return error
-func (b *BaseService) captchaStash(captcha *entity.Captcha) error {
+func (b *BaseService) captchaStash(captcha *entity.Captcha) gerr.Error {
 	// 整合
 	captcha.GenerateCaptcha()
 	captcha.GenerateCaptchaCode()
 	// 存到redis
-	return b.rdb.Set(b.ctx, captcha.RedisKey, captcha.CaptchaCode, time.Minute*5)
+	err := b.rdb.Set(b.ctx, captcha.RedisKey, captcha.CaptchaCode, time.Minute*5)
+	if err != nil {
+		err = gerr.WrapSysErrf(err, "系统繁忙，请稍后重试")
+		zlog.ErrorfCtx(b.ctx, "%+v", err)
+		return err.(gerr.Error)
+	}
+	return nil
 }
 
 // CaptchaCheck
@@ -85,7 +92,7 @@ func (b *BaseService) captchaStash(captcha *entity.Captcha) error {
 //	@param key
 //	@param code
 //	@return error
-func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) error {
+func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) gerr.Error {
 	// 拿出来
 	capcha := &entity.Captcha{
 		Way: way,
@@ -96,27 +103,32 @@ func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) e
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			// 验证码过期
-			zlog.ErrorfCtx(b.ctx, "验证码过期或未向该手机号发送过验证码")
-			return errors.New("验证码过期或未向该手机号发送过验证码")
+			err = gerr.WrapSysErrf(err, "验证码过期或未向该手机号发送过验证码")
+			zlog.ErrorfCtx(b.ctx, "%+v", err)
+			return err.(gerr.Error)
 		}
-		return err
+		err = gerr.WrapSysErrf(err, "系统繁忙，请稍后重试")
+		zlog.ErrorfCtx(b.ctx, "%+v", err)
+		return err.(gerr.Error)
 	}
 
 	if err = b.rdb.Del(b.ctx, capcha.RedisKey); err != nil {
-		return err
+		err = gerr.WrapSysErrf(err, "系统繁忙，请稍后重试")
+		zlog.ErrorfCtx(b.ctx, "%+v", err)
+		return err.(gerr.Error)
 	}
 
 	ret, ok := ret.(string)
 	if !ok {
 		// 安全断言失败
-		zlog.ErrorfCtx(b.ctx, "类型断言失败")
-		return errors.New("类型断言失败")
+		err = gerr.DefaultSysErr()
+		return err.(gerr.Error)
 	}
 
 	if ret != code {
 		// 验证码错误
-		zlog.ErrorfCtx(b.ctx, "验证码错误")
-		return errors.New("验证码错误")
+		err = gerr.WrapSysErrf(err, "验证码错误")
+		return err.(gerr.Error)
 	}
 
 	return nil
