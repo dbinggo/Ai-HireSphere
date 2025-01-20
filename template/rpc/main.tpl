@@ -35,7 +35,7 @@ func main() {
 
 	defer s.Stop()
     //注册自定义日志
-    zlog.InitLogger(c.RestConf)
+    zlog.InitLogger(c.ServiceConf)
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

@@ -25,7 +25,7 @@ func main() {
     httpx.SetErrorHandler(xcode.ErrHandler)
     httpx.SetOkHandler(xcode.OKHandler)
     // 注册自定义日志
-    zlog.InitLogger(c.RestConf)
+    zlog.InitLogger(c.ServiceConf)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

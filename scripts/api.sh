@@ -2,11 +2,13 @@
 
 # 定义log文件路径
 log="./generate_api.log"
+docs_dir="./docs"
+application_dir="./application"
 file_name="*"
 # 遍历所有命令行参数
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -f)
+    -s)
       file_name="$2"
       shift 2  # 移动两个位置，跳过 -f 和它的值
       ;;
@@ -24,7 +26,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # 查找当前目录及其子目录下所有以 .api 结尾的文件
-find . -type f -name "$file_name.api" | while read api_file; do
+find "$application_dir" -type f -name "$file_name.api" | while read api_file; do
     # 获取文件所在目录
     dir=$(dirname "$api_file")
     # 提取文件名
@@ -40,13 +42,13 @@ find . -type f -name "$file_name.api" | while read api_file; do
         exit 1
     fi
 
-    goctl api plugin -plugin goctl-swagger="swagger -filename $file_name_without_ext.json" -api "$api_file" -dir "./docs" >> $log 2>&1
+    goctl api plugin -plugin goctl-swagger="swagger -filename $file_name_without_ext.json" -api "$api_file" -dir "$docs_dir" >> $log 2>&1
     if [ $? -ne 0 ]; then
         echo -e "\033[31mFailed to generate code for $api_file \033[0m"
         cat $log
         exit 1
     fi
-    echo -e "\033[42mGenerated code for $api_file \033[42m"
+    echo -e "\033[42mGenerated code for $api_file \033[0m"
     rm -f $log
 done
 

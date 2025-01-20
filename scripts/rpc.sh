@@ -2,13 +2,16 @@
 
 # 定义log文件路径
 log="./generate_rpc.log"
+call_dir="./common/call"
+application_dir="./application"
+
+
 file_name="*"
 # 定义call目录
-call_dir="./common/call"
 # 遍历所有命令行参数
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -f)
+    -s)
       file_name="$2"
       shift 2  # 移动两个位置，跳过 -f 和它的值
       ;;
@@ -26,7 +29,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # 查找当前目录及其子目录下所有以 .proto 结尾的文件
-find ./application -type f -name "$file_name.proto" | while read rpc_file; do
+find "$application_dir" -type f -name "$file_name.proto" | while read rpc_file; do
     # 获取文件所在目录
     dir=$(dirname "$rpc_file")
     # 提取文件名
@@ -42,18 +45,15 @@ find ./application -type f -name "$file_name.proto" | while read rpc_file; do
     fi
 
     # 对每个生成的客户端移动到 common/call 目录下
-
     find "$dir" -type d -maxdepth 1  | while read client_file; do
         # 如果不为原来目录且不为etc目录和internal目录就移动到common/call目录下
         if [[ "$client_file" != "$dir" && "$client_file" != *"etc"* && "$client_file" != *"internal"* ]]; then
-            mv "$client_file" "$call_dir"
+            mv -f "$client_file" "$call_dir"
+            rm -f "$client_file"
         fi
-        mv "$client_file" "$call_dir"
     done
 
-
-
-    echo -e "\033[42mGenerated code for $rpc_file \033[42m"
+    echo -e "\033[42mGenerated code for $rpc_file \033[0m"
     rm -f $log
 done
 
