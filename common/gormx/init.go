@@ -21,7 +21,7 @@ type Mysql struct {
 	Port     int
 	Username string
 	Password string
-	DbName   string
+	Database string
 }
 
 type Postgres struct {
@@ -29,7 +29,7 @@ type Postgres struct {
 	Port     int
 	Username string
 	Password string
-	DbName   string
+	Database string
 }
 
 func (cfg Mysql) getDSN() string {
@@ -39,7 +39,7 @@ func (cfg Mysql) getDSN() string {
 		cfg.Password,
 		cfg.Host,
 		cfg.Port,
-		cfg.DbName)
+		cfg.Database)
 }
 
 func (cfg Postgres) getDSN() string {
@@ -47,7 +47,7 @@ func (cfg Postgres) getDSN() string {
 		cfg.Host,
 		cfg.Username,
 		cfg.Password,
-		cfg.DbName,
+		cfg.Database,
 		cfg.Port)
 }
 
