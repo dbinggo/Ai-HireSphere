@@ -4,6 +4,34 @@
 ## 项目简介
 使用[Go-Zero](https://github.com/zeromicro/go-zero)框架开发的AI驱动的助力面试平台
 
+## 快速开始
+### · docker启动
+#### 1. 到deploy目录下面
+```shell
+  cd deploy
+```
+#### 2. 执行docker build 命令
+```shell
+  docker build -f Dockerfile -t repository:tag .  
+```
+#### 3. 运行docker容器
+```shell
+  docker run -d -p 8080:8080 --name test repository:tag
+```
+如果您看到``Starting server at 0.0.0.0:8888...`` 字样视为启动成功
+
+####  ！特别注意
+本项目不含最基础配置文件，对于每个微服务，我们规定：配置文件模板放在
+``application/application/xxx-center/interfaces/xxx/etc/xx.yaml.templeate`` 文件中。 
+
+若想正常启动微服务，需要根据配置文件模板``xxx.yaml.templeate``修改配置文件，之后把配置文件命名为 ``xx.yaml``到原来目录下，再启动``docker build`` 和 ``docker run``。
+
+或者是根据配置文件模板``xxx.yaml.templeate``修改配置文件，之后把配置文件命名为 ``xx.yaml``,再通过 ``docker run -v your/config_yaml_path:/app/etc`` 进行挂载，确保程序正常启动。
+
+
+
+
+
 ## 项目技术栈
 1. Go-Zero
 2. Gorm
@@ -87,19 +115,19 @@ chmod -R -x .githooks
 
 因此，分支命名必须标准化。
 ```text
-<type>-<name>-<description>
+<type>/<name>/<description>
 ```
 例如：
 - 如果是开发新功能的分支，命名规范如下
 ```text
-feature-<name>-<feature description>
-例如：feature-jett-dev_log_system
+feature/<name>/<feature description>
+例如：feature/jett/dev_log_system
 ```
 
 - 如果是修复bug：
 ```text
-bugfix-<name>-<bug name>
-e.g.：bugfix-jett-login_error
+bugfix/<name>/<bug name>
+e.g.：bugfix/jett/login_error
 ```
 以及其他类型：
 `hotfix`、`release`...
