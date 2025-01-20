@@ -9,12 +9,12 @@ import (
 
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/logic"
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/svc"
-	"Ai-HireSphere/common/call/types"
+	"Ai-HireSphere/common/call/user"
 )
 
 type UserServer struct {
 	svcCtx *svc.ServiceContext
-	types.UnimplementedUserServer
+	user.UnimplementedUserServer
 }
 
 func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {
@@ -23,7 +23,7 @@ func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {
 	}
 }
 
-func (s *UserServer) FindUserById(ctx context.Context, in *types.Id) (*types.UserInfo, error) {
+func (s *UserServer) FindUserById(ctx context.Context, in *user.Id) (*user.UserInfo, error) {
 	l := logic.NewFindUserByIdLogic(ctx, s.svcCtx)
 	return l.FindUserById(in)
 }

@@ -9,7 +9,7 @@ import (
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/config"
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/server"
 	"Ai-HireSphere/application/user-center/interfaces/rpc/internal/svc"
-	"Ai-HireSphere/common/call/types"
+	"Ai-HireSphere/common/call/user"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -28,7 +28,7 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		types.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
+		user.RegisterUserServer(grpcServer, server.NewUserServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -1,6 +1,7 @@
 package base
 
 import (
+	"Ai-HireSphere/common/codex"
 	"Ai-HireSphere/common/model/enums"
 	"context"
 
@@ -25,6 +26,8 @@ func NewCaptchaSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Captc
 }
 
 func (l *CaptchaSendLogic) CaptchaSend(req *types.CaptchaSendReq) error {
-
-	return l.svcCtx.BaseApp.CaptchaSend(l.ctx, enums.CaptchaWayType(req.Way), req.Target)
+	err := l.svcCtx.BaseApp.CaptchaSend(l.ctx, enums.CaptchaWayType(req.Way), req.Target)
+	if err != nil {
+		err = codex.New(2000010, err.Error())
+	}
 }

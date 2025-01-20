@@ -12,7 +12,7 @@ import (
 
 type IBaseApp interface {
 	// 验证码接口
-	CaptchaSend(ctx context.Context, way enums.CaptchaWayType, key string) error
+	CaptchaSend(ctx context.Context, way enums.CaptchaWayType, key string) gerr.Error
 	// 验证码校验
 	CaptchaCheck(ctx context.Context, way enums.CaptchaWayType, key, code string) error
 }

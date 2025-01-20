@@ -2,20 +2,20 @@
 // goctl 1.7.3
 // Source: user.proto
 
-package userClient
+package user_client
 
 import (
 	"context"
 
-	"Ai-HireSphere/application/user-center/interfaces/rpc/types"
+	"Ai-HireSphere/common/call/user"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	Id       = types.Id
-	UserInfo = types.UserInfo
+	Id       = user.Id
+	UserInfo = user.UserInfo
 
 	User interface {
 		FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error)
@@ -33,6 +33,6 @@ func NewUser(cli zrpc.Client) User {
 }
 
 func (m *defaultUser) FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error) {
-	client := types.NewUserClient(m.cli.Conn())
+	client := user.NewUserClient(m.cli.Conn())
 	return client.FindUserById(ctx, in, opts...)
 }
