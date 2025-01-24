@@ -16,50 +16,42 @@ var _ idataaccess.IUserGorm = (*GormOpts)(nil)
 //即：底层数据库存储对上层领域模型没有任何感知，你想怎么存就怎么存，
 //弱化数据库概念，数据库只是适配器
 
-type userGorm struct {
-}
+func (o *GormOpts) SaveUser(ctx context.Context, user *entity.UserEntity) (*entity.UserEntity, gerr.Error) {
 
-func (o *GormOpts) SaveUser(ctx context.Context, user *entity.User) (*entity.User, gerr.Error) {
-	u := o.userEntryToModel(user)
-	u, err := u.Create(o.db, u)
+	userModel := user.Transform()
+	userModel, err := userModel.Save(o.db, userModel)
 	if err != nil {
 		err = gerr.DefaultSysErr()
 		return nil, err.(gerr.Error)
 	}
-	return o.userModelToEntry(u), nil
+	return user.From(userModel), nil
 }
 
-func (o *GormOpts) FindUserById(ctx context.Context, id int64) (*entity.User, gerr.Error) {
+func (o *GormOpts) FindUserById(ctx context.Context, id int64) (user *entity.UserEntity, err2 gerr.Error) {
 	z, err := (&model.TUser{}).GetOne(o.db, "id = ?", id)
 	if err != nil {
 		err = gerr.DefaultSysErr()
 		return nil, err.(gerr.Error)
 	}
-	return o.userModelToEntry(z), nil
+	return user.From(z), nil
 }
 
-func (o *GormOpts) FindUserByLoginType(ctx context.Context, loginType enums.UserRegisterWayType, data string) (*entity.User, gerr.Error) {
+func (o *GormOpts) FindUserByLoginType(ctx context.Context, loginType enums.UserRegisterWayType, data string) (user *entity.UserEntity, err gerr.Error) {
 	if loginType == enums.UserRegisterWayTypeEmail {
 		z, err := (&model.TUser{}).GetOne(o.db, "email = ?", data)
 		if err != nil {
 			err = gerr.DefaultSysErr()
 			return nil, err.(gerr.Error)
 		}
-		return o.userModelToEntry(z), nil
+		user.From(z)
+		return user, nil
 	} else {
 		z, err := (&model.TUser{}).GetOne(o.db, "phone = ?", data)
 		if err != nil {
 			err = gerr.DefaultSysErr()
 			return nil, err.(gerr.Error)
 		}
-		return o.userModelToEntry(z), nil
+		user.From(z)
+		return user, nil
 	}
-	return nil, gerr.DefaultSysErr()
-}
-
-func (o *GormOpts) userModelToEntry(user model.TUser) *entity.User {
-	return &entity.User{}
-}
-func (o *GormOpts) userEntryToModel(user *entity.User) model.TUser {
-	return model.TUser{}
 }

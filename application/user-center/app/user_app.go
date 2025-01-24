@@ -17,7 +17,7 @@ type IUserApp interface {
 	// 注册用户
 	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, gerr.Error)
 	// 查询用户
-	FindUserById(ctx context.Context, id int64) (*entity.User, gerr.Error)
+	FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error)
 	// 用户登陆
 	LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, gerr.Error)
 	// 登录用户
@@ -56,7 +56,7 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 	s := services.NewUserService(u.Repo, u.UserRpc)
 
 	// 创建一个user
-	user := &entity.User{
+	user := &entity.UserEntity{
 		Role: enums.UserRoleTypeUser,
 	}
 
@@ -77,9 +77,9 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 //	@receiver u
 //	@param ctx
 //	@param id
-//	@return entity.User
+//	@return entity.UserEntity
 //	@return error
-func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, gerr.Error) {
+func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error) {
 	return u.Repo.FindUserById(ctx, id)
 }
 
@@ -90,7 +90,7 @@ func (u *UserApp) LoginUser(ctx context.Context, way enums.UserRegisterWayType, 
 		return "", err
 	}
 
-	user := &entity.User{}
+	user := &entity.UserEntity{}
 	switch way {
 	case enums.UserRegisterWayTypeEmail:
 		user.Email = data

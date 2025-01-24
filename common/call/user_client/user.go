@@ -15,10 +15,12 @@ import (
 
 type (
 	Id       = user.Id
+	Phone    = user.Phone
 	UserInfo = user.UserInfo
 
 	User interface {
 		FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error)
+		FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error)
 	}
 
 	defaultUser struct {
@@ -35,4 +37,9 @@ func NewUser(cli zrpc.Client) User {
 func (m *defaultUser) FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error) {
 	client := user.NewUserClient(m.cli.Conn())
 	return client.FindUserById(ctx, in, opts...)
+}
+
+func (m *defaultUser) FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error) {
+	client := user.NewUserClient(m.cli.Conn())
+	return client.FindUserByPhone(ctx, in, opts...)
 }

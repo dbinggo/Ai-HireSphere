@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	User_FindUserById_FullMethodName = "/user.User/FindUserById"
+	User_FindUserById_FullMethodName    = "/user.User/FindUserById"
+	User_FindUserByPhone_FullMethodName = "/user.User/FindUserByPhone"
 )
 
 // UserClient is the client API for User service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserClient interface {
 	FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error)
+	FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error)
 }
 
 type userClient struct {
@@ -47,11 +49,22 @@ func (c *userClient) FindUserById(ctx context.Context, in *Id, opts ...grpc.Call
 	return out, nil
 }
 
+func (c *userClient) FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserInfo)
+	err := c.cc.Invoke(ctx, User_FindUserByPhone_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
 type UserServer interface {
 	FindUserById(context.Context, *Id) (*UserInfo, error)
+	FindUserByPhone(context.Context, *Phone) (*UserInfo, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedUserServer struct{}
 
 func (UnimplementedUserServer) FindUserById(context.Context, *Id) (*UserInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUserById not implemented")
+}
+func (UnimplementedUserServer) FindUserByPhone(context.Context, *Phone) (*UserInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindUserByPhone not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -104,6 +120,24 @@ func _User_FindUserById_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_FindUserByPhone_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Phone)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).FindUserByPhone(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_FindUserByPhone_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).FindUserByPhone(ctx, req.(*Phone))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindUserById",
 			Handler:    _User_FindUserById_Handler,
+		},
+		{
+			MethodName: "FindUserByPhone",
+			Handler:    _User_FindUserByPhone_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

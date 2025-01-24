@@ -15,6 +15,8 @@ type ServiceContext struct {
 	UserApp app.IUserApp
 	BaseApp app.IBaseApp
 	Repo    idataaccess.IUserGorm
+
+	UserRpc userClient.User
 }
 
 // 这里进行初始化各种依赖

@@ -27,3 +27,8 @@ func (s *UserServer) FindUserById(ctx context.Context, in *user.Id) (*user.UserI
 	l := logic.NewFindUserByIdLogic(ctx, s.svcCtx)
 	return l.FindUserById(in)
 }
+
+func (s *UserServer) FindUserByPhone(ctx context.Context, in *user.Phone) (*user.UserInfo, error) {
+	l := logic.NewFindUserByPhoneLogic(ctx, s.svcCtx)
+	return l.FindUserByPhone(in)
+}

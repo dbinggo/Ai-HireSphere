@@ -8,6 +8,10 @@ message Id {
   int64 id = 1;
 }
 
+message Phone{
+  string phone = 1;
+}
+
 message UserInfo {
   int64  id = 1;
   string UserName = 2;
@@ -20,4 +24,6 @@ message UserInfo {
 
 service User {
   rpc FindUserById(Id) returns(UserInfo);
+  rpc FindUserByPhone(Phone) returns(UserInfo);
+
 }

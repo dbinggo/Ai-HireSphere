@@ -16,8 +16,8 @@ import (
 // IUserService
 // @Description: 对外提供的接口
 type IUserService interface {
-	RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error)
-	LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error)
+	RegisterUser(user *entity.UserEntity, way enums.UserRegisterWayType) (token string, err gerr.Error)
+	LoginUser(user *entity.UserEntity, way enums.UserRegisterWayType) (token string, err gerr.Error)
 }
 
 type UserService struct {
@@ -33,7 +33,7 @@ func NewUserService(repo irepository.IRepoBroker, userRpc userClient.User) IUser
 	}
 }
 
-func (s *UserService) RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error) {
+func (s *UserService) RegisterUser(user *entity.UserEntity, way enums.UserRegisterWayType) (token string, err gerr.Error) {
 	// 调用领域模型方法进行注册
 	if err = user.Register(way); err != nil {
 		return token, err
@@ -45,12 +45,12 @@ func (s *UserService) RegisterUser(user *entity.User, way enums.UserRegisterWayT
 		return token, err
 	}
 
-	// 生成token
+	// 进阶保存方法
 	token, err = user.GenerateToken()
 	return token, err
 }
 
-func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err gerr.Error) {
+func (s *UserService) LoginUser(user *entity.UserEntity, way enums.UserRegisterWayType) (token string, err gerr.Error) {
 	// 调用仓储查找这个user
 	data := ""
 	switch way {

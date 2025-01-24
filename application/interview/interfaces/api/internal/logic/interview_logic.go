@@ -25,6 +25,7 @@ func NewInterviewLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Intervi
 
 func (l *InterviewLogic) Interview(req *types.Request) (resp *types.Response, err error) {
 	// todo: add your logic here and delete this line
+	userInfo, err := l.svcCtx.UserRpc.FindUserById(l.ctx, 1)
 
 	return
 }
