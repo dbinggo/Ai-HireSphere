@@ -2,9 +2,9 @@ package idataaccess
 
 // IDataAccess defines the set of methods that we use for accessing data from MySQL
 
-type IDataAccess[T any] interface {
+type IDataAccess interface {
 	IUserGorm
-	ITransaction[T]
+	//ITransaction[T]
 }
 
 // 实现基础事务功能

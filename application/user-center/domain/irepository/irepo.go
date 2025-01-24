@@ -6,6 +6,6 @@ import (
 )
 
 type IRepoBroker interface {
-	idataaccess.IUserGorm
+	idataaccess.IDataAccess
 	ireidsaccess.IRedisAccess
 }

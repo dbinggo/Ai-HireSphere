@@ -2,20 +2,24 @@ package svc
 
 import (
 	"Ai-HireSphere/application/user-center/app"
-	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
+	"Ai-HireSphere/application/user-center/domain/irepository"
 	"Ai-HireSphere/application/user-center/infrastructure/repository"
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/config"
 	userClient "Ai-HireSphere/common/call/user_client"
 	"Ai-HireSphere/common/gormx"
-	"github.com/zeromicro/go-zero/zrpc"
+	"Ai-HireSphere/common/redisx"
 )
 
 type ServiceContext struct {
-	Config  config.Config
+	// 基本配置
+	Config config.Config
+	// 用户服务
 	UserApp app.IUserApp
+	// 基础服务
 	BaseApp app.IBaseApp
-	Repo    idataaccess.IUserGorm
-
+	// 仓储接口
+	Repo irepository.IRepoBroker
+	// rpc服务
 	UserRpc userClient.User
 }
 
@@ -23,15 +27,16 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	// 第一步先初始化数据库配置
 	db := gormx.MustOpen(c.Mysql, nil)
+	rdb := redisx.MustOpen(c.Redis)
 
 	// 第二部初始化repo仓库
-	repo := repository.NewRepoBroker(db, nil)
+	repo := repository.NewRepoBroker(db, rdb)
 
 	// 第三部初始化rpc服务
-	userRpc := userClient.NewUser(zrpc.MustNewClient(c.UserRpc))
+	//userRpc := userClient.NewUser(zrpc.MustNewClient(c.UserRpc))
 
 	// 第四部初始化APP层
-	userApp := app.NewUserApp(repo, userRpc)
+	userApp := app.NewUserApp(repo, nil)
 	//todo 要完善email sms
 	baseApp := app.NewBaseApp(repo, nil)
 
