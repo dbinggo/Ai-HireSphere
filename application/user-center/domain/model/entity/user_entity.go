@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"Ai-HireSphere/common/model"
 	"Ai-HireSphere/common/model/enums"
 	"Ai-HireSphere/common/utils"
 	"Ai-HireSphere/common/utils/jwt"
@@ -10,8 +11,12 @@ import (
 
 // 本层不允许引用repo层 否则会造成循环依赖
 
-// 用户基本信息
-type User struct {
+var (
+	ErrNotVailed = gerr.NewSysErrf("参数不合法")
+)
+
+// UserEntity 用户实体
+type UserEntity struct {
 	Id       int64
 	Sex      enums.UserSex
 	Role     enums.UserRole
@@ -23,7 +28,35 @@ type User struct {
 
 // 充血模型
 
-func (u *User) Register(way enums.UserRegisterWayType) gerr.Error {
+// 实体与schema互转
+var _ ICommonEntity[*UserEntity, *model.TUser] = &UserEntity{}
+
+func (u *UserEntity) Transform() *model.TUser {
+	return &model.TUser{
+		CommonModel: model.CommonModel{
+			ID: u.Id,
+		},
+		Sex:      int(u.Sex),
+		Role:     string(u.Role),
+		Avatar:   u.Avatar,
+		Username: u.UserName,
+		Email:    u.Email,
+		Phone:    u.Phone,
+	}
+}
+
+func (u *UserEntity) From(a *model.TUser) *UserEntity {
+	u.Id = a.ID
+	u.Sex = enums.UserSex(a.Sex)
+	u.Role = enums.UserRole(a.Role)
+	u.Avatar = a.Avatar
+	u.UserName = a.Username
+	u.Email = a.Email
+	u.Phone = a.Phone
+	return u
+}
+
+func (u *UserEntity) Register(way enums.UserRegisterWayType) gerr.Error {
 	if err := u.CheckRegister(way); err != nil {
 		return err
 	}
@@ -35,7 +68,7 @@ func (u *User) Register(way enums.UserRegisterWayType) gerr.Error {
 //	@Description: 校验用户注册信息
 //	@receiver u
 //	@return error
-func (u *User) Validate() error {
+func (u *UserEntity) Validate() error {
 	var (
 		errEmail error
 		errPhone error
@@ -55,7 +88,7 @@ func (u *User) Validate() error {
 //	@receiver u
 //	@param way
 //	@return error
-func (u *User) CheckRegister(way enums.UserRegisterWayType) gerr.Error {
+func (u *UserEntity) CheckRegister(way enums.UserRegisterWayType) gerr.Error {
 	switch way {
 	case enums.UserRegisterWayTypeEmail:
 		// 校验email邮箱是否正确
@@ -79,7 +112,7 @@ func (u *User) CheckRegister(way enums.UserRegisterWayType) gerr.Error {
 //	@receiver u
 //	@return string
 //	@return error
-func (u *User) GenerateToken() (string, gerr.Error) {
+func (u *UserEntity) GenerateToken() (string, gerr.Error) {
 	token, err := jwt.GenerateToken(u.Id)
 	if err != nil {
 		err = gerr.WrapSysErrf(err, "生成token失败")
