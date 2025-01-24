@@ -21,5 +21,6 @@ ddd:
 clean:
 	bash  ./scripts/clean.sh
 
-
+help:
+	bash  ./scripts/help.sh
 
