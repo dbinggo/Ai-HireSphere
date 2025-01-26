@@ -17,3 +17,5 @@ go.work.sum
 .cache
 .golangci.yml
 private/*
+
+/test/*

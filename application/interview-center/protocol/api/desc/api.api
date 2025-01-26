@@ -1,0 +1,20 @@
+syntax = "v1"
+
+info (
+	title:   "面试中心模块"
+	desc:    "面试中心api接口"
+	author:  "kkb"
+	email:   "2609479523@qq.com"
+	version: "1"
+)
+
+import "body/body.api"
+
+@server (
+	group: interview_center
+)
+service v1 {
+	@handler resumeAdd
+	post / (ResumeAddRequest) returns (ResumeAddResponse)
+}
+
