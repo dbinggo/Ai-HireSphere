@@ -19,7 +19,7 @@ func InitLogger(rest service.ServiceConf) {
 		// 是否开启彩色（Info 颜色）
 		Colour: rest.Log.Encoding == "plain" && rest.Log.Mode == "console",
 		// 日志存储路径 会在路径下生成 info.log error.log
-		FilePath: rest.Log.Path,
+		FilePath: path + "/" + rest.Log.Path,
 		// 是否存储日志
 		File: rest.Log.Mode == "file",
 		// 是否在控制台输出

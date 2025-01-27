@@ -14,7 +14,7 @@ func GetRootPath(myPath string) string {
 		panic("Something wrong with getting root path")
 	}
 	absPath, err := filepath.Abs(fileName)
-	rootPath := filepath.Dir(filepath.Dir(absPath))
+	rootPath := filepath.Dir(filepath.Dir(filepath.Dir(absPath)))
 	if err != nil {
 		panic(any(err))
 	}
