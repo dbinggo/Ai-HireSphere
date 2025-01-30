@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	User_FindUserById_FullMethodName    = "/user.User/FindUserById"
 	User_FindUserByPhone_FullMethodName = "/user.User/FindUserByPhone"
+	User_OssUpload_FullMethodName       = "/user.User/OssUpload"
 )
 
 // UserClient is the client API for User service.
@@ -29,6 +30,7 @@ const (
 type UserClient interface {
 	FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error)
 	FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error)
+	OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error)
 }
 
 type userClient struct {
@@ -59,12 +61,23 @@ func (c *userClient) FindUserByPhone(ctx context.Context, in *Phone, opts ...grp
 	return out, nil
 }
 
+func (c *userClient) OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OSSUploadResp)
+	err := c.cc.Invoke(ctx, User_OssUpload_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
 type UserServer interface {
 	FindUserById(context.Context, *Id) (*UserInfo, error)
 	FindUserByPhone(context.Context, *Phone) (*UserInfo, error)
+	OssUpload(context.Context, *OSSUploadReq) (*OSSUploadResp, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedUserServer) FindUserById(context.Context, *Id) (*UserInfo, er
 }
 func (UnimplementedUserServer) FindUserByPhone(context.Context, *Phone) (*UserInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindUserByPhone not implemented")
+}
+func (UnimplementedUserServer) OssUpload(context.Context, *OSSUploadReq) (*OSSUploadResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OssUpload not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -138,6 +154,24 @@ func _User_FindUserByPhone_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_OssUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OSSUploadReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).OssUpload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_OssUpload_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).OssUpload(ctx, req.(*OSSUploadReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindUserByPhone",
 			Handler:    _User_FindUserByPhone_Handler,
+		},
+		{
+			MethodName: "OssUpload",
+			Handler:    _User_OssUpload_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -38,6 +38,36 @@
           "interview-api"
         ]
       }
+    },
+    "/v1/resume/upload": {
+      "post": {
+        "summary": "上传简历",
+        "operationId": "UploadResumeHandler",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UploadResumeResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UploadResumeReq"
+            }
+          }
+        ],
+        "tags": [
+          "resume"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      }
     }
   },
   "definitions": {
@@ -55,6 +85,37 @@
       "title": "Response",
       "required": [
         "message"
+      ]
+    },
+    "UploadResumeReq": {
+      "type": "object",
+      "properties": {
+        "resume": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/byte"
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "UploadResumeReq",
+      "required": [
+        "resume",
+        "name"
+      ]
+    },
+    "UploadResumeResp": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      },
+      "title": "UploadResumeResp",
+      "required": [
+        "address"
       ]
     }
   },

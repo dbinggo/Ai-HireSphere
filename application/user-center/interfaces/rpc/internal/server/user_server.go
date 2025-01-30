@@ -32,3 +32,8 @@ func (s *UserServer) FindUserByPhone(ctx context.Context, in *user.Phone) (*user
 	l := logic.NewFindUserByPhoneLogic(ctx, s.svcCtx)
 	return l.FindUserByPhone(in)
 }
+
+func (s *UserServer) OssUpload(ctx context.Context, in *user.OSSUploadReq) (*user.OSSUploadResp, error) {
+	l := logic.NewOssUploadLogic(ctx, s.svcCtx)
+	return l.OssUpload(in)
+}

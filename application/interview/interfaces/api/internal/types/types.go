@@ -8,3 +8,12 @@ type Request struct {
 type Response struct {
 	Message string `json:"message"`
 }
+
+type UploadResumeReq struct {
+	Resume []byte `form:"resume"`
+	Name   string `form:"name"`
+}
+
+type UploadResumeResp struct {
+	Address string `json:"address"`
+}

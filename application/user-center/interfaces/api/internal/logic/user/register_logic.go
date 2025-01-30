@@ -27,7 +27,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
 	// todo: add your logic here and delete this line
-	res, err := l.svcCtx.UserApp.RegisterUser(l.ctx, enums.UserRegisterWayType(req.Way), req.Data, req.Code)
+	res, err := l.svcCtx.UserApp.RegisterUser(l.ctx, enums.UserRegisterMethodType(req.Method), req.Data, req.Code)
 
 	userInfo, err := l.svcCtx.UserRpc.FindUserByPhone(l.ctx, &user.Phone{
 		Phone: "13131227873",

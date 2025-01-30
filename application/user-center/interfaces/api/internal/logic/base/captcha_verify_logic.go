@@ -25,5 +25,5 @@ func NewCaptchaVerifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cap
 }
 
 func (l *CaptchaVerifyLogic) CaptchaVerify(req *types.CaptchaVerifyReq) error {
-	return l.svcCtx.BaseApp.CaptchaCheck(l.ctx, enums.CaptchaWayType(req.Way), req.Target, req.Code)
+	return l.svcCtx.BaseApp.CaptchaCheck(l.ctx, enums.CaptchaWayType(req.Way), enums.CaptchaMethodType(req.Method), req.Target, req.Code)
 }

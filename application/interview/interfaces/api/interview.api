@@ -13,3 +13,24 @@ service interview-api {
 	get /from/:name (Request) returns (Response)
 }
 
+// 定义服务前缀
+// 定义 HTTP 服务
+@server (
+	group:  resume
+	prefix: /v1/resume
+)
+service interview-api {
+	@doc "上传简历"
+	@handler UploadResumeHandler
+	post /upload (UploadResumeReq) returns (UploadResumeResp)
+}
+
+type UploadResumeReq {
+	Resume []byte `form:"resume"`
+	Name   string `form:"name"`
+}
+
+type UploadResumeResp {
+	Address string `json:"address"`
+}
+

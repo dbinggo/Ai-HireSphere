@@ -21,9 +21,9 @@ const (
 	UserRoleTypeDefault UserRole = UserRoleTypeUser
 )
 
-type UserRegisterWayType string
+type UserRegisterMethodType string
 
 const (
-	UserRegisterWayTypeEmail UserRegisterWayType = "email"
-	UserRegisterWayTypePhone UserRegisterWayType = "phone"
+	UserRegisterWayTypeEmail UserRegisterMethodType = "email"
+	UserRegisterWayTypePhone UserRegisterMethodType = "phone"
 )

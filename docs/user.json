@@ -148,12 +148,17 @@
         "target": {
           "type": "string",
           "description": " 手机号或者邮箱"
+        },
+        "method": {
+          "type": "string",
+          "description": " 验证码发送方式 phone, email"
         }
       },
       "title": "CaptchaSendReq",
       "required": [
         "way",
-        "target"
+        "target",
+        "method"
       ]
     },
     "CaptchaVerifyReq": {
@@ -162,6 +167,10 @@
         "way": {
           "type": "string",
           "description": " 验证码用途 register，login"
+        },
+        "method": {
+          "type": "string",
+          "description": " 验证码发送方式 phone, email"
         },
         "target": {
           "type": "string",
@@ -175,6 +184,7 @@
       "title": "CaptchaVerifyReq",
       "required": [
         "way",
+        "method",
         "target",
         "code"
       ]
@@ -182,7 +192,7 @@
     "LoginReq": {
       "type": "object",
       "properties": {
-        "way": {
+        "method": {
           "type": "string",
           "description": " 登录方式 email或者phone"
         },
@@ -197,7 +207,7 @@
       },
       "title": "LoginReq",
       "required": [
-        "way",
+        "method",
         "data",
         "code"
       ]
@@ -218,7 +228,7 @@
     "RegisterReq": {
       "type": "object",
       "properties": {
-        "way": {
+        "method": {
           "type": "string",
           "description": " 登录方式 email或者phone"
         },
@@ -233,7 +243,7 @@
       },
       "title": "RegisterReq",
       "required": [
-        "way",
+        "method",
         "data",
         "code"
       ]

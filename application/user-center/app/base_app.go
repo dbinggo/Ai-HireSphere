@@ -13,9 +13,9 @@ import (
 
 type IBaseApp interface {
 	// 验证码接口
-	CaptchaSend(ctx context.Context, way enums.CaptchaWayType, key string) gerr.Error
+	CaptchaSend(ctx context.Context, way enums.CaptchaWayType, method enums.CaptchaMethodType, key string) gerr.Error
 	// 验证码校验
-	CaptchaCheck(ctx context.Context, way enums.CaptchaWayType, key, code string) gerr.Error
+	CaptchaCheck(ctx context.Context, way enums.CaptchaWayType, method enums.CaptchaMethodType, key, code string) gerr.Error
 }
 
 type BaseApp struct {

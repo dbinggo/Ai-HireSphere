@@ -11,3 +11,10 @@ const (
 	CaptchaWayTypeRegister CaptchaWayType = "register" // 注册
 	CaptchaWayTypeReset    CaptchaWayType = "reset"    // 重置
 )
+
+type CaptchaMethodType string
+
+const (
+	CaptchaMethodTypeEmail CaptchaMethodType = "email"
+	CaptchaMethodTypePhone CaptchaMethodType = "phone"
+)

@@ -14,13 +14,16 @@ import (
 )
 
 type (
-	Id       = user.Id
-	Phone    = user.Phone
-	UserInfo = user.UserInfo
+	Id            = user.Id
+	OSSUploadReq  = user.OSSUploadReq
+	OSSUploadResp = user.OSSUploadResp
+	Phone         = user.Phone
+	UserInfo      = user.UserInfo
 
 	User interface {
 		FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error)
 		FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error)
+		OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error)
 	}
 
 	defaultUser struct {
@@ -42,4 +45,9 @@ func (m *defaultUser) FindUserById(ctx context.Context, in *Id, opts ...grpc.Cal
 func (m *defaultUser) FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error) {
 	client := user.NewUserClient(m.cli.Conn())
 	return client.FindUserByPhone(ctx, in, opts...)
+}
+
+func (m *defaultUser) OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error) {
+	client := user.NewUserClient(m.cli.Conn())
+	return client.OssUpload(ctx, in, opts...)
 }

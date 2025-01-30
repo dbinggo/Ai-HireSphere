@@ -4,18 +4,20 @@ package types
 type CaptchaSendReq struct {
 	Way    string `json:"way"`    // 验证码用途 register，login
 	Target string `json:"target"` // 手机号或者邮箱
+	Method string `json:"method"` // 验证码发送方式 phone, email
 }
 
 type CaptchaVerifyReq struct {
 	Way    string `json:"way"`    // 验证码用途 register，login
+	Method string `json:"method"` // 验证码发送方式 phone, email
 	Target string `json:"target"` // 手机号或者邮箱
 	Code   string `json:"code"`   // 验证码 6位数字
 }
 
 type LoginReq struct {
-	Way  string `json:"way"`  // 登录方式 email或者phone
-	Data string `json:"data"` // 登录账号 手机号或者邮箱
-	Code string `json:"code"` // 验证码 6位数字
+	Method string `json:"method"` // 登录方式 email或者phone
+	Data   string `json:"data"`   // 登录账号 手机号或者邮箱
+	Code   string `json:"code"`   // 验证码 6位数字
 }
 
 type LoginResp struct {
@@ -23,9 +25,9 @@ type LoginResp struct {
 }
 
 type RegisterReq struct {
-	Way  string `json:"way"`  // 登录方式 email或者phone
-	Data string `json:"data"` // 登录账号 手机号或者邮箱
-	Code string `json:"code"` // 验证码 6位数字
+	Method string `json:"method"` // 登录方式 email或者phone
+	Data   string `json:"data"`   // 登录账号 手机号或者邮箱
+	Code   string `json:"code"`   // 验证码 6位数字
 }
 
 type RegisterResp struct {

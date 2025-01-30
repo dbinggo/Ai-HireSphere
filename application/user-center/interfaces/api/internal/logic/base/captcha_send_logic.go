@@ -25,7 +25,7 @@ func NewCaptchaSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Captc
 }
 
 func (l *CaptchaSendLogic) CaptchaSend(req *types.CaptchaSendReq) error {
-	err := l.svcCtx.BaseApp.CaptchaSend(l.ctx, enums.CaptchaWayType(req.Way), req.Target)
+	err := l.svcCtx.BaseApp.CaptchaSend(l.ctx, enums.CaptchaWayType(req.Way), enums.CaptchaMethodType(req.Method), req.Target)
 
 	return err
 }
