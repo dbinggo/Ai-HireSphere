@@ -10,8 +10,13 @@ var (
 	NotFound           = add(404, "NOT_FOUND")
 	MethodNotAllowed   = add(405, "METHOD_NOT_ALLOWED")
 	Canceled           = add(498, "CANCELED")
-	ServerErr          = add(500, "INTERNAL_ERROR")
+	ServerErr          = add(500, "系统繁忙，请稍后重试")
 	ServiceUnavailable = add(503, "UNAVAILABLE")
 	Deadline           = add(504, "DEADLINE_EXCEEDED")
 	LimitExceed        = add(509, "RESOURCE_EXHAUSTED")
+)
+
+var (
+	_                 = 10 // 用户注册登陆错误 10开头
+	UserRegisterExist = add(11001, "用户已存在")
 )

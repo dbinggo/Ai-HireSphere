@@ -11,5 +11,5 @@ import (
 type IUserGorm interface {
 	SaveUser(ctx context.Context, user *entity.UserEntity) (*entity.UserEntity, gerr.Error)
 	FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error)
-	FindUserByLoginType(ctx context.Context, loginType enums.UserRegisterWayType, data string) (*entity.UserEntity, gerr.Error)
+	FindUserByLoginType(ctx context.Context, loginType enums.UserRegisterMethodType, data string) (*entity.UserEntity, gerr.Error)
 }

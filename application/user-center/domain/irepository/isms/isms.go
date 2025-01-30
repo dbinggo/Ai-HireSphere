@@ -1,8 +1,8 @@
 package isms
 
-import "github.com/dbinggo/gerr"
+import "context"
 
 // todo 需要实现短信接口
 type ISms interface {
-	Send(target string, content string) gerr.Error
+	SendCaptcha(ctx context.Context, target, code string) error
 }

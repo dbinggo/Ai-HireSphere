@@ -8,6 +8,8 @@ import (
 	userClient "Ai-HireSphere/common/call/user_client"
 	"Ai-HireSphere/common/gormx"
 	"Ai-HireSphere/common/redisx"
+	"Ai-HireSphere/common/thrift/sms"
+	"Ai-HireSphere/common/zlog/dbLogger"
 )
 
 type ServiceContext struct {
@@ -26,19 +28,18 @@ type ServiceContext struct {
 // 这里进行初始化各种依赖
 func NewServiceContext(c config.Config) *ServiceContext {
 	// 第一步先初始化数据库配置
-	db := gormx.MustOpen(c.Mysql, nil)
+	db := gormx.MustOpen(c.Mysql, dbLogger.New())
 	rdb := redisx.MustOpen(c.Redis)
-
 	// 第二部初始化repo仓库
 	repo := repository.NewRepoBroker(db, rdb)
-
 	// 第三部初始化rpc服务
 	//userRpc := userClient.NewUser(zrpc.MustNewClient(c.UserRpc))
 
 	// 第四部初始化APP层
 	userApp := app.NewUserApp(repo, nil)
-	//todo 要完善email sms
-	baseApp := app.NewBaseApp(repo, nil)
+
+	smsClient := sms.MustNewAliyunSMSClient(c.AliyunSMS.AccessKeyId, c.AliyunSMS.AccessKeySecret)
+	baseApp := app.NewBaseApp(repo, smsClient)
 
 	return &ServiceContext{
 		Config:  c,

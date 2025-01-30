@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Ai-HireSphere/common/thift/deepseek"
+	"Ai-HireSphere/common/thrift/deepseek"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"

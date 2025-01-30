@@ -36,12 +36,13 @@ func (u *UserEntity) Transform() *model.TUser {
 		CommonModel: model.CommonModel{
 			ID: u.Id,
 		},
-		Sex:      int(u.Sex),
-		Role:     string(u.Role),
-		Avatar:   u.Avatar,
-		Username: u.UserName,
-		Email:    u.Email,
-		Phone:    u.Phone,
+		IDBAdapter: &model.CommonAdapter[model.TUser]{},
+		Sex:        int(u.Sex),
+		Role:       string(u.Role),
+		Avatar:     u.Avatar,
+		Username:   u.UserName,
+		Email:      u.Email,
+		Phone:      u.Phone,
 	}
 }
 
@@ -56,7 +57,8 @@ func (u *UserEntity) From(a *model.TUser) *UserEntity {
 	return u
 }
 
-func (u *UserEntity) Register(way enums.UserRegisterWayType) gerr.Error {
+func (u *UserEntity) Register(way enums.UserRegisterMethodType) gerr.Error {
+	// 先进行数据校验
 	if err := u.CheckRegister(way); err != nil {
 		return err
 	}
@@ -88,7 +90,7 @@ func (u *UserEntity) Validate() error {
 //	@receiver u
 //	@param way
 //	@return error
-func (u *UserEntity) CheckRegister(way enums.UserRegisterWayType) gerr.Error {
+func (u *UserEntity) CheckRegister(way enums.UserRegisterMethodType) gerr.Error {
 	switch way {
 	case enums.UserRegisterWayTypeEmail:
 		// 校验email邮箱是否正确

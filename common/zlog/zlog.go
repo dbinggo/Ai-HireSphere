@@ -63,6 +63,10 @@ func SetZlog(config ZlogConfig) {
 //		return *ctx
 //	}
 func getLogger() zap.Logger {
+	if logger == nil {
+		initLogger(zap.NewNop())
+	}
+
 	return *logger
 }
 func WithContext(ctx context.Context) zap.Logger {

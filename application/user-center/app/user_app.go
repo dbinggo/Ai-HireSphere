@@ -20,7 +20,6 @@ type IUserApp interface {
 	FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error)
 	// 用户登陆
 	LoginUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error)
-	// 登录用户
 }
 type UserApp struct {
 	// 这里主要是依赖
@@ -68,7 +67,7 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterMethod
 	}
 
 	// 用户注册服务
-	return s.RegisterUser(user, way)
+	return s.RegisterUser(user, way, data)
 }
 
 // FindUserById
@@ -99,5 +98,5 @@ func (u *UserApp) LoginUser(ctx context.Context, method enums.UserRegisterMethod
 
 	}
 
-	return services.NewUserService(u.Repo, u.UserRpc).LoginUser(user, way)
+	return services.NewUserService(u.Repo, u.UserRpc).LoginUser(user, method)
 }

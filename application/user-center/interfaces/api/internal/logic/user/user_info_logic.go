@@ -1,10 +1,10 @@
 package user
 
 import (
-	"context"
-
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/svc"
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/types"
+	"Ai-HireSphere/common/utils"
+	"context"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,9 +25,8 @@ func NewUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserInfo
 
 func (l *UserInfoLogic) UserInfo() (resp *types.UserInfo, err error) {
 
-	// fixme 等bkwang 搞好中间件这里拿到userid
-	var id int64
-	user, err := l.svcCtx.UserApp.FindUserById(l.ctx, id)
+	userId := utils.GetUserId(l.ctx)
+	user, err := l.svcCtx.UserApp.FindUserById(l.ctx, userId)
 	if err != nil {
 		return nil, err
 	}

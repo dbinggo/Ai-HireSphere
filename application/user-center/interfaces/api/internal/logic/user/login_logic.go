@@ -27,7 +27,5 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
 
 	res, err := l.svcCtx.UserApp.LoginUser(l.ctx, enums.UserRegisterMethodType(req.Method), req.Data, req.Code)
-
-	resp.Token = res
-	return resp, err
+	return &types.LoginResp{Token: res}, err
 }

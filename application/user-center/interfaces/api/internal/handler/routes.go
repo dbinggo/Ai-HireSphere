@@ -33,12 +33,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				// 获取用户信息
-				Method:  http.MethodGet,
-				Path:    "/data",
-				Handler: user.UserInfoHandler(serverCtx),
-			},
-			{
 				// 登录
 				Method:  http.MethodPost,
 				Path:    "/login",
@@ -51,6 +45,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: user.RegisterHandler(serverCtx),
 			},
 		},
+		rest.WithPrefix("/v1/user"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取用户信息
+				Method:  http.MethodGet,
+				Path:    "/data",
+				Handler: user.UserInfoHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/v1/user"),
 	)
 }

@@ -3,6 +3,7 @@ package config
 import (
 	"Ai-HireSphere/common/gormx"
 	"Ai-HireSphere/common/redisx"
+	"Ai-HireSphere/common/thrift/sms"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -13,4 +14,9 @@ type Config struct {
 	Mysql   gormx.Mysql
 	Redis   redisx.Redis
 	UserRpc zrpc.RpcClientConf
+	Auth    struct {
+		AccessSecret string
+		AccessExpire int64
+	}
+	AliyunSMS sms.AliyunSMSConfig
 }

@@ -14,6 +14,9 @@ type CaptchaVerifyReq struct {
 	Code   string `json:"code"`   // 验证码 6位数字
 }
 
+type EmptyResp struct {
+}
+
 type LoginReq struct {
 	Method string `json:"method"` // 登录方式 email或者phone
 	Data   string `json:"data"`   // 登录账号 手机号或者邮箱

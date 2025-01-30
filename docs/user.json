@@ -22,7 +22,9 @@
         "responses": {
           "200": {
             "description": "A successful response.",
-            "schema": {}
+            "schema": {
+              "$ref": "#/definitions/EmptyResp"
+            }
           }
         },
         "parameters": [
@@ -79,6 +81,11 @@
         },
         "tags": [
           "user"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
         ]
       }
     },
@@ -188,6 +195,10 @@
         "target",
         "code"
       ]
+    },
+    "EmptyResp": {
+      "type": "object",
+      "title": "EmptyResp"
     },
     "LoginReq": {
       "type": "object",

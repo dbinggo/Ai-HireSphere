@@ -4,6 +4,7 @@ import (
 	ireidsaccess "Ai-HireSphere/application/user-center/domain/irepository/ireids_access"
 	"Ai-HireSphere/application/user-center/domain/irepository/isms"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
+	"Ai-HireSphere/common/codex"
 	"Ai-HireSphere/common/model/enums"
 	"Ai-HireSphere/common/zlog"
 	"context"
@@ -21,6 +22,13 @@ type IBaseService interface {
 	// 验证码校验
 	CaptchaCheck(way enums.CaptchaWayType, key, code string) gerr.Error
 }
+
+var (
+	_                  = 11 // 验证码场景使用 11开头
+	ErrorCaptchaSend   = codex.New(110001, "验证码发送失败")
+	ErrorCaptchaCheck  = codex.New(110002, "验证码错误")
+	ErrorCaptchaExpire = codex.New(110003, "验证码过期或未向该手机号发送过验证码")
+)
 
 type BaseService struct {
 	ctx context.Context
@@ -57,8 +65,10 @@ func (b *BaseService) CaptchaSend(way enums.CaptchaWayType, key string) gerr.Err
 	}
 
 	// 发送
-	if err := b.sms.Send(key, capcha.CaptchaCode); err != nil {
-		return err
+	if err := b.sms.SendCaptcha(b.ctx, key, capcha.CaptchaCode); err != nil {
+		err = gerr.Wraps(ErrorCaptchaSend, err)
+		zlog.ErrorfCtx(b.ctx, "%+v", err)
+		return err.(gerr.Error)
 	}
 	return nil
 }
@@ -76,7 +86,7 @@ func (b *BaseService) captchaStash(captcha *entity.Captcha) gerr.Error {
 	// 存到redis
 	err := b.rdb.Set(b.ctx, captcha.RedisKey, captcha.CaptchaCode, time.Minute*5)
 	if err != nil {
-		err = gerr.WrapSysErrf(err, "系统繁忙，请稍后重试")
+		err = gerr.Wraps(codex.ServerErr, err)
 		zlog.ErrorfCtx(b.ctx, "%+v", err)
 		return err.(gerr.Error)
 	}
@@ -98,25 +108,25 @@ func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) g
 		Way: way,
 		Key: key,
 	}
-
+	capcha.GenerateCaptcha()
 	ret, err := b.rdb.Get(b.ctx, capcha.RedisKey)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			// 验证码过期
-			err = gerr.WrapSysErrf(err, "验证码过期或未向该手机号发送过验证码")
+			err = gerr.Wraps(ErrorCaptchaExpire)
 			zlog.ErrorfCtx(b.ctx, "%+v", err)
 			return err.(gerr.Error)
 		}
-		err = gerr.WrapSysErrf(err, "系统繁忙，请稍后重试")
+		err = gerr.Wraps(codex.ServerErr, err)
 		zlog.ErrorfCtx(b.ctx, "%+v", err)
 		return err.(gerr.Error)
 	}
-
-	if err = b.rdb.Del(b.ctx, capcha.RedisKey); err != nil {
-		err = gerr.WrapSysErrf(err, "系统繁忙，请稍后重试")
-		zlog.ErrorfCtx(b.ctx, "%+v", err)
-		return err.(gerr.Error)
-	}
+	// 验证码不应该被主动删除
+	//if err = b.rdb.Del(b.ctx, capcha.RedisKey); err != nil {
+	//	err = gerr.Wraps(codex.ServerErr, err)
+	//	zlog.ErrorfCtx(b.ctx, "%+v", err)
+	//	return err.(gerr.Error)
+	//}
 
 	ret, ok := ret.(string)
 	if !ok {
@@ -127,7 +137,7 @@ func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) g
 
 	if ret != code {
 		// 验证码错误
-		err = gerr.WrapSysErrf(err, "验证码错误")
+		err = gerr.Wraps(ErrorCaptchaCheck)
 		return err.(gerr.Error)
 	}
 

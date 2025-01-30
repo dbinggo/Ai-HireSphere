@@ -2,7 +2,6 @@ package dbLogger
 
 import (
 	"context"
-	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
 	gormLogger "gorm.io/gorm/logger"
 	"time"
@@ -53,7 +52,7 @@ func (l *dbLog) Error(ctx context.Context, msg string, data ...interface{}) {
 
 func (l *dbLog) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
 	//这块的逻辑可以自己根据业务情况修改
-	fmt.Println(l.LogLevel)
+	//fmt.Println(l.LogLevel)
 	elapsed := time.Since(begin)
 	sql, rows := fc()
 	logx.WithContext(ctx).WithDuration(elapsed).Slowf("Trace sql: %v  row： %v  err: %v", sql, rows, err)

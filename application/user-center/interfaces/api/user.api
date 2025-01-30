@@ -9,7 +9,7 @@ syntax = "v1"
 service user {
 	@doc "发送验证码"
 	@handler CaptchaSend
-	post /captcha/send (CaptchaSendReq)
+	post /captcha/send (CaptchaSendReq) returns (EmptyResp)
 
 	@doc "验证验证码"
 	@handler CaptchaVerify
@@ -28,13 +28,21 @@ service user {
 	@doc "登录"
 	@handler Login
 	post /login (LoginReq) returns (LoginResp)
+}
 
+@server (
+	group:  user
+	prefix: /v1/user
+	jwt:    auth
+)
+service user {
 	@doc "获取用户信息"
 	@handler UserInfo
 	get /data returns (UserInfo)
 }
 
 type (
+	EmptyResp  {}
 	RegisterReq {
 		Method string `json:"method"` // 登录方式 email或者phone
 		Data   string `json:"data"` // 登录账号 手机号或者邮箱
