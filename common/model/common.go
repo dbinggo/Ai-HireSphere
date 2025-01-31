@@ -32,6 +32,7 @@ type IDBAdapter[T ICommonModel] interface {
 	Save(ctx context.Context, db *gorm.DB, data *T) (*T, error)
 	UpdateOne(ctx context.Context, db *gorm.DB, data *T, selects ...string) (*T, error)
 	Delete(ctx context.Context, db *gorm.DB, ids ...[]int) error
+	List(ctx context.Context, tx *gorm.DB, limit int, offset int, where interface{}, args ...interface{}) (int64, []T, error)
 }
 
 type CommonAdapter[T ICommonModel] struct{}
@@ -54,6 +55,9 @@ func (c *CommonAdapter[T]) UpdateOne(ctx context.Context, db *gorm.DB, data *T, 
 
 func (c *CommonAdapter[T]) Delete(ctx context.Context, db *gorm.DB, ids ...[]int) error {
 	return _delete[T](ctx, db, ids...)
+}
+func (c *CommonAdapter[T]) List(ctx context.Context, tx *gorm.DB, limit int, offset int, where interface{}, args ...interface{}) (int64, []T, error) {
+	return _list[T](ctx, tx, limit, offset, where, args...)
 }
 
 func _getOne[T ICommonModel](ctx context.Context, tx *gorm.DB, where interface{}, args ...interface{}) (*T, error) {
@@ -86,4 +90,12 @@ func _delete[T ICommonModel](ctx context.Context, tx *gorm.DB, ids ...[]int) (er
 	var model T
 	err = tx.WithContext(ctx).Model(&model).Delete(&model, ids).Error
 	return err
+}
+
+func _list[T ICommonModel](ctx context.Context, tx *gorm.DB, limit int, offset int, where interface{}, args ...interface{}) (int64, []T, error) {
+	var ret []T
+	var name T
+	var count int64
+	err := tx.WithContext(ctx).Model(&name).Where(where, args...).Limit(limit).Offset(offset).Count(&count).Find(&ret).Error
+	return count, ret, err
 }

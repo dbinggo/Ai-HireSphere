@@ -39,6 +39,44 @@
         ]
       }
     },
+    "/v1/resume/list": {
+      "get": {
+        "summary": "获取简历",
+        "operationId": "GetResumeListHandler",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/GetResumeListResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "resume"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/upload": {
       "post": {
         "summary": "上传简历",
@@ -63,6 +101,70 @@
     }
   },
   "definitions": {
+    "CommonListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "CommonListReq",
+      "required": [
+        "page",
+        "page_size"
+      ]
+    },
+    "CommonListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "CommonListResp",
+      "required": [
+        "total"
+      ]
+    },
+    "GetResumeListReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "GetResumeListReq"
+    },
+    "GetResumeListResp": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ResumeInfo"
+          }
+        }
+      },
+      "title": "GetResumeListResp",
+      "required": [
+        "list"
+      ]
+    },
     "Request": {
       "type": "object",
       "title": "Request"
@@ -79,23 +181,39 @@
         "message"
       ]
     },
-    "UploadResumeReq": {
+    "ResumeInfo": {
       "type": "object",
       "properties": {
-        "resume": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/byte"
-          }
+        "id": {
+          "type": "integer",
+          "format": "int64"
         },
         "name": {
           "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "upload_time": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
         }
       },
-      "title": "UploadResumeReq",
+      "title": "ResumeInfo",
       "required": [
-        "resume",
-        "name"
+        "id",
+        "name",
+        "url",
+        "upload_time",
+        "size",
+        "user_id"
       ]
     },
     "UploadResumeResp": {

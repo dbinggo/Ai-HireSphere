@@ -24,6 +24,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 获取简历
+				Method:  http.MethodGet,
+				Path:    "/list",
+				Handler: resume.GetResumeListHandler(serverCtx),
+			},
+			{
 				// 上传简历
 				Method:  http.MethodPost,
 				Path:    "/upload",

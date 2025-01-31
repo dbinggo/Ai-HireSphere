@@ -8,4 +8,5 @@ import (
 
 type IResumeAccess interface {
 	SaveResume(ctx context.Context, entity *entity.ResumeEntity) gerr.Error
+	ListResume(ctx context.Context, userId int64, page, pageSize int) (int64, []entity.ResumeEntity, gerr.Error)
 }

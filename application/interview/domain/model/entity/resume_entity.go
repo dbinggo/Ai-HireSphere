@@ -40,6 +40,7 @@ func (r *ResumeEntity) Transform() *model.TResume {
 		UserID:     r.UserId,
 		Size:       r.Handler.Size,
 		UploadTime: r.UploadTime,
+		FileName:   r.FileName,
 	}
 
 }

@@ -13,6 +13,7 @@ import (
 
 type IResumeService interface {
 	UploadResume(file multipart.File, handler *multipart.FileHeader) (*entity.ResumeEntity, gerr.Error)
+	ListResume(userId int64, page, pageSize int64) ([]entity.ResumeEntity, gerr.Error)
 }
 
 type ResumeService struct {

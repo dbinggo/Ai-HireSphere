@@ -3,6 +3,7 @@ package app
 import (
 	"Ai-HireSphere/application/interview/domain/irepository"
 	"Ai-HireSphere/application/interview/domain/irepository/ioss"
+	"Ai-HireSphere/application/interview/domain/model/entity"
 	"Ai-HireSphere/application/interview/domain/service"
 	"context"
 	"github.com/dbinggo/gerr"
@@ -11,6 +12,7 @@ import (
 
 type IResumeApp interface {
 	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader) (string, gerr.Error)
+	ListResume(ctx context.Context, userId int64, page int, pageSize int) (int64, []entity.ResumeEntity, gerr.Error)
 }
 
 type ResumeApp struct {
@@ -32,4 +34,12 @@ func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handl
 		return "", err
 	}
 	return resume.Url, nil
+}
+
+func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, pageSize int) (int64, []entity.ResumeEntity, gerr.Error) {
+	count, resp, err := r.Repo.ListResume(ctx, userId, page, pageSize)
+	if err != nil {
+		return 0, nil, err
+	}
+	return count, resp, nil
 }
