@@ -24,6 +24,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 删除简历
+				Method:  http.MethodDelete,
+				Path:    "/delete/:id",
+				Handler: resume.DeleteResumeHandler(serverCtx),
+			},
+			{
 				// 获取简历
 				Method:  http.MethodGet,
 				Path:    "/list",

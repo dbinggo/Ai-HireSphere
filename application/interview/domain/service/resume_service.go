@@ -4,6 +4,7 @@ import (
 	"Ai-HireSphere/application/interview/domain/irepository/idataaccess"
 	"Ai-HireSphere/application/interview/domain/irepository/ioss"
 	"Ai-HireSphere/application/interview/domain/model/entity"
+	"Ai-HireSphere/common/codex"
 	"Ai-HireSphere/common/utils"
 	"context"
 	"github.com/dbinggo/gerr"
@@ -13,7 +14,7 @@ import (
 
 type IResumeService interface {
 	UploadResume(file multipart.File, handler *multipart.FileHeader) (*entity.ResumeEntity, gerr.Error)
-	ListResume(userId int64, page, pageSize int64) ([]entity.ResumeEntity, gerr.Error)
+	DeleteResume(id int64) gerr.Error
 }
 
 type ResumeService struct {
@@ -52,4 +53,21 @@ func (r *ResumeService) UploadResume(file multipart.File, handler *multipart.Fil
 	}
 	return resume, nil
 
+}
+
+func (r *ResumeService) DeleteResume(id int64) gerr.Error {
+	// 先查到这个简历
+	resume, err := r.resumeRepo.FindResumeById(r.ctx, id)
+	if err != nil {
+		return err
+	}
+	if resume.UserId != utils.GetUserId(r.ctx) {
+		return gerr.Wraps(codex.ResumeDeleteNotPermission)
+	}
+	// 删除oss文件
+	if err = resume.DeleteResume(r.oss); err != nil {
+		return err
+	}
+	// 删除数据库信息
+	return r.resumeRepo.DeleteResume(r.ctx, id)
 }

@@ -41,6 +41,7 @@ func (r *ResumeEntity) Transform() *model.TResume {
 		Size:       r.Handler.Size,
 		UploadTime: r.UploadTime,
 		FileName:   r.FileName,
+		Path:       r.Path,
 	}
 
 }
@@ -52,6 +53,7 @@ func (r *ResumeEntity) From(f *model.TResume) *ResumeEntity {
 	r.UploadTime = f.UploadTime
 	r.FileName = f.FileName
 	r.Size = f.Size
+	r.Path = f.Path
 	return r
 }
 
@@ -103,4 +105,16 @@ func (r *ResumeEntity) UploadResume(oss ioss.Ioss) gerr.Error {
 func (r *ResumeEntity) GeneratePathAndUrl() {
 	r.Path = fmt.Sprintf("resume/%d/%d_%s", r.UserId, time.Now().Unix(), r.FileName)
 	r.Url = fmt.Sprintf("https://%s%s", "ai-hiresphere.oss-cn-beijing.aliyuncs.com/", r.Path)
+}
+
+func (r *ResumeEntity) DeleteResume(oss ioss.Ioss) gerr.Error {
+	if r.Path == "" {
+		return gerr.Wraps(codex.ResumeDeleteEmpty)
+	}
+	err := oss.DeleteFile(r.Path)
+	if err != nil {
+		zlog.Errorf("delete file fail: %v", err)
+		return gerr.Wraps(codex.ResumeDeleteFail, err)
+	}
+	return nil
 }

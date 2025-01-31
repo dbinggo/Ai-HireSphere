@@ -13,6 +13,7 @@ import (
 type IResumeApp interface {
 	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader) (string, gerr.Error)
 	ListResume(ctx context.Context, userId int64, page int, pageSize int) (int64, []entity.ResumeEntity, gerr.Error)
+	DeleteResume(ctx context.Context, id int64) gerr.Error
 }
 
 type ResumeApp struct {
@@ -42,4 +43,9 @@ func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, page
 		return 0, nil, err
 	}
 	return count, resp, nil
+}
+
+func (r *ResumeApp) DeleteResume(ctx context.Context, id int64) gerr.Error {
+	err := service.NewResumeService(ctx, r.Oss, r.Repo).DeleteResume(id)
+	return err
 }

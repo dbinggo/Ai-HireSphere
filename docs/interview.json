@@ -39,6 +39,42 @@
         ]
       }
     },
+    "/v1/resume/delete/{id}": {
+      "delete": {
+        "summary": "删除简历",
+        "operationId": "DeleteResumeHandler",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteResumeReq"
+            }
+          }
+        ],
+        "tags": [
+          "resume"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/list": {
       "get": {
         "summary": "获取简历",
@@ -131,6 +167,10 @@
       "required": [
         "total"
       ]
+    },
+    "DeleteResumeReq": {
+      "type": "object",
+      "title": "DeleteResumeReq"
     },
     "GetResumeListReq": {
       "type": "object",

@@ -10,6 +10,10 @@ type CommonListResp struct {
 	Total int64 `json:"total"`
 }
 
+type DeleteResumeReq struct {
+	ResumeId int64 `path:"id"`
+}
+
 type GetResumeListReq struct {
 	CommonListReq
 }

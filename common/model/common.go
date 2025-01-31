@@ -31,7 +31,7 @@ type IDBAdapter[T ICommonModel] interface {
 	GetMulti(ctx context.Context, db *gorm.DB, where interface{}, args ...interface{}) (*[]*T, error)
 	Save(ctx context.Context, db *gorm.DB, data *T) (*T, error)
 	UpdateOne(ctx context.Context, db *gorm.DB, data *T, selects ...string) (*T, error)
-	Delete(ctx context.Context, db *gorm.DB, ids ...[]int) error
+	Delete(ctx context.Context, db *gorm.DB, ids ...int64) error
 	List(ctx context.Context, tx *gorm.DB, limit int, offset int, where interface{}, args ...interface{}) (int64, []T, error)
 }
 
@@ -53,8 +53,8 @@ func (c *CommonAdapter[T]) UpdateOne(ctx context.Context, db *gorm.DB, data *T, 
 	return _updateOne[T](ctx, db, data, selects...)
 }
 
-func (c *CommonAdapter[T]) Delete(ctx context.Context, db *gorm.DB, ids ...[]int) error {
-	return _delete[T](ctx, db, ids...)
+func (c *CommonAdapter[T]) Delete(ctx context.Context, db *gorm.DB, ids ...int64) error {
+	return _delete[T](ctx, db, ids)
 }
 func (c *CommonAdapter[T]) List(ctx context.Context, tx *gorm.DB, limit int, offset int, where interface{}, args ...interface{}) (int64, []T, error) {
 	return _list[T](ctx, tx, limit, offset, where, args...)
@@ -86,7 +86,7 @@ func _updateOne[T ICommonModel](ctx context.Context, tx *gorm.DB, data *T, selec
 	return data, err
 }
 
-func _delete[T ICommonModel](ctx context.Context, tx *gorm.DB, ids ...[]int) (err error) {
+func _delete[T ICommonModel](ctx context.Context, tx *gorm.DB, ids ...[]int64) (err error) {
 	var model T
 	err = tx.WithContext(ctx).Model(&model).Delete(&model, ids).Error
 	return err

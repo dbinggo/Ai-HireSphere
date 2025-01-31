@@ -28,6 +28,10 @@ service interview-api {
 	@doc "获取简历"
 	@handler GetResumeListHandler
 	get /list (GetResumeListReq) returns (GetResumeListResp)
+
+	@doc "删除简历"
+	@handler DeleteResumeHandler
+	delete /delete/:id (DeleteResumeReq)
 }
 
 type (
@@ -55,6 +59,9 @@ type (
 	GetResumeListResp {
 		CommonListResp
 		List []ResumeInfo `json:"list"`
+	}
+	DeleteResumeReq {
+		ResumeId int64 `path:"id"`
 	}
 )
 
