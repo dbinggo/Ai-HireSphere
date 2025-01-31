@@ -19,4 +19,10 @@ var (
 var (
 	_                 = 10 // 用户注册登陆错误 10开头
 	UserRegisterExist = add(11001, "用户已存在")
+
+	_                 = 20 // 简历服务20开头
+	ResumeUploadEmpty = add(20001, "简历为空")
+	ResumeUploadFail  = add(20002, "简历上传失败")
+	ResumeUploadExist = add(20003, "简历已存在")
+	ResumeUploadMAX   = add(20004, "简历过大")
 )

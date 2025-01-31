@@ -29,7 +29,7 @@ type UserEntity struct {
 // 充血模型
 
 // 实体与schema互转
-var _ ICommonEntity[*UserEntity, *model.TUser] = &UserEntity{}
+var _ model.ICommonEntity[*UserEntity, *model.TUser] = &UserEntity{}
 
 func (u *UserEntity) Transform() *model.TUser {
 	return &model.TUser{

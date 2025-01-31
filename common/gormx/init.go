@@ -68,7 +68,10 @@ func Open(cfg Config, logger gormLogger.Interface) (*gorm.DB, error) {
 	return db, err
 }
 func autoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate(&model.TUser{})
+	return db.AutoMigrate(
+		&model.TUser{},
+		&model.TResume{},
+	)
 }
 func MustOpen(cfg Config, logger gormLogger.Interface) *gorm.DB {
 	db, err := Open(cfg, logger)

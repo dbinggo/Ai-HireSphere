@@ -25,6 +25,7 @@ message UserInfo {
 message OSSUploadReq{
   bytes data = 1;
   string fileName = 2;
+  string filePath = 3;
 }
 message OSSUploadResp{
   string url = 1;

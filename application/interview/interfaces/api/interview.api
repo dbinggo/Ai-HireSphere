@@ -18,11 +18,12 @@ service interview-api {
 @server (
 	group:  resume
 	prefix: /v1/resume
+	jwt:    auth
 )
 service interview-api {
 	@doc "上传简历"
 	@handler UploadResumeHandler
-	post /upload (UploadResumeReq) returns (UploadResumeResp)
+	post /upload returns (UploadResumeResp)
 }
 
 type UploadResumeReq {
