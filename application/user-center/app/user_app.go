@@ -4,9 +4,10 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/application/user-center/domain/services"
-	"Ai-HireSphere/common/call/userClient"
+	userClient "Ai-HireSphere/common/call/user_client"
 	"Ai-HireSphere/common/model/enums"
 	"context"
+	"github.com/dbinggo/gerr"
 )
 
 // 定义service
@@ -14,12 +15,11 @@ import (
 
 type IUserApp interface {
 	// 注册用户
-	RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error)
+	RegisterUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error)
 	// 查询用户
-	FindUserById(ctx context.Context, id int64) (*entity.User, error)
+	FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error)
 	// 用户登陆
-	LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error)
-	// 登录用户
+	LoginUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error)
 }
 type UserApp struct {
 	// 这里主要是依赖
@@ -43,7 +43,7 @@ func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.User) *UserApp 
 //	@param user
 //	@return string
 //	@return error
-func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error) {
+func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterMethodType, data string, code string) (string, gerr.Error) {
 	// 这里是对领域服务的调用和编排
 	// 首先校验code正确性
 
@@ -55,7 +55,7 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 	s := services.NewUserService(u.Repo, u.UserRpc)
 
 	// 创建一个user
-	user := &entity.User{
+	user := &entity.UserEntity{
 		Role: enums.UserRoleTypeUser,
 	}
 
@@ -67,7 +67,7 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 	}
 
 	// 用户注册服务
-	return s.RegisterUser(user, way)
+	return s.RegisterUser(user, way, data)
 }
 
 // FindUserById
@@ -76,21 +76,21 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterWayTyp
 //	@receiver u
 //	@param ctx
 //	@param id
-//	@return entity.User
+//	@return entity.UserEntity
 //	@return error
-func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.User, error) {
+func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error) {
 	return u.Repo.FindUserById(ctx, id)
 }
 
-func (u *UserApp) LoginUser(ctx context.Context, way enums.UserRegisterWayType, data string, code string) (string, error) {
+func (u *UserApp) LoginUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error) {
 
 	// 基础校验校验验证码
 	if err := services.NewBaseCaptcha(ctx, u.Repo, nil).CaptchaCheck(enums.CaptchaWayTypeLogin, data, code); err != nil {
 		return "", err
 	}
 
-	user := &entity.User{}
-	switch way {
+	user := &entity.UserEntity{}
+	switch method {
 	case enums.UserRegisterWayTypeEmail:
 		user.Email = data
 	case enums.UserRegisterWayTypePhone:
@@ -98,5 +98,5 @@ func (u *UserApp) LoginUser(ctx context.Context, way enums.UserRegisterWayType, 
 
 	}
 
-	return services.NewUserService(u.Repo, u.UserRpc).LoginUser(user, way)
+	return services.NewUserService(u.Repo, u.UserRpc).LoginUser(user, method)
 }

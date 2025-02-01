@@ -1,0 +1,67 @@
+syntax = "v1"
+
+type Request {
+	Name string `path:"name,options=you|me"`
+}
+
+type Response {
+	Message string `json:"message"`
+}
+
+service interview-api {
+	@handler InterviewHandler
+	get /from/:name (Request) returns (Response)
+}
+
+// 定义服务前缀
+// 定义 HTTP 服务
+@server (
+	group:  resume
+	prefix: /v1/resume
+	jwt:    auth
+)
+service interview-api {
+	@doc "上传简历"
+	@handler UploadResumeHandler
+	post /upload returns (UploadResumeResp)
+
+	@doc "获取简历"
+	@handler GetResumeListHandler
+	get /list (GetResumeListReq) returns (GetResumeListResp)
+
+	@doc "删除简历"
+	@handler DeleteResumeHandler
+	delete /delete/:id (DeleteResumeReq)
+}
+
+type (
+	CommonListReq {
+		Page     int `form:"page"`
+		PageSize int `form:"page_size"`
+	}
+	CommonListResp {
+		Total int64 `json:"total"`
+	}
+	ResumeInfo {
+		ResumeId   int64  `json:"id"`
+		ResumeName string `json:"name"`
+		ResumeUrl  string `json:"url"`
+		UploadTime string `json:"upload_time"`
+		ResumeSize int64  `json:"size"`
+		UserId     int64  `json:"user_id"`
+	}
+	UploadResumeResp {
+		Address string `json:"address"`
+	}
+	GetResumeListReq {
+		CommonListReq
+	}
+	GetResumeListResp {
+		CommonListResp
+		List []ResumeInfo `json:"list"`
+	}
+	DeleteResumeReq {
+		ResumeId int64 `path:"id"`
+	}
+)
+

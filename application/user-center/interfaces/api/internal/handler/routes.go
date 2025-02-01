@@ -4,6 +4,8 @@ package handler
 import (
 	"net/http"
 
+	base "Ai-HireSphere/application/user-center/interfaces/api/internal/handler/base"
+	user "Ai-HireSphere/application/user-center/interfaces/api/internal/handler/user"
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -13,19 +15,34 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
-				Path:    "/data",
-				Handler: UserInfoHandler(serverCtx),
+				// 发送验证码
+				Method:  http.MethodPost,
+				Path:    "/captcha/send",
+				Handler: base.CaptchaSendHandler(serverCtx),
 			},
 			{
+				// 验证验证码
+				Method:  http.MethodPost,
+				Path:    "/captcha/verify",
+				Handler: base.CaptchaVerifyHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/v1/base"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 登录
 				Method:  http.MethodPost,
 				Path:    "/login",
-				Handler: LoginHandler(serverCtx),
+				Handler: user.LoginHandler(serverCtx),
 			},
 			{
+				// 注册
 				Method:  http.MethodPost,
 				Path:    "/register",
-				Handler: RegisterHandler(serverCtx),
+				Handler: user.RegisterHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/v1/user"),
@@ -34,16 +51,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodPost,
-				Path:    "/captcha/send",
-				Handler: CaptchaSendHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/captcha/verify",
-				Handler: CaptchaVerifyHandler(serverCtx),
+				// 获取用户信息
+				Method:  http.MethodGet,
+				Path:    "/data",
+				Handler: user.UserInfoHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/v1/base"),
+		rest.WithJwt(serverCtx.Config.auth.AccessSecret),
+		rest.WithPrefix("/v1/user"),
 	)
 }

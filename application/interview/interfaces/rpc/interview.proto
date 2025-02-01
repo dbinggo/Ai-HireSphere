@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package interview;
+option go_package="./interview";
+
+message Request {
+  string ping = 1;
+}
+
+message Response {
+  string pong = 1;
+}
+
+service Interview {
+  rpc Ping(Request) returns(Response);
+}

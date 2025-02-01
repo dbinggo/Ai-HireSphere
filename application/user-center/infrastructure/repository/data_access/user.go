@@ -3,8 +3,11 @@ package dataaccess
 import (
 	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
+	"Ai-HireSphere/common/codex"
 	"Ai-HireSphere/common/model"
+	"Ai-HireSphere/common/model/enums"
 	"context"
+	"github.com/dbinggo/gerr"
 )
 
 // IResumeGorm is an interface that defines the methods for accessing data from MySQL
@@ -14,30 +17,42 @@ var _ idataaccess.IUserGorm = (*GormOpts)(nil)
 //即：底层数据库存储对上层领域模型没有任何感知，你想怎么存就怎么存，
 //弱化数据库概念，数据库只是适配器
 
-type userGorm struct {
-}
+func (o *GormOpts) SaveUser(ctx context.Context, user *entity.UserEntity) (*entity.UserEntity, gerr.Error) {
 
-func (o *GormOpts) SaveUser(ctx context.Context, user *entity.User) (*entity.User, error) {
-	u := o.userEntryToModel(user)
-	u, err := u.Create(o.db, u)
+	userModel := user.Transform()
+
+	userModel, err := userModel.Save(ctx, o.db, userModel)
 	if err != nil {
-		return nil, err
+		err = gerr.Wraps(codex.ServerErr, err)
+		return nil, err.(gerr.Error)
 	}
-	return o.userModelToEntry(u), nil
+	return user.From(userModel), nil
 }
 
-func (o *GormOpts) FindUserById(ctx context.Context, id int64) (*entity.User, error) {
-	z, err := (&model.TUser{}).GetOne(o.db, "id = ?", id)
+func (o *GormOpts) FindUserById(ctx context.Context, id int64) (user *entity.UserEntity, err2 gerr.Error) {
+	z, err := (&model.CommonAdapter[model.TUser]{}).GetOne(ctx, o.db, "id = ?", id)
 	if err != nil {
-		return nil, err
+		err = gerr.Wraps(codex.ServerErr, err)
+		return nil, err.(gerr.Error)
 	}
-	return o.userModelToEntry(z), nil
+	return (&entity.UserEntity{}).From(z), nil
 }
 
-// todo 待完善
-func (o *GormOpts) userModelToEntry(user model.TUser) *entity.User {
-	return &entity.User{}
-}
-func (o *GormOpts) userEntryToModel(user *entity.User) model.TUser {
-	return model.TUser{}
+func (o *GormOpts) FindUserByLoginType(ctx context.Context, loginType enums.UserRegisterMethodType, data string) (user *entity.UserEntity, err gerr.Error) {
+	if loginType == enums.UserRegisterWayTypeEmail {
+		z, err := (&model.CommonAdapter[model.TUser]{}).GetOne(ctx, o.db, "email = ?", data)
+		if err != nil {
+			err = gerr.Wraps(codex.ServerErr, err)
+			return nil, err.(gerr.Error)
+		}
+		user.From(z)
+		return user, nil
+	} else {
+		z, err := (&model.CommonAdapter[model.TUser]{}).GetOne(ctx, o.db, "phone = ?", data)
+		if err != nil {
+			err = gerr.Wraps(codex.ServerErr, err)
+			return nil, err.(gerr.Error)
+		}
+		return (&entity.UserEntity{}).From(z), nil
+	}
 }

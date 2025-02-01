@@ -3,64 +3,81 @@ syntax = "v1"
 // 定义服务前缀
 // 定义 HTTP 服务
 @server (
-	prefix: /v1/user
-)
-service user {
-	@handler Register
-	post /register (RegisterReq) returns (RegisterResp)
-
-	@handler Login
-	post /login (LoginReq) returns (LoginResp)
-
-	@handler UserInfo
-	get /data returns (UserInfo)
-}
-
-@server (
+	group:  base
 	prefix: /v1/base
 )
 service user {
+	@doc "发送验证码"
 	@handler CaptchaSend
-	post /captcha/send (CaptchaSendReq)
+	post /captcha/send (CaptchaSendReq) returns (EmptyResp)
 
+	@doc "验证验证码"
 	@handler CaptchaVerify
 	post /captcha/verify (CaptchaVerifyReq)
 }
 
+@server (
+	group:  user
+	prefix: /v1/user
+)
+service user {
+	@doc "注册"
+	@handler Register
+	post /register (RegisterReq) returns (RegisterResp)
+
+	@doc "登录"
+	@handler Login
+	post /login (LoginReq) returns (LoginResp)
+}
+
+@server (
+	group:  user
+	prefix: /v1/user
+	jwt:    auth
+)
+service user {
+	@doc "获取用户信息"
+	@handler UserInfo
+	get /data returns (UserInfo)
+}
+
 type (
+	EmptyResp  {}
 	RegisterReq {
-		Way  string `json:"way"`
-		Data string `json:"data"`
-		Code string `json:"code"`
+		Method string `json:"method"` // 登录方式 email或者phone
+		Data   string `json:"data"` // 登录账号 手机号或者邮箱
+		Code   string `json:"code"` // 验证码 6位数字
 	}
 	RegisterResp {
-		Token string `json:"token"`
+		Token string `json:"token"` // token
 	}
 	LoginReq {
-		Way  string `json:"way"`
-		Data string `json:"data"`
-		Code string `json:"code"`
+		Method string `json:"method"` // 登录方式 email或者phone
+		Data   string `json:"data"` // 登录账号 手机号或者邮箱
+		Code   string `json:"code"` // 验证码 6位数字
 	}
 	LoginResp {
-		Token string `json:"token"`
+		Token string `json:"token"` // token
 	}
 	CaptchaSendReq {
-		way    string `json:"way"`
-		target string `json:"target"`
+		Way    string `json:"way"` // 验证码用途 register，login
+		Target string `json:"target"` // 手机号或者邮箱
+		Method string `json:"method"` // 验证码发送方式 phone, email
 	}
 	CaptchaVerifyReq {
-		way    string `json:"way"`
-		target string `json:"target"`
-		code   string `json:"code"`
+		Way    string `json:"way"` // 验证码用途 register，login
+		Method string `json:"method"` // 验证码发送方式 phone, email
+		Target string `json:"target"` // 手机号或者邮箱
+		Code   string `json:"code"` // 验证码 6位数字
 	}
 	UserInfo {
-		id       int64  `json:"id"`
-		username string `json:"username"`
-		avatar   string `json:"avatar"`
-		role     string `json:"role"`
-		phone    string `json:"phone"`
-		email    string `json:"email"`
-		sex      int    `json:"sex"`
+		id       int64  `json:"id"` // 用户id
+		username string `json:"username"` // 用户名
+		avatar   string `json:"avatar"` // 用户头像地址
+		role     string `json:"role"` // 用户角色 admin，user
+		phone    string `json:"phone"` // 用户手机号
+		email    string `json:"email"` // 用户邮箱
+		sex      int    `json:"sex"` // 用户性别 0未知，1男，2女
 	}
 )
 

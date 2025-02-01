@@ -5,7 +5,7 @@ import (
 )
 
 // 相当于一个介于error和proto流之间的自定义中间人
-type XCode interface {
+type CodeX interface {
 	//实现Error方法，就是实现error接口
 	Error() string
 

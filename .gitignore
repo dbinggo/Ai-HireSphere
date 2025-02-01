@@ -8,7 +8,7 @@
 **/adhoc
 **/coverage.txt
 config.yaml
-**/*.yaml
+***/*.yaml
 # for test purpose
 go.work
 go.work.sum

@@ -10,7 +10,7 @@ type GormOpts struct {
 	db *gorm.DB
 }
 
-var _ idataaccess.IDataAccess[GormOpts] = (*GormOpts)(nil)
+var _ idataaccess.IDataAccess = (*GormOpts)(nil)
 
 func NewGormOpts(db *gorm.DB) *GormOpts {
 	return &GormOpts{db: db}

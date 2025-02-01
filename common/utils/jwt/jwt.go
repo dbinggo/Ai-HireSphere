@@ -1,6 +1,9 @@
 package jwt
 
-import "github.com/golang-jwt/jwt/v4"
+import (
+	"github.com/golang-jwt/jwt/v4"
+	"time"
+)
 
 // MyClain 自定义claim
 type MyClaim struct {
@@ -14,8 +17,8 @@ func GenerateToken(userId int64) (string, error) {
 	claim := MyClaim{
 		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: 60 * 60 * 24,    // 过期时间
-			Issuer:    "ai-hiresphere", // 签发人
+			ExpiresAt: time.Now().Unix() + 60*60*24, // 过期时间
+			Issuer:    "ai-hiresphere",              // 签发人
 		},
 	}
 	// 使用HS256算法进行加密

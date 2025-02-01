@@ -4,9 +4,13 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
-	"Ai-HireSphere/common/call/userClient"
+	userClient "Ai-HireSphere/common/call/user_client"
+	"Ai-HireSphere/common/codex"
 	"Ai-HireSphere/common/model/enums"
 	"context"
+	"github.com/dbinggo/gerr"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 )
 
 // 本层为用户服务层
@@ -15,8 +19,8 @@ import (
 // IUserService
 // @Description: 对外提供的接口
 type IUserService interface {
-	RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error)
-	LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error)
+	RegisterUser(user *entity.UserEntity, way enums.UserRegisterMethodType, data string) (token string, err gerr.Error)
+	LoginUser(user *entity.UserEntity, way enums.UserRegisterMethodType) (token string, err gerr.Error)
 }
 
 type UserService struct {
@@ -32,10 +36,18 @@ func NewUserService(repo irepository.IRepoBroker, userRpc userClient.User) IUser
 	}
 }
 
-func (s *UserService) RegisterUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error) {
+func (s *UserService) RegisterUser(user *entity.UserEntity, way enums.UserRegisterMethodType, data string) (token string, err gerr.Error) {
+
 	// 调用领域模型方法进行注册
 	if err = user.Register(way); err != nil {
 		return token, err
+	}
+	// 查看是否有这个用户
+	user, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
+	if err == nil {
+		return token, gerr.Wraps(codex.UserRegisterExist)
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		return token, gerr.Wraps(codex.UserRegisterExist)
 	}
 
 	// 调用仓储方法进行保存
@@ -44,12 +56,12 @@ func (s *UserService) RegisterUser(user *entity.User, way enums.UserRegisterWayT
 		return token, err
 	}
 
-	// 生成token
+	// 进阶保存方法
 	token, err = user.GenerateToken()
 	return token, err
 }
 
-func (s *UserService) LoginUser(user *entity.User, way enums.UserRegisterWayType) (token string, err error) {
+func (s *UserService) LoginUser(user *entity.UserEntity, way enums.UserRegisterMethodType) (token string, err gerr.Error) {
 	// 调用仓储查找这个user
 	data := ""
 	switch way {
