@@ -58,6 +58,11 @@ type AuthResp struct {
 	ExpiresIn   int64  `json:"expires_in"`
 }
 
+type APIResp struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
 // 开始签名
 func GetJWT(param JWTSignature) string {
 	header := getJWTHeader(param.Kid)
@@ -176,10 +181,13 @@ func GetAccessToken(param JWTParam) AuthResp {
 	defer resp.Body.Close()
 
 	respByte, err := io.ReadAll(resp.Body)
-	fmt.Println(string(respByte))
+	//fmt.Println(string(respByte))
 
 	var respData AuthResp
-	json.Unmarshal(respByte, &respData)
+	err = json.Unmarshal(respByte, &respData)
+	if err != nil {
+		return AuthResp{}
+	}
 
 	return respData
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"os"
 	"time"
 )
@@ -18,9 +19,11 @@ type Config struct {
 
 type CozeApi struct {
 	Doc *CozeDocApi
+	Bot *BotApi
 }
 
 func NewCozeApi(cfg Config) (api *CozeApi, err error) {
+	api = &CozeApi{}
 	param := JWTParam{
 		Begin: time.Now(),
 		Exp:   time.Hour * time.Duration(cfg.Exp),
@@ -46,6 +49,8 @@ func NewCozeApi(cfg Config) (api *CozeApi, err error) {
 	param.PKey = pKey.(*rsa.PrivateKey)
 
 	token := GetAccessToken(param)
+	fmt.Printf("%+v\n", token)
 	api.Doc = NewCozeDocApi(token.AccessToken, cfg.DatasetID)
+	api.Bot = NewBotApi(token.AccessToken)
 	return
 }

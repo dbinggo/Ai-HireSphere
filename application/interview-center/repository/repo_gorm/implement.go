@@ -2,7 +2,6 @@ package repo_gorm
 
 import (
 	"Ai-HireSphere/application/interview-center/repository"
-	"Ai-HireSphere/common/coze"
 	"Ai-HireSphere/common/utils"
 	"errors"
 	"github.com/jinzhu/copier"
@@ -11,39 +10,32 @@ import (
 
 var _ repository.Repo = (*Repo)(nil)
 
-func NewRepo(db *gorm.DB, api *coze.CozeApi) *Repo {
-	return &Repo{
-		DB:   db,
-		Coze: api,
-	}
-}
-
-func (b *Repo) Get(where repository.Resume) (repository.Resume, error) {
+func (b *Repo) Get(where repository.Interview) (repository.Interview, error) {
 	var repoWhere, repoData ResumeModel
-	var data repository.Resume
+	var data repository.Interview
 
-	err := copier.Copy(&repoWhere, where)
+	err := copier.Copy(&repoWhere, where.Resume)
 	if err != nil {
-		return repository.Resume{}, err
+		return repository.Interview{}, err
 	}
 
 	err = b.DB.Model(b.Model).Where(repoWhere).First(&repoData).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return repository.Resume{}, repository.NotFound
+			return repository.Interview{}, repository.NotFound
 		}
-		return repository.Resume{}, err
+		return repository.Interview{}, err
 	}
 
 	err = copier.Copy(&data, repoData)
 	if err != nil {
-		return repository.Resume{}, err
+		return repository.Interview{}, err
 	}
 
 	return data, nil
 }
 
-func (b *Repo) Update(where repository.Resume, data repository.Resume) error {
+func (b *Repo) Update(where repository.Interview, data repository.Interview) error {
 	var repoWhere, repoData ResumeModel
 
 	err := copier.Copy(&repoWhere, where)
@@ -64,14 +56,14 @@ func (b *Repo) Update(where repository.Resume, data repository.Resume) error {
 	return nil
 }
 
-func (b *Repo) Create(data repository.Resume) error {
+func (b *Repo) Create(data repository.Interview) error {
 	var repoData ResumeModel
 	err := copier.Copy(&repoData, data)
 	if err != nil {
 		return err
 	}
 
-	err = b.Coze.Doc.CreateDoc([]utils.FileBase{data.File})
+	err = b.Coze.Doc.CreateDoc([]utils.FileBase{data.Resume.File})
 	if err != nil {
 		return err
 	}
@@ -84,7 +76,7 @@ func (b *Repo) Create(data repository.Resume) error {
 	return nil
 }
 
-func (b *Repo) Delete(where repository.Resume) error {
+func (b *Repo) Delete(where repository.Interview) error {
 	var repoWhere ResumeModel
 	err := copier.Copy(&repoWhere, where)
 	if err != nil {

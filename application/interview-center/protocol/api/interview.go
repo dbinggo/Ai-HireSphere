@@ -1,8 +1,11 @@
 package main
 
 import (
+	"Ai-HireSphere/common/codex"
+	"Ai-HireSphere/common/zlog"
 	"flag"
 	"fmt"
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"Ai-HireSphere/application/interview-center/protocol/api/internal/config"
 	"Ai-HireSphere/application/interview-center/protocol/api/internal/handler"
@@ -12,7 +15,7 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 )
 
-var configFile = flag.String("f", "etc/v1.yaml", "the config file")
+var configFile = flag.String("f", "application/interview-center/protocol/api/etc/interview.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -26,6 +29,11 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 
+	// 注册自定义响应
+	httpx.SetErrorHandler(codex.ErrHandler)
+	httpx.SetOkHandler(codex.OKHandler)
+	// 注册自定义日志
+	zlog.InitLogger(c.ServiceConf)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

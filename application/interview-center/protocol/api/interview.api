@@ -1,0 +1,45 @@
+syntax = "v1"
+
+info (
+	title:   "面试中心模块"
+	desc:    "面试中心"
+	author:  "kkb"
+	email:   "2609479523@qq.com"
+	version: "1"
+)
+
+type (
+	Resume {
+		UserID int64  `json:"user_id" form:"user_id"`
+		Name   string `json:"name" form:"name"`
+	}
+)
+
+type (
+	ResumeAddRequest {
+		Resume
+	}
+	ResumeAddResponse {
+		ID int64 `json:"id"`
+	}
+)
+
+type (
+	ChatRequest {
+		SessionID int64  `json:"session_id,optional"`
+		Message   string `json:"message"`
+		IsNew     bool   `json:"is_new"`
+	}
+)
+
+@server (
+	group: interview_center
+)
+service interview {
+	@handler resumeAdd
+	post / (ResumeAddRequest) returns (ResumeAddResponse)
+
+	@handler chat
+	post /chat (ChatRequest)
+}
+

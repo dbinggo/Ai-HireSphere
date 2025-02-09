@@ -42,7 +42,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: resume.UploadResumeHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.auth.AccessSecret),
 		rest.WithPrefix("/v1/resume"),
 	)
 }
