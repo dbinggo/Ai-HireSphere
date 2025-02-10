@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:1.23-alpine AS builder
 
 LABEL stage=gobuilder
 
@@ -15,17 +15,17 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 COPY application/interview/interfaces/rpc/etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/user-rpc application/interview/interfaces/rpc/interview.go
+RUN go build -ldflags="-s -w" -o /app/interview-rpc application/interview/interfaces/rpc/interview.go
 
 
-FROM alpine:latest
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
 ENV TZ Asia/Shanghai
 
 WORKDIR /app
-COPY --from=builder /app/user-rpc /app/user-rpc
+COPY --from=builder /app/interview-rpc /app/interview-rpc
 COPY --from=builder /app/etc /app/etc
 
-CMD ["./user-rpc", "-f", "etc/interview.yaml"]
+CMD ["./interview-rpc", "-f", "etc/interview.yaml"]

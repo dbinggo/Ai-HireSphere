@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:1.23-alpine AS builder
 
 LABEL stage=gobuilder
 
@@ -18,7 +18,7 @@ COPY application/user-center/interfaces/rpc/etc /app/etc
 RUN go build -ldflags="-s -w" -o /app/user-rpc application/user-center/interfaces/rpc/user.go
 
 
-FROM alpine:latest
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai

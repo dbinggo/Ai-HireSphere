@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:1.23-alpine AS builder
 
 LABEL stage=gobuilder
 
@@ -15,17 +15,17 @@ ADD go.sum .
 RUN go mod download
 COPY . .
 COPY application/interview/interfaces/api/etc /app/etc
-RUN go build -ldflags="-s -w" -o /app/user-api application/interview/interfaces/api/interview.go
+RUN go build -ldflags="-s -w" -o /app/interview-api application/interview/interfaces/api/interview.go
 
 
-FROM alpine:latest
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
 ENV TZ Asia/Shanghai
 
 WORKDIR /app
-COPY --from=builder /app/user-api /app/user-api
+COPY --from=builder /app/interview-api /app/interview-api
 COPY --from=builder /app/etc /app/etc
 
-CMD ["./user-api", "-f", "etc/interview-api.yaml"]
+CMD ["./interview-api", "-f", "etc/interview-api.yaml"]
