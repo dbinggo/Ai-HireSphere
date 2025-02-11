@@ -47,19 +47,19 @@ mkdir -p "$infrastructure_name/repository"
 # 使用 goctl demo 创建文件
 
 # api
-goctl api new "$interfaces_name/$service_name" --style=go_zero --home=./template
-mv "$interfaces_name/$service_name" "$interfaces_name/api"
+goctl api new "$interfaces_name/${service_name}" --style=go_zero --home=./template
+mv "$interfaces_name/${service_name}" "$interfaces_name/api"
 
 # 使用 goctl demo 创建rpc文件
 # rpc 现在goctl 的 rpc new 含有bug 已经提交issue https://github.com/zeromicro/go-zero/issues/4588
 pwd=$(pwd)
 cd "$interfaces_name"
-goctl rpc new "$service_name" --style=go_zero --home=./template
+goctl rpc new "${service_name}" --style=go_zero --home=./template
 cd "$pwd"
-mv "$interfaces_name/$service_name" "$interfaces_name/rpc"
+mv "$interfaces_name/${service_name}" "$interfaces_name/rpc"
 
-find "$interfaces_name/api" -mindepth 1 -maxdepth 1 ! -name "$service_name.api" -exec rm -rf {} +
-find "$interfaces_name/rpc" -mindepth 1 -maxdepth 1 ! -name "$service_name.proto" -exec rm -rf {} +
+find "$interfaces_name/api" -mindepth 1 -maxdepth 1 ! -name "${service_name}.api" -exec rm -rf {} +
+find "$interfaces_name/rpc" -mindepth 1 -maxdepth 1 ! -name "${service_name}.proto" -exec rm -rf {} +
 
 echo "# $service_name" > $base_dir/README.md
 
