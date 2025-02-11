@@ -24,3 +24,6 @@ clean:
 help:
 	bash  ./scripts/help.sh
 
+build:
+	# docker 批量构建dockerfile
+	bash ./scripts/build.sh
