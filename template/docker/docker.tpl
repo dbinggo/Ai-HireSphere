@@ -1,4 +1,4 @@
-FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:{{.Version}}alpine AS builder
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:{{.Version}}build AS builder
 
 LABEL stage=gobuilder
 
