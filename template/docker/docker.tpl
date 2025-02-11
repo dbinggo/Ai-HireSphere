@@ -1,4 +1,4 @@
-FROM golang:{{.Version}}alpine AS builder
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:{{.Version}}alpine AS builder
 
 LABEL stage=gobuilder
 
@@ -18,7 +18,7 @@ COPY . .
 {{end}}RUN go build -ldflags="-s -w" -o /app/{{.ExeFile}} {{.GoMainFrom}}
 
 
-FROM alpine:latest
+FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 {{if .HasTimezone}}COPY --from=builder /usr/share/zoneinfo/{{.Timezone}} /usr/share/zoneinfo/{{.Timezone}}
