@@ -3,71 +3,81 @@ package ssex
 import (
 	"Ai-HireSphere/common/zlog"
 	"context"
-	"k8s.io/apimachinery/pkg/util/json"
+	"fmt"
 	"net/http"
+	"sync"
 )
 
 type Server struct {
 	writer http.ResponseWriter
-
 	ctx    context.Context
 	cancel context.CancelFunc
-
-	data chan interface{}
-	err  error
+	wg     sync.WaitGroup
+	data   chan string
+	err    error
 }
 
-// 升级协议
-func Upgrade(ctx context.Context, w http.ResponseWriter) Server {
-	//设置响应头
-	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache, no-transform")
-	w.Header().Set("Connection", "keep-alive")
-	w.Header().Set("X-Accel-Buffering", "no") // 禁用 Nginx 的缓冲
+var (
+	sseEventDone = "data: [DONE]\n\n"
+)
 
+// 升级协议
+func Upgrade(ctx context.Context, w http.ResponseWriter) *Server {
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	w.Header().Set("X-Accel-Buffering", "no") // 禁用 Nginx 的缓冲
+	w.WriteHeader(http.StatusOK)
 	ctx, cancel := context.WithCancel(ctx)
 
-	server := Server{
+	server := &Server{
 		writer: w,
-
 		ctx:    ctx,
 		cancel: cancel,
-		data:   make(chan interface{}),
+		data:   make(chan string, 10),
 	}
+	server.Flush()
 	server.use()
 	return server
 }
 
 // 单次写入
-func (server *Server) Write(resp interface{}) error {
+func (server *Server) Write(msg string) *Server {
 
 	if server.err != nil {
-		close(server.data)
-		return server.err
+		return server
 	}
-	server.data <- resp
-
-	return nil
+	server.wg.Add(1)
+	server.data <- msg
+	return server
+}
+func (server *Server) WriteEvent(Event SseEvent) *Server {
+	return server.Write(Event.build())
 }
 
 // 不断写入
 func (server *Server) push() {
-
-	var data []byte
-	me := context.WithoutCancel(server.ctx)
+	defer server.wg.Done()
 	for {
 		select {
-		case <-me.Done():
+		case <-server.ctx.Done():
+			if len(server.data) != 0 {
+				// 这里让他先处理完 如果不处理完会会wg.wait()一直阻塞
+				continue
+			}
 			zlog.InfofCtx(server.ctx, "stop push")
 			return
-		case resp := <-server.data:
-			data, server.err = json.Marshal(resp)
+		case msg := <-server.data:
+			server.wg.Done()
 			if server.err != nil {
-				panic(server.err)
+				continue
 			}
-			_, server.err = server.writer.Write(append(data, []byte("\n\n")...))
+			_, server.err = fmt.Fprint(server.writer, msg)
 			if server.err != nil {
 				zlog.ErrorfCtx(server.ctx, "push failed, err: %v", server.err)
+				return
 			}
 			server.Flush()
 		}
@@ -76,18 +86,28 @@ func (server *Server) push() {
 
 // 使用sse
 func (server *Server) use() {
+	server.wg.Add(1)
 	zlog.DebugfCtx(server.ctx, "use sse")
 	go server.push()
 }
 
-func (server *Server) Close() {
-
-	server.Flush()
+// 关闭sse
+func (server *Server) Close() *Server {
 	server.cancel()
+	server.wg.Wait()
+	fmt.Fprint(server.writer, sseEventDone)
+	server.err = fmt.Errorf("close sse")
+	close(server.data)
+	return server
 }
 
-func (server *Server) Flush() {
-	if f, ok := server.writer.(http.Flusher); ok {
-		f.Flush()
+func (server *Server) Flush() *Server {
+	if flusher, ok := server.writer.(http.Flusher); ok && flusher != nil {
+		flusher.Flush()
 	}
+	return server
+}
+
+func (server *Server) Error() error {
+	return server.err
 }
