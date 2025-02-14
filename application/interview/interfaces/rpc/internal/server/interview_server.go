@@ -14,7 +14,7 @@ import (
 
 type InterviewServer struct {
 	svcCtx *svc.ServiceContext
-	interview.UnimplementedInterviewServer
+	interview.UnsafeInterviewRpcServer
 }
 
 func NewInterviewServer(svcCtx *svc.ServiceContext) *InterviewServer {

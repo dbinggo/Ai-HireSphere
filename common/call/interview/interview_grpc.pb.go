@@ -19,101 +19,101 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Interview_Ping_FullMethodName = "/interview.Interview/Ping"
+	InterviewRpc_Ping_FullMethodName = "/interview.interview_rpc/Ping"
 )
 
-// InterviewClient is the client API for Interview service.
+// InterviewRpcClient is the client API for InterviewRpc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type InterviewClient interface {
+type InterviewRpcClient interface {
 	Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 }
 
-type interviewClient struct {
+type interviewRpcClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewInterviewClient(cc grpc.ClientConnInterface) InterviewClient {
-	return &interviewClient{cc}
+func NewInterviewRpcClient(cc grpc.ClientConnInterface) InterviewRpcClient {
+	return &interviewRpcClient{cc}
 }
 
-func (c *interviewClient) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *interviewRpcClient) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Response)
-	err := c.cc.Invoke(ctx, Interview_Ping_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, InterviewRpc_Ping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// InterviewServer is the server API for Interview service.
-// All implementations must embed UnimplementedInterviewServer
+// InterviewRpcServer is the server API for InterviewRpc service.
+// All implementations must embed UnimplementedInterviewRpcServer
 // for forward compatibility.
-type InterviewServer interface {
+type InterviewRpcServer interface {
 	Ping(context.Context, *Request) (*Response, error)
-	mustEmbedUnimplementedInterviewServer()
+	mustEmbedUnimplementedInterviewRpcServer()
 }
 
-// UnimplementedInterviewServer must be embedded to have
+// UnimplementedInterviewRpcServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedInterviewServer struct{}
+type UnimplementedInterviewRpcServer struct{}
 
-func (UnimplementedInterviewServer) Ping(context.Context, *Request) (*Response, error) {
+func (UnimplementedInterviewRpcServer) Ping(context.Context, *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedInterviewServer) mustEmbedUnimplementedInterviewServer() {}
-func (UnimplementedInterviewServer) testEmbeddedByValue()                   {}
+func (UnimplementedInterviewRpcServer) mustEmbedUnimplementedInterviewRpcServer() {}
+func (UnimplementedInterviewRpcServer) testEmbeddedByValue()                      {}
 
-// UnsafeInterviewServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to InterviewServer will
+// UnsafeInterviewRpcServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InterviewRpcServer will
 // result in compilation errors.
-type UnsafeInterviewServer interface {
-	mustEmbedUnimplementedInterviewServer()
+type UnsafeInterviewRpcServer interface {
+	mustEmbedUnimplementedInterviewRpcServer()
 }
 
-func RegisterInterviewServer(s grpc.ServiceRegistrar, srv InterviewServer) {
-	// If the following call pancis, it indicates UnimplementedInterviewServer was
+func RegisterInterviewRpcServer(s grpc.ServiceRegistrar, srv InterviewRpcServer) {
+	// If the following call pancis, it indicates UnimplementedInterviewRpcServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Interview_ServiceDesc, srv)
+	s.RegisterService(&InterviewRpc_ServiceDesc, srv)
 }
 
-func _Interview_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InterviewRpc_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InterviewServer).Ping(ctx, in)
+		return srv.(InterviewRpcServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Interview_Ping_FullMethodName,
+		FullMethod: InterviewRpc_Ping_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InterviewServer).Ping(ctx, req.(*Request))
+		return srv.(InterviewRpcServer).Ping(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Interview_ServiceDesc is the grpc.ServiceDesc for Interview service.
+// InterviewRpc_ServiceDesc is the grpc.ServiceDesc for InterviewRpc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Interview_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "interview.Interview",
-	HandlerType: (*InterviewServer)(nil),
+var InterviewRpc_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "interview.interview_rpc",
+	HandlerType: (*InterviewRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Ping",
-			Handler:    _Interview_Ping_Handler,
+			Handler:    _InterviewRpc_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

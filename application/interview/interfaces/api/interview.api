@@ -1,24 +1,12 @@
 syntax = "v1"
 
-type Request {
-	Name string `path:"name,options=you|me"`
-}
-
-type Response {
-	Message string `json:"message"`
-}
-
-service interview-api {
-	@handler InterviewHandler
-	get /from/:name (Request) returns (Response)
-}
-
 // 定义服务前缀
 // 定义 HTTP 服务
 @server (
-	group:  resume
-	prefix: /v1/resume
-	jwt:    auth
+	group:      resume
+	prefix:     /v1/resume
+	middleware: CorsMiddleware
+	jwt:        Auth
 )
 service interview-api {
 	@doc "上传简历"
@@ -32,6 +20,21 @@ service interview-api {
 	@doc "删除简历"
 	@handler DeleteResumeHandler
 	delete /delete/:id (DeleteResumeReq)
+}
+
+@server (
+	group:      interview
+	middleware: CorsMiddleware
+	prefix:     /v1/interview
+)
+service interview-api {
+	@doc "进行单次对话"
+	@handler Chat
+	post /chat (SSEReq)
+}
+
+type SSEReq {
+	Data string `json:"data"`
 }
 
 type (

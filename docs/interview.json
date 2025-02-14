@@ -15,27 +15,28 @@
     "application/json"
   ],
   "paths": {
-    "/from/{name}": {
-      "get": {
-        "operationId": "InterviewHandler",
+    "/v1/interview/chat": {
+      "post": {
+        "summary": "进行单次对话",
+        "operationId": "Chat",
         "responses": {
           "200": {
             "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/Response"
-            }
+            "schema": {}
           }
         },
         "parameters": [
           {
-            "name": "name",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/SSEReq"
+            }
           }
         ],
         "tags": [
-          "interview-api"
+          "interview"
         ]
       }
     },
@@ -205,22 +206,6 @@
         "list"
       ]
     },
-    "Request": {
-      "type": "object",
-      "title": "Request"
-    },
-    "Response": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      },
-      "title": "Response",
-      "required": [
-        "message"
-      ]
-    },
     "ResumeInfo": {
       "type": "object",
       "properties": {
@@ -254,6 +239,18 @@
         "upload_time",
         "size",
         "user_id"
+      ]
+    },
+    "SSEReq": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        }
+      },
+      "title": "SSEReq",
+      "required": [
+        "data"
       ]
     },
     "UploadResumeResp": {

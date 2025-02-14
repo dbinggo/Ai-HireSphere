@@ -11,6 +11,6 @@ message Response {
   string pong = 1;
 }
 
-service Interview {
+service interview_rpc {
   rpc Ping(Request) returns(Response);
 }

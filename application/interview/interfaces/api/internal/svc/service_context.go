@@ -3,22 +3,28 @@ package svc
 import (
 	repot "Ai-HireSphere/application/interview/infrastructure/repository"
 	"Ai-HireSphere/application/interview/interfaces/api/internal/config"
-	userClient "Ai-HireSphere/common/call/user_client"
+	"Ai-HireSphere/application/interview/interfaces/api/internal/middleware"
+	userClient "Ai-HireSphere/common/call/userrpc"
 	"Ai-HireSphere/common/gormx"
 	"Ai-HireSphere/common/thrift/oss"
 	"Ai-HireSphere/common/zlog/dbLogger"
+	"github.com/zeromicro/go-zero/rest"
 
 	"Ai-HireSphere/application/interview/app"
 )
 
 type ServiceContext struct {
 	Config  config.Config
-	UserRpc userClient.User
+	UserRpc userClient.UserRpc
 	Auth    struct {
 		AccessSecret string
 		AccessExpire int64
 	}
-	ResumeAPP app.IResumeApp
+	DeepSeek struct {
+		ApiKey string
+	}
+	ResumeAPP      app.IResumeApp
+	CorsMiddleware rest.Middleware
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -32,6 +38,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	resumeApp := app.NewResumeApp(client, repo)
 
 	return &ServiceContext{
+		CorsMiddleware: middleware.NewCorsMiddleware().Handle,
+
 		Config:    c,
 		ResumeAPP: resumeApp,
 	}
