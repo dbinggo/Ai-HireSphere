@@ -14,7 +14,7 @@ import (
 
 type UserServer struct {
 	svcCtx *svc.ServiceContext
-	user.UnimplementedUserServer
+	user.UnsafeUserRpcServer
 }
 
 func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {

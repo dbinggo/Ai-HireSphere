@@ -13,51 +13,60 @@ import (
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// 发送验证码
-				Method:  http.MethodPost,
-				Path:    "/captcha/send",
-				Handler: base.CaptchaSendHandler(serverCtx),
-			},
-			{
-				// 验证验证码
-				Method:  http.MethodPost,
-				Path:    "/captcha/verify",
-				Handler: base.CaptchaVerifyHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CorsMiddleware},
+			[]rest.Route{
+				{
+					// 发送验证码
+					Method:  http.MethodPost,
+					Path:    "/captcha/send",
+					Handler: base.CaptchaSendHandler(serverCtx),
+				},
+				{
+					// 验证验证码
+					Method:  http.MethodPost,
+					Path:    "/captcha/verify",
+					Handler: base.CaptchaVerifyHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/v1/base"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// 登录
-				Method:  http.MethodPost,
-				Path:    "/login",
-				Handler: user.LoginHandler(serverCtx),
-			},
-			{
-				// 注册
-				Method:  http.MethodPost,
-				Path:    "/register",
-				Handler: user.RegisterHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CorsMiddleware},
+			[]rest.Route{
+				{
+					// 登录
+					Method:  http.MethodPost,
+					Path:    "/login",
+					Handler: user.LoginHandler(serverCtx),
+				},
+				{
+					// 注册
+					Method:  http.MethodPost,
+					Path:    "/register",
+					Handler: user.RegisterHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/v1/user"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				// 获取用户信息
-				Method:  http.MethodGet,
-				Path:    "/data",
-				Handler: user.UserInfoHandler(serverCtx),
-			},
-		},
-		rest.WithJwt(serverCtx.Config.auth.AccessSecret),
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.CorsMiddleware},
+			[]rest.Route{
+				{
+					// 获取用户信息
+					Method:  http.MethodGet,
+					Path:    "/data",
+					Handler: user.UserInfoHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/v1/user"),
 	)
 }

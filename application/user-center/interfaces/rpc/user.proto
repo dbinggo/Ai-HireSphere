@@ -33,7 +33,7 @@ message OSSUploadResp{
 
 
 
-service User {
+service user_rpc {
   rpc FindUserById(Id) returns(UserInfo);
   rpc FindUserByPhone(Phone) returns(UserInfo);
   rpc OssUpload(OSSUploadReq) returns(OSSUploadResp);
