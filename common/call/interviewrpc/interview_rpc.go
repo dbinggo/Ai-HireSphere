@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: interview.proto
 
-package interview_client
+package interviewrpc
 
 import (
 	"context"
@@ -17,22 +17,22 @@ type (
 	Request  = interview.Request
 	Response = interview.Response
 
-	Interview interface {
+	InterviewRpc interface {
 		Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 	}
 
-	defaultInterview struct {
+	defaultInterviewRpc struct {
 		cli zrpc.Client
 	}
 )
 
-func NewInterview(cli zrpc.Client) Interview {
-	return &defaultInterview{
+func NewInterviewRpc(cli zrpc.Client) InterviewRpc {
+	return &defaultInterviewRpc{
 		cli: cli,
 	}
 }
 
-func (m *defaultInterview) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
-	client := interview.NewInterviewClient(m.cli.Conn())
+func (m *defaultInterviewRpc) Ping(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+	client := interview.NewInterviewRpcClient(m.cli.Conn())
 	return client.Ping(ctx, in, opts...)
 }

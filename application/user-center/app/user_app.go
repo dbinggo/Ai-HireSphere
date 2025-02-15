@@ -4,7 +4,7 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/application/user-center/domain/services"
-	userClient "Ai-HireSphere/common/call/user_client"
+	userClient "Ai-HireSphere/common/call/userrpc"
 	"Ai-HireSphere/common/model/enums"
 	"context"
 	"github.com/dbinggo/gerr"
@@ -24,10 +24,10 @@ type IUserApp interface {
 type UserApp struct {
 	// 这里主要是依赖
 	Repo    irepository.IRepoBroker
-	UserRpc userClient.User
+	UserRpc userClient.UserRpc
 }
 
-func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.User) *UserApp {
+func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.UserRpc) *UserApp {
 	return &UserApp{
 		Repo:    repo,
 		UserRpc: userRpc,

@@ -1,0 +1,75 @@
+# 通用环境
+version: '3.0'
+networks:
+  net01:
+    driver: bridge
+services:
+
+  user-api:
+    image: "registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/user-api:1.0.0"
+    container_name: "user-api"
+    ports:
+      - "8071:8071"
+    volumes:
+      - "./:/app/etc"
+    restart: always
+    depends_on:
+      - user-rpc
+    networks:
+      - net01
+
+  user-rpc:
+    image: "registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/user-rpc:1.0.0"
+    container_name: "user-rpc"
+    ports:
+      - "8073:8073"
+    volumes:
+      - "./:/app/etc"
+    restart: always
+    networks:
+      - net01
+
+  interview-api:
+    image: "registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/interview-api:1.0.0"
+    container_name: "interview-api"
+    ports:
+      - "8072:8072"
+    volumes:
+      - "./:/app/etc"
+    restart: always
+    networks:
+      - net01
+    depends_on:
+      - interview-rpc
+
+  interview-rpc:
+    image: "registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/interview-rpc:1.0.0"
+    container_name: "interview-rpc"
+    ports:
+      - "8074:8074"
+    volumes:
+      - "./:/app/etc"
+    restart: always
+    networks:
+      - net01
+  nginx:
+    restart: always
+    container_name: nginx
+    image: "registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/nginx:latest"
+    volumes:
+      - "./nginx/conf:/etc/nginx/conf.d"
+      - "./nginx/logs:/var/log/nginx"
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NGINX_PORT=80
+      - TZ=Asia/Shanghai
+    networks:
+      - net01
+    depends_on:
+      - user-api
+      - interview-api
+      - user-rpc
+      - interview-rpc
+    privileged: true

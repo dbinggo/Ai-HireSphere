@@ -3,10 +3,11 @@ syntax = "v1"
 // 定义服务前缀
 // 定义 HTTP 服务
 @server (
-	group:  base
-	prefix: /v1/base
+	group:      base
+	middleware: CorsMiddleware
+	prefix:     /v1/base
 )
-service user {
+service user-api {
 	@doc "发送验证码"
 	@handler CaptchaSend
 	post /captcha/send (CaptchaSendReq) returns (EmptyResp)
@@ -17,10 +18,11 @@ service user {
 }
 
 @server (
-	group:  user
-	prefix: /v1/user
+	group:      user
+	middleware: CorsMiddleware
+	prefix:     /v1/user
 )
-service user {
+service user-api {
 	@doc "注册"
 	@handler Register
 	post /register (RegisterReq) returns (RegisterResp)
@@ -31,11 +33,12 @@ service user {
 }
 
 @server (
-	group:  user
-	prefix: /v1/user
-	jwt:    auth
+	group:      user
+	prefix:     /v1/user
+	middleware: CorsMiddleware
+	jwt:        Auth
 )
-service user {
+service user-api {
 	@doc "获取用户信息"
 	@handler UserInfo
 	get /data returns (UserInfo)

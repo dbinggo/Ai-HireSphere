@@ -1,6 +1,8 @@
 package main
 
 import (
+	"Ai-HireSphere/common/interceptors"
+	"Ai-HireSphere/common/zlog"
 	"flag"
 	"fmt"
 
@@ -26,7 +28,7 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		interview.RegisterInterviewServer(grpcServer, server.NewInterviewServer(ctx))
+		interview.RegisterInterviewRpcServer(grpcServer, server.NewInterviewRpcServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 )
@@ -21,10 +22,9 @@ func main() {
 		panic(err)
 	}
 	prompt := fmt.Sprintf(Prompt, "字节", ExampleYes, ExampleNO)
-	client := deepseek.NewDeepSeekClient("", "")
 	// 控制并发
 	var wg sync.WaitGroup
-
+	apiKey := os.Getenv("DEEPSEEK_API_KEY")
 	for _, record := range records.Data.Records {
 		wg.Add(1)
 		go func() {
@@ -36,7 +36,9 @@ func main() {
 
 				return
 			}
-			chatResp, err := client.Chat(prompt, contentResp.Data.Content)
+			client := deepseek.NewDeepSeekClient(apiKey, deepseek.SILICONFLOW_CHAT_URL, deepseek.SILICONFLOW_CHAT_ENDPOINT, deepseek.SILICONFLOW_DEEPSEEKMODEL_V3, prompt)
+
+			chatResp, err := client.JsonChat(contentResp.Data.Content, jsonFormat)
 			if err != nil {
 				return
 			}
@@ -48,8 +50,58 @@ func main() {
 
 }
 
+type RespFormat struct {
+	IsOk      bool `json:"isOk"`
+	Questions []struct {
+		Index    int    `json:"index"`
+		Question string `json:"question"`
+		Answer   string `json:"answer"`
+	} `json:"questions"`
+	Url string `json:"url"`
+}
+
 const (
-	Prompt = "你是一个资深帖子审核员，现在我会给你很多个面经帖子，请你输出他是否是%s公司的面经，如果是请按照如下格式给我相关json数据 %s，如果不是，请给我如下json数据 %s，注意：你只可以返回我json数据，请不要返回其他格式信息，返回的数据需要满足json格式"
+	Prompt = `
+你是一个智能面经处理器，请严格按步骤处理用户提交的牛客网帖子：
+
+1. 类型判断：
+- 若帖子包含面试问题复盘、技术考点总结、具体题目讨论等内容，判定为面经帖子（IsOk=true）
+- 若帖子属于招聘信息、经验闲聊、资源分享等类型，立即返回 {"isOk":false}
+
+2. 问题提取规则：
+- 仅处理包含完整题干的问题（如："TCP三次握手过程"）
+- 跳过模糊表述（如："疯狂被问八股文"、"算法题很难","两道hard题"）
+- 过滤带侮辱性/情绪化表述（如："实习拷打"、"被虐惨了"）
+
+3. 标准化处理：
+- 问题美化：将口语化表达转为正式提问（例："问了我进程线程区别" → "请阐述进程与线程的区别"）
+
+4. 输出要求：
+- 严格使用指定JSON格式
+- 问题按出现顺序编号(index从1开始)
+- 非问题内容不得出现在questions中
+
+示例正确输出：
+{
+  "isOk": true,
+  "questions": [
+    {
+      "index": 1,
+      "question": "Redis持久化机制有哪些？",
+    }
+  ],
+}
+`
+	jsonFormat = `
+{
+  "isOk": true,
+  "questions": [
+    {
+      "index": 1,
+      "question": "Redis持久化机制有哪些？",
+    }
+  ],
+}`
 
 	ExampleYes = `{
     isOK:"true",
@@ -57,6 +109,7 @@ const (
 		{
 			index: 1,
 			question: xxxxx,
+			
 		},
 	]
 }`

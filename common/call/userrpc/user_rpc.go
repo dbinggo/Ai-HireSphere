@@ -2,7 +2,7 @@
 // goctl 1.7.3
 // Source: user.proto
 
-package user_client
+package userrpc
 
 import (
 	"context"
@@ -20,34 +20,34 @@ type (
 	Phone         = user.Phone
 	UserInfo      = user.UserInfo
 
-	User interface {
+	UserRpc interface {
 		FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error)
 		FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error)
 		OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error)
 	}
 
-	defaultUser struct {
+	defaultUserRpc struct {
 		cli zrpc.Client
 	}
 )
 
-func NewUser(cli zrpc.Client) User {
-	return &defaultUser{
+func NewUserRpc(cli zrpc.Client) UserRpc {
+	return &defaultUserRpc{
 		cli: cli,
 	}
 }
 
-func (m *defaultUser) FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error) {
-	client := user.NewUserClient(m.cli.Conn())
+func (m *defaultUserRpc) FindUserById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*UserInfo, error) {
+	client := user.NewUserRpcClient(m.cli.Conn())
 	return client.FindUserById(ctx, in, opts...)
 }
 
-func (m *defaultUser) FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error) {
-	client := user.NewUserClient(m.cli.Conn())
+func (m *defaultUserRpc) FindUserByPhone(ctx context.Context, in *Phone, opts ...grpc.CallOption) (*UserInfo, error) {
+	client := user.NewUserRpcClient(m.cli.Conn())
 	return client.FindUserByPhone(ctx, in, opts...)
 }
 
-func (m *defaultUser) OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error) {
-	client := user.NewUserClient(m.cli.Conn())
+func (m *defaultUserRpc) OssUpload(ctx context.Context, in *OSSUploadReq, opts ...grpc.CallOption) (*OSSUploadResp, error) {
+	client := user.NewUserRpcClient(m.cli.Conn())
 	return client.OssUpload(ctx, in, opts...)
 }

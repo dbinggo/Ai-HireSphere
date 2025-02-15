@@ -4,7 +4,7 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	idataaccess "Ai-HireSphere/application/user-center/domain/irepository/idata_access"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
-	userClient "Ai-HireSphere/common/call/user_client"
+	userClient "Ai-HireSphere/common/call/userrpc"
 	"Ai-HireSphere/common/codex"
 	"Ai-HireSphere/common/model/enums"
 	"context"
@@ -26,10 +26,10 @@ type IUserService interface {
 type UserService struct {
 	ctx     context.Context
 	useRepo idataaccess.IUserGorm
-	userRpc userClient.User
+	userRpc userClient.UserRpc
 }
 
-func NewUserService(repo irepository.IRepoBroker, userRpc userClient.User) IUserService {
+func NewUserService(repo irepository.IRepoBroker, userRpc userClient.UserRpc) IUserService {
 	return &UserService{
 		useRepo: repo,
 		userRpc: userRpc,

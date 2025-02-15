@@ -12,18 +12,18 @@ import (
 	"Ai-HireSphere/common/call/interview"
 )
 
-type InterviewServer struct {
+type InterviewRpcServer struct {
 	svcCtx *svc.ServiceContext
-	interview.UnsafeInterviewRpcServer
+	interview.UnimplementedInterviewRpcServer
 }
 
-func NewInterviewServer(svcCtx *svc.ServiceContext) *InterviewServer {
-	return &InterviewServer{
+func NewInterviewRpcServer(svcCtx *svc.ServiceContext) *InterviewRpcServer {
+	return &InterviewRpcServer{
 		svcCtx: svcCtx,
 	}
 }
 
-func (s *InterviewServer) Ping(ctx context.Context, in *interview.Request) (*interview.Response, error) {
+func (s *InterviewRpcServer) Ping(ctx context.Context, in *interview.Request) (*interview.Response, error) {
 	l := logic.NewPingLogic(ctx, s.svcCtx)
 	return l.Ping(in)
 }

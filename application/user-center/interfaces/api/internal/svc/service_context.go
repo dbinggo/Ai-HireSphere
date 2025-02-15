@@ -5,11 +5,13 @@ import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
 	"Ai-HireSphere/application/user-center/infrastructure/repository"
 	"Ai-HireSphere/application/user-center/interfaces/api/internal/config"
-	userClient "Ai-HireSphere/common/call/user_client"
+	"Ai-HireSphere/application/user-center/interfaces/api/internal/middleware"
+	userClient "Ai-HireSphere/common/call/userrpc"
 	"Ai-HireSphere/common/gormx"
 	"Ai-HireSphere/common/redisx"
 	"Ai-HireSphere/common/thrift/sms"
 	"Ai-HireSphere/common/zlog/dbLogger"
+	"github.com/zeromicro/go-zero/rest"
 )
 
 type ServiceContext struct {
@@ -22,7 +24,9 @@ type ServiceContext struct {
 	// 仓储接口
 	Repo irepository.IRepoBroker
 	// rpc服务
-	UserRpc userClient.User
+	UserRpc userClient.UserRpc
+
+	CorsMiddleware rest.Middleware
 }
 
 // 这里进行初始化各种依赖
@@ -42,9 +46,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	baseApp := app.NewBaseApp(repo, smsClient)
 
 	return &ServiceContext{
-		Config:  c,
-		Repo:    repo,
-		UserApp: userApp,
-		BaseApp: baseApp,
+		CorsMiddleware: middleware.NewCorsMiddleware().Handle,
+		Config:         c,
+		Repo:           repo,
+		UserApp:        userApp,
+		BaseApp:        baseApp,
 	}
 }

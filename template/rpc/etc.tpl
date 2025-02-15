@@ -4,3 +4,8 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: {{.serviceName}}.rpc
+Log:
+    ServiceName: {{.serviceName}}
+    Encoding: plain
+    Mode: console
+    Path: logs/{{.serviceName}}

@@ -59,7 +59,7 @@ find "$application_dir" -type f -name "$file_name.proto" | while read rpc_file; 
 
     # 3. 生成docker代码
     cd "$dir"
-    goctl docker --go "$file_name_without_ext.go" --exe user-rpc --home="$root_dir/template" --version 1.23 >> $log 2>&1
+    goctl docker --go "$file_name_without_ext.go" --exe "$file_name_without_ext-rpc" --home="$root_dir/template" --version 1.23 >> $log 2>&1
     if [ $? -ne 0 ]; then
         echo -e "\033[31mFailed to generate code for $rpc_file \033[0m"
         cat $log

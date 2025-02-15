@@ -12,28 +12,28 @@ import (
 	"Ai-HireSphere/common/call/user"
 )
 
-type UserServer struct {
+type UserRpcServer struct {
 	svcCtx *svc.ServiceContext
-	user.UnsafeUserRpcServer
+	user.UnimplementedUserRpcServer
 }
 
-func NewUserServer(svcCtx *svc.ServiceContext) *UserServer {
-	return &UserServer{
+func NewUserRpcServer(svcCtx *svc.ServiceContext) *UserRpcServer {
+	return &UserRpcServer{
 		svcCtx: svcCtx,
 	}
 }
 
-func (s *UserServer) FindUserById(ctx context.Context, in *user.Id) (*user.UserInfo, error) {
+func (s *UserRpcServer) FindUserById(ctx context.Context, in *user.Id) (*user.UserInfo, error) {
 	l := logic.NewFindUserByIdLogic(ctx, s.svcCtx)
 	return l.FindUserById(in)
 }
 
-func (s *UserServer) FindUserByPhone(ctx context.Context, in *user.Phone) (*user.UserInfo, error) {
+func (s *UserRpcServer) FindUserByPhone(ctx context.Context, in *user.Phone) (*user.UserInfo, error) {
 	l := logic.NewFindUserByPhoneLogic(ctx, s.svcCtx)
 	return l.FindUserByPhone(in)
 }
 
-func (s *UserServer) OssUpload(ctx context.Context, in *user.OSSUploadReq) (*user.OSSUploadResp, error) {
+func (s *UserRpcServer) OssUpload(ctx context.Context, in *user.OSSUploadReq) (*user.OSSUploadResp, error) {
 	l := logic.NewOssUploadLogic(ctx, s.svcCtx)
 	return l.OssUpload(in)
 }

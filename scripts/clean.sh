@@ -7,4 +7,5 @@ rm -rf ./docs/*.json
 # 删除所有日志信息
 rm -rf ./logs/*
 # 删除 /deploy/ 目录下的所有docker文件
-rm -rf ./deploy/Dockerfile_*
+rm -rf ./deploy/Dockerfile_api_*
+rm -rf ./deploy/Dockerfile_rpc_*

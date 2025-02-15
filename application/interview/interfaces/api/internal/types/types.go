@@ -23,14 +23,6 @@ type GetResumeListResp struct {
 	List []ResumeInfo `json:"list"`
 }
 
-type Request struct {
-	Name string `path:"name,options=you|me"`
-}
-
-type Response struct {
-	Message string `json:"message"`
-}
-
 type ResumeInfo struct {
 	ResumeId   int64  `json:"id"`
 	ResumeName string `json:"name"`
@@ -38,6 +30,10 @@ type ResumeInfo struct {
 	UploadTime string `json:"upload_time"`
 	ResumeSize int64  `json:"size"`
 	UserId     int64  `json:"user_id"`
+}
+
+type SSEReq struct {
+	Data string `json:"data"`
 }
 
 type UploadResumeResp struct {
