@@ -11,6 +11,7 @@ type TResume struct {
 	FileName            string    `json:"file_name"` // 文件名
 	Size                int64     `json:"size"`      // 文件大小
 	UploadTime          time.Time `json:"upload_time"`
+	FolderId            int64     `json:"folder_id"` // 文件夹Id
 }
 
 func (r TResume) TableName() string {

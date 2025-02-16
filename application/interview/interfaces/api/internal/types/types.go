@@ -10,12 +10,17 @@ type CommonListResp struct {
 	Total int64 `json:"total"`
 }
 
+type CreqteResumeFolderReq struct {
+	ResumeName string `json:"name"`
+}
+
 type DeleteResumeReq struct {
-	ResumeId int64 `path:"id"`
+	ResumeId int64 `path:"id"` // 要删除的简历Id
 }
 
 type GetResumeListReq struct {
 	CommonListReq
+	FolderID int64 `form:"folder_id"` // 要查找的文件夹id，如果为空就是查找所有简历
 }
 
 type GetResumeListResp struct {
@@ -38,4 +43,8 @@ type SSEReq struct {
 
 type UploadResumeResp struct {
 	Address string `json:"address"`
+}
+
+type UploadReusmeReq struct {
+	FolderId int64 `json:"folder_id"` // 文件夹名称
 }

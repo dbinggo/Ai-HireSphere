@@ -11,7 +11,7 @@ import (
 )
 
 type IResumeApp interface {
-	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader) (string, gerr.Error)
+	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error)
 	ListResume(ctx context.Context, userId int64, page int, pageSize int) (int64, []entity.ResumeEntity, gerr.Error)
 	DeleteResume(ctx context.Context, id int64) gerr.Error
 }
@@ -28,9 +28,9 @@ func NewResumeApp(oss ioss.Ioss, repo irepository.IRepoBroker) *ResumeApp {
 	}
 }
 
-func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader) (string, gerr.Error) {
+func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error) {
 	// 调用服务
-	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo).UploadResume(file, handler)
+	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo).UploadResume(file, handler, folderId)
 	if err != nil {
 		return "", err
 	}

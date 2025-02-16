@@ -13,7 +13,7 @@ import (
 )
 
 type IResumeService interface {
-	UploadResume(file multipart.File, handler *multipart.FileHeader) (*entity.ResumeEntity, gerr.Error)
+	UploadResume(file multipart.File, handler *multipart.FileHeader, folderId int64) (*entity.ResumeEntity, gerr.Error)
 	DeleteResume(id int64) gerr.Error
 }
 
@@ -23,7 +23,7 @@ type ResumeService struct {
 	resumeRepo idataaccess.IResumeAccess
 }
 
-func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResumeAccess) *ResumeService {
+func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResumeAccess) IResumeService {
 	return &ResumeService{
 		oss:        oss,
 		ctx:        ctx,
@@ -31,12 +31,13 @@ func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResu
 	}
 }
 
-func (r *ResumeService) UploadResume(file multipart.File, handler *multipart.FileHeader) (*entity.ResumeEntity, gerr.Error) {
+func (r *ResumeService) UploadResume(file multipart.File, handler *multipart.FileHeader, folderId int64) (*entity.ResumeEntity, gerr.Error) {
 	// 新建实体上传简历
 	resume := &entity.ResumeEntity{
 		File:       file,
 		FileName:   handler.Filename,
 		Handler:    handler,
+		FolderId:   folderId,
 		UploadTime: time.Now(),
 		UserId:     utils.GetUserId(r.ctx),
 		Size:       handler.Size,

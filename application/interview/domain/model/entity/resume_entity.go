@@ -17,6 +17,7 @@ type ResumeEntity struct {
 	Url        string
 	UserId     int64
 	UploadTime time.Time
+	FolderId   int64
 	Size       int64
 	Path       string
 	FileName   string
@@ -26,12 +27,12 @@ type ResumeEntity struct {
 }
 
 // 实体与schema互转
-var _ model.ICommonEntity[*ResumeEntity, *model.TResume] = &ResumeEntity{}
+var _ model.ICommonEntity[ResumeEntity, model.TResume] = &ResumeEntity{}
 
 // 实现
 
-func (r *ResumeEntity) Transform() *model.TResume {
-	return &model.TResume{
+func (r *ResumeEntity) Transform() model.TResume {
+	return model.TResume{
 		CommonModel: model.CommonModel{
 			ID: r.Id,
 		},
@@ -41,20 +42,22 @@ func (r *ResumeEntity) Transform() *model.TResume {
 		Size:       r.Handler.Size,
 		UploadTime: r.UploadTime,
 		FileName:   r.FileName,
+		FolderId:   r.FolderId,
 		Path:       r.Path,
 	}
 
 }
 
-func (r *ResumeEntity) From(f *model.TResume) *ResumeEntity {
+func (r *ResumeEntity) From(f model.TResume) ResumeEntity {
 	r.Id = f.ID
 	r.UserId = f.UserID
 	r.Url = f.Url
 	r.UploadTime = f.UploadTime
 	r.FileName = f.FileName
+	r.FolderId = f.FolderId
 	r.Size = f.Size
 	r.Path = f.Path
-	return r
+	return *r
 }
 
 // ValidateUpload

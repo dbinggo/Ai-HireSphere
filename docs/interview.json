@@ -76,6 +76,36 @@
         ]
       }
     },
+    "/v1/resume/folder": {
+      "post": {
+        "summary": "新建简历文件夹",
+        "operationId": "CreateResumeFolderHandler",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreqteResumeFolderReq"
+            }
+          }
+        ],
+        "tags": [
+          "resume"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/list": {
       "get": {
         "summary": "获取简历",
@@ -102,10 +132,21 @@
             "required": true,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "folder_id",
+            "description": " 要查找的文件夹id，如果为空就是查找所有简历",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
           "resume"
+        ],
+        "consumes": [
+          "multipart/form-data"
         ],
         "security": [
           {
@@ -126,6 +167,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UploadReusmeReq"
+            }
+          }
+        ],
         "tags": [
           "resume"
         ],
@@ -169,6 +220,18 @@
         "total"
       ]
     },
+    "CreqteResumeFolderReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "title": "CreqteResumeFolderReq",
+      "required": [
+        "name"
+      ]
+    },
     "DeleteResumeReq": {
       "type": "object",
       "title": "DeleteResumeReq"
@@ -183,9 +246,17 @@
         "page_size": {
           "type": "integer",
           "format": "int32"
+        },
+        "folder_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 要查找的文件夹id，如果为空就是查找所有简历"
         }
       },
-      "title": "GetResumeListReq"
+      "title": "GetResumeListReq",
+      "required": [
+        "folder_id"
+      ]
     },
     "GetResumeListResp": {
       "type": "object",
@@ -263,6 +334,20 @@
       "title": "UploadResumeResp",
       "required": [
         "address"
+      ]
+    },
+    "UploadReusmeReq": {
+      "type": "object",
+      "properties": {
+        "folder_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 文件夹名称"
+        }
+      },
+      "title": "UploadReusmeReq",
+      "required": [
+        "folder_id"
       ]
     }
   },
