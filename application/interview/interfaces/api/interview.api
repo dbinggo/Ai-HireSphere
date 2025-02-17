@@ -31,11 +31,23 @@ service interview-api {
 	@doc "进行单次对话"
 	@handler Chat
 	post /chat (SSEReq)
+
+	@doc "与智能体进行对话"
+	@handler ChatAgent
+	post /chat/agent (ChatAgentReq)
 }
 
 type SSEReq {
 	Data string `json:"data"`
 }
+
+type (
+	ChatAgentReq {
+		IsNew     bool   `json:"is_new"`
+		Message   string `json:"message"`
+		SessionID int64  `json:"session_id,optional"`
+	}
+)
 
 type (
 	CommonListReq {

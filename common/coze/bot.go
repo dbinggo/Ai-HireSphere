@@ -5,17 +5,22 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
 const (
-	CreateSessionAPI = "https://api.coze.cn/v1/conversation/create"
-	ChatAPIFormat    = "https://api.coze.cn/v3/chat?conversation_id=%d"
-	botID            = "7463508586472423465"
+	CreateSessionAPI     = "https://api.coze.cn/v1/conversation/create"
+	ChatAPIFormat        = "https://api.coze.cn/v3/chat?conversation_id=%d"
+	ChatHistortAPIFormat = " https://api.coze.cn/v1/conversation/message/list?conversation_id=%d"
+	botID                = "7463508586472423465"
+
+	ErrTimeout = `{"code":500, "msg":"timeout"}`
 )
 
 type BotApi struct {
@@ -33,6 +38,10 @@ type BotSessionData struct {
 		ID string `json:"id"`
 	} `json:"data"`
 }
+type BotHistoryResp struct {
+	APIResp
+	Data []BotMessage `json:"data"`
+}
 
 type BotChatBody struct {
 	BotID              string       `json:"bot_id"`
@@ -45,6 +54,11 @@ type BotMessage struct {
 	Role        string `json:"role"`
 	ContentType string `json:"content_type"`
 	Content     string `json:"content"`
+}
+
+type BotStreamReply struct {
+	Event string `json:"event"`
+	Data  string `json:"data"`
 }
 
 func NewBotApi(token string) *BotApi {
@@ -82,11 +96,11 @@ func (bot *BotApi) CreateSession() int64 {
 
 	client := http.Client{}
 	resp, err := client.Do(request)
-	defer resp.Body.Close()
-
 	if err != nil {
 		return 0
 	}
+
+	defer resp.Body.Close()
 
 	var apiData BotSessionData
 	var dataByte []byte
@@ -113,7 +127,7 @@ func (bot *BotApi) CreateSession() int64 {
 }
 
 // 流式对话
-func (bot *BotApi) Chat(sessionID int64, message string) (ch chan string, err error) {
+func (bot *BotApi) Chat(sessionID int64, message string) (ch chan BotStreamReply, err error) {
 	c, _ := context.WithTimeout(context.Background(), 5*time.Minute)
 	c = context.Background()
 	var req *http.Request
@@ -165,11 +179,85 @@ func (bot *BotApi) Chat(sessionID int64, message string) (ch chan string, err er
 	//	logrus.Debugf("sse finish: %v", err)
 	//	close(ch)
 	//}()
-
-	ch, err = ssex.Connect(req)
+	var strCh chan string
+	strCh, err = ssex.Connect(req)
 	if err != nil {
 		return
 	}
+	ch = make(chan BotStreamReply)
+	go func() {
+		defer close(ch)
+		var reply BotStreamReply
+		for reply.Data == "" ||
+			!(strings.Contains(reply.Event, "done") || strings.Contains(reply.Event, "conversation.chat.failed")) {
+			timer := time.NewTimer(time.Minute * 5)
+			select {
+			case msg := <-strCh:
+				if strings.HasPrefix(msg, "event") {
+					reply.Event = strings.TrimPrefix(msg, "event:")
+				}
+				if strings.HasPrefix(msg, "data") {
+					reply.Data = strings.TrimPrefix(msg, "data:")
+					ch <- reply
+					//清空数据
+					reply = BotStreamReply{}
+				}
+			case <-timer.C:
+				reply.Event = "conversation.chat.failed"
+				reply.Data = ErrTimeout
+				ch <- reply
+				return
+			}
+		}
+	}()
 
 	return
+}
+
+// 获取会话历史记录
+func (bot *BotApi) GetChatHistory(sessionID int64) (history []BotMessage, err error) {
+	request, err := http.NewRequest("POST", fmt.Sprintf(ChatHistortAPIFormat, sessionID), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	headerMap := make(map[string]string)
+	var headerByte []byte
+
+	headerByte, err = json.Marshal(bot.Header)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(headerByte, &headerMap)
+	if err != nil {
+		return nil, err
+	}
+
+	for key, value := range headerMap {
+		request.Header.Set(key, value)
+	}
+
+	client := http.Client{}
+	resp, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var apiData BotHistoryResp
+	var dataByte []byte
+	dataByte, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(dataByte, &apiData)
+	if err != nil {
+		return nil, err
+	}
+	if apiData.Code != 0 {
+		return nil, errors.New(apiData.Msg)
+	}
+
+	return apiData.Data, nil
 }

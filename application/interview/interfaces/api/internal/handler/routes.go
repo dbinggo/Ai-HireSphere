@@ -22,6 +22,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/chat",
 					Handler: interview.ChatHandler(serverCtx),
 				},
+				{
+					// 与智能体进行对话
+					Method:  http.MethodPost,
+					Path:    "/chat/agent",
+					Handler: interview.ChatAgentHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/v1/interview"),

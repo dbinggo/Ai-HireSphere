@@ -40,6 +40,31 @@
         ]
       }
     },
+    "/v1/interview/chat/agent": {
+      "post": {
+        "summary": "与智能体进行对话",
+        "operationId": "ChatAgent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChatAgentReq"
+            }
+          }
+        ],
+        "tags": [
+          "interview"
+        ]
+      }
+    },
     "/v1/resume/delete/{id}": {
       "delete": {
         "summary": "删除简历",
@@ -138,6 +163,27 @@
     }
   },
   "definitions": {
+    "ChatAgentReq": {
+      "type": "object",
+      "properties": {
+        "is_new": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ChatAgentReq",
+      "required": [
+        "is_new",
+        "message"
+      ]
+    },
     "CommonListReq": {
       "type": "object",
       "properties": {

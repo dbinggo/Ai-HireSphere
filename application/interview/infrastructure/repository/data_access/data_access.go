@@ -1,6 +1,8 @@
 package data_access
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type GormOpts struct {
 	db *gorm.DB

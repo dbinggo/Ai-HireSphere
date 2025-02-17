@@ -71,6 +71,7 @@ func autoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&model.TUser{},
 		&model.TResume{},
+		&model.TChat{},
 	)
 }
 func MustOpen(cfg Config, logger gormLogger.Interface) *gorm.DB {

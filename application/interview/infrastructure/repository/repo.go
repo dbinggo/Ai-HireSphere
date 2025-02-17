@@ -3,6 +3,7 @@ package repositor
 import (
 	"Ai-HireSphere/application/interview/domain/irepository"
 	dataaccess "Ai-HireSphere/application/interview/infrastructure/repository/data_access"
+	"Ai-HireSphere/common/coze"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 	"sync"
@@ -16,6 +17,7 @@ var (
 
 type RepoStruct struct {
 	*dataaccess.GormOpts
+	*coze.CozeApi
 }
 
 // 初始化仓储服务

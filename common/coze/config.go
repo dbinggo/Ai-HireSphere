@@ -10,11 +10,10 @@ import (
 )
 
 type Config struct {
-	Kid       string `json:"kid"`
-	Iss       string `json:"iss"`
-	Exp       int    `json:"exp"` //单位小时
-	PKeyPath  string `json:"pkey_path"`
-	DatasetID string `json:"dataset_id"`
+	Kid       string
+	Iss       string
+	PKeyPath  string
+	DatasetID string
 }
 
 type CozeApi struct {
@@ -26,7 +25,7 @@ func NewCozeApi(cfg Config) (api *CozeApi, err error) {
 	api = &CozeApi{}
 	param := JWTParam{
 		Begin: time.Now(),
-		Exp:   time.Hour * time.Duration(cfg.Exp),
+		Exp:   time.Hour * 3,
 		Iss:   cfg.Iss,
 		Kid:   cfg.Kid,
 	}
@@ -52,5 +51,16 @@ func NewCozeApi(cfg Config) (api *CozeApi, err error) {
 	fmt.Printf("%+v\n", token)
 	api.Doc = NewCozeDocApi(token.AccessToken, cfg.DatasetID)
 	api.Bot = NewBotApi(token.AccessToken)
+
+	go func() {
+		for {
+			timer := time.NewTimer(time.Hour * 2)
+			<-timer.C
+			api, err = NewCozeApi(cfg)
+			if err != nil {
+				return
+			}
+		}
+	}()
 	return
 }

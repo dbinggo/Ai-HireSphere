@@ -29,4 +29,8 @@ var (
 	ResumeNotExist            = add(20006, "简历不存在")
 	ResumeDeleteNotPermission = add(20007, "无权限删除简历")
 	ResumeDeleteEmpty         = add(20008, "删除简历未找到")
+
+	ChatSessionNotExist   = add(20009, "会话不存在")
+	ChatSessionCreateFail = add(20010, "会话创建失败")
+	ChatSessionUpdateFail = add(20011, "修改会话失败")
 )

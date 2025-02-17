@@ -1,6 +1,7 @@
 package config
 
 import (
+	"Ai-HireSphere/common/coze"
 	"Ai-HireSphere/common/gormx"
 	"Ai-HireSphere/common/redisx"
 	"Ai-HireSphere/common/thrift/oss"
@@ -17,4 +18,5 @@ type Config struct {
 		AccessExpire int64
 	}
 	AliyunOss oss.AliyunOssConfig
+	Coze      coze.Config
 }
