@@ -37,6 +37,7 @@ func (l *GetResumeListLogic) GetResumeList(req *types.GetResumeListReq) (resp *t
 			ResumeSize: v.Size,
 			UploadTime: v.UploadTime.Format("2006-01-02 15:04:05"),
 			ResumeUrl:  v.Url,
+			FolderId:   v.FolderId,
 		}
 		retData = append(retData, temp)
 	}

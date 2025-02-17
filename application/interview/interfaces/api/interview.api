@@ -11,7 +11,7 @@ syntax = "v1"
 service interview-api {
 	@doc "上传简历"
 	@handler UploadResumeHandler
-	post /upload returns (UploadResumeResp)
+	post /upload (UploadReusmeReq) returns (UploadResumeResp)
 
 	@doc "获取简历"
 	@handler GetResumeListHandler
@@ -20,6 +20,22 @@ service interview-api {
 	@doc "删除简历"
 	@handler DeleteResumeHandler
 	delete /delete/:id (DeleteResumeReq)
+
+	@doc "新建简历文件夹"
+	@handler CreateResumeFolderHandler
+	post /folder (CreqteResumeFolderReq)
+
+	@doc "删除简历文件夹"
+	@handler DeleteResumeFolderHandler
+	delete /folder/:id (DeleteResumeFolderReq)
+
+	@doc "获取简历文件夹列表"
+	@handler GetResumeFolderListHandler
+	get /folder/list (GetResumeFolderListReq) returns (GetResumeFolderListResp)
+
+	@doc "更新简历文件夹"
+	@handler UpdateResumeFolderHandler
+	put /folder (UpdateResumeFolderReq)
 }
 
 @server (
@@ -61,22 +77,48 @@ type (
 		ResumeId   int64  `json:"id"`
 		ResumeName string `json:"name"`
 		ResumeUrl  string `json:"url"`
+		FolderId   int64  `json:"folder_id"`
 		UploadTime string `json:"upload_time"`
 		ResumeSize int64  `json:"size"`
 		UserId     int64  `json:"user_id"`
+	}
+	FolderInfo {
+		FolderId   int64  `json:"id"`
+		FolderName string `json:"name"`
+	}
+	UploadReusmeReq {
+		FolderId int64 `json:"folder_id"` // 文件夹名称
 	}
 	UploadResumeResp {
 		Address string `json:"address"`
 	}
 	GetResumeListReq {
 		CommonListReq
+		FolderID int64 `form:"folder_id"` // 要查找的文件夹id，如果为空就是查找所有简历
 	}
 	GetResumeListResp {
 		CommonListResp
 		List []ResumeInfo `json:"list"`
 	}
 	DeleteResumeReq {
-		ResumeId int64 `path:"id"`
+		ResumeId int64 `path:"id"` // 要删除的简历Id
+	}
+	CreqteResumeFolderReq {
+		ResumeName string `json:"name"`
+	}
+	DeleteResumeFolderReq {
+		FolderId int64 `path:"id"` // 要删除的文件夹Id
+	}
+	GetResumeFolderListReq {
+		CommonListReq
+	}
+	GetResumeFolderListResp {
+		CommonListResp
+		List []FolderInfo `json:"list"` // 简历文件夹信息
+	}
+	UpdateResumeFolderReq {
+		FolderId   int64  `json:"folder_id"`
+		FolderName string `json:"name"`
 	}
 )
 

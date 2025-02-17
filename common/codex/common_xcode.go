@@ -29,6 +29,13 @@ var (
 	ResumeNotExist            = add(20006, "简历不存在")
 	ResumeDeleteNotPermission = add(20007, "无权限删除简历")
 	ResumeDeleteEmpty         = add(20008, "删除简历未找到")
+	ResumeFindFail            = add(20009, "简历查找失败")
+	FolderNameIsEmpty         = add(21001, "简历id为空")
+	FolderCreateFail          = add(21002, "简历创建失败")
+	FolderListFail            = add(21003, "简历列表获取失败")
+	FolderDeleteFail          = add(21004, "简历删除失败")
+	FolderFindFail            = add(21005, "简历查找失败")
+	FolderUpdateFail          = add(21006, "简历更新失败")
 
 	ChatSessionNotExist   = add(20009, "会话不存在")
 	ChatSessionCreateFail = add(20010, "会话创建失败")

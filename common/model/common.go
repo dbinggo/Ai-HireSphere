@@ -29,8 +29,8 @@ type ICommonEntity[T any, F any] interface {
 type IDBAdapter[T ICommonModel] interface {
 	GetOne(ctx context.Context, db *gorm.DB, where interface{}, args ...interface{}) (*T, error)
 	GetMulti(ctx context.Context, db *gorm.DB, where interface{}, args ...interface{}) (*[]*T, error)
-	Save(ctx context.Context, db *gorm.DB, data *T) (*T, error)
-	UpdateOne(ctx context.Context, db *gorm.DB, data *T, selects ...string) (*T, error)
+	Save(ctx context.Context, db *gorm.DB, data T) (*T, error)
+	UpdateOne(ctx context.Context, db *gorm.DB, data T, selects ...string) (*T, error)
 	Delete(ctx context.Context, db *gorm.DB, ids ...int64) error
 	List(ctx context.Context, tx *gorm.DB, limit int, offset int, where interface{}, args ...interface{}) (int64, []T, error)
 }
@@ -45,11 +45,11 @@ func (c *CommonAdapter[T]) GetMulti(ctx context.Context, db *gorm.DB, where inte
 	return _getMulti[T](ctx, db, where, args)
 }
 
-func (c *CommonAdapter[T]) Save(ctx context.Context, db *gorm.DB, data *T) (*T, error) {
+func (c *CommonAdapter[T]) Save(ctx context.Context, db *gorm.DB, data T) (*T, error) {
 	return _save[T](ctx, db, data)
 }
 
-func (c *CommonAdapter[T]) UpdateOne(ctx context.Context, db *gorm.DB, data *T, selects ...string) (*T, error) {
+func (c *CommonAdapter[T]) UpdateOne(ctx context.Context, db *gorm.DB, data T, selects ...string) (*T, error) {
 	return _updateOne[T](ctx, db, data, selects...)
 }
 
@@ -73,17 +73,17 @@ func _getMulti[T ICommonModel](ctx context.Context, tx *gorm.DB, where interface
 	return &ret, err
 }
 
-func _save[T ICommonModel](ctx context.Context, tx *gorm.DB, data *T) (*T, error) {
+func _save[T ICommonModel](ctx context.Context, tx *gorm.DB, data T) (*T, error) {
 	err := tx.WithContext(ctx).Model(&data).Create(&data).Error
-	return data, err
+	return &data, err
 }
 
-func _updateOne[T ICommonModel](ctx context.Context, tx *gorm.DB, data *T, selects ...string) (*T, error) {
+func _updateOne[T ICommonModel](ctx context.Context, tx *gorm.DB, data T, selects ...string) (*T, error) {
 	if selects == nil || len(selects) == 0 || selects[0] == "" {
 		selects = []string{"*"}
 	}
 	err := tx.WithContext(ctx).Model(&data).Select(selects).Updates(&data).Error
-	return data, err
+	return &data, err
 }
 
 func _delete[T ICommonModel](ctx context.Context, tx *gorm.DB, ids ...[]int64) (err error) {
@@ -96,6 +96,10 @@ func _list[T ICommonModel](ctx context.Context, tx *gorm.DB, limit int, offset i
 	var ret []T
 	var name T
 	var count int64
-	err := tx.WithContext(ctx).Model(&name).Where(where, args...).Limit(limit).Offset(offset).Count(&count).Find(&ret).Error
+	query := tx.WithContext(ctx).Model(&name).Where(where, args...)
+	if limit > 0 && offset >= 0 {
+		query = query.Limit(limit).Offset(offset)
+	}
+	err := query.Count(&count).Find(&ret).Error
 	return count, ret, err
 }

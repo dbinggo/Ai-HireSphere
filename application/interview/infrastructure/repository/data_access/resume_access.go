@@ -22,7 +22,7 @@ func (g *GormOpts) SaveResume(ctx context.Context, resume *entity.ResumeEntity) 
 	if err != nil {
 		return gerr.Wraps(codex.ResumeUploadFail, err)
 	}
-	resume.From(resumeModel)
+	resume.From(*resumeModel)
 
 	return nil
 }
@@ -48,7 +48,7 @@ func (g *GormOpts) ListResume(ctx context.Context, userId int64, page, pageSize 
 	resumeEntitys := make([]entity.ResumeEntity, 0)
 	for _, resumeModel := range resumeModels {
 		resume := entity.ResumeEntity{}
-		resume.From(&resumeModel)
+		resume.From(resumeModel)
 		resumeEntitys = append(resumeEntitys, resume)
 	}
 	return count, resumeEntitys, nil
@@ -83,7 +83,120 @@ func (g *GormOpts) FindResumeById(ctx context.Context, id int64) (entity.ResumeE
 		return entity.ResumeEntity{}, gerr.Wraps(codex.ResumeNotExist, err)
 	}
 	resume := new(entity.ResumeEntity)
-	resume.From(resumeModel)
-
+	resume.From(*resumeModel)
 	return *resume, nil
+}
+
+// FindResumeByFolderId
+//
+//	@Description: 根据文件夹id查找简历
+//	@receiver g
+//	@param ctx
+//	@param folderId
+//	@return []entity.ResumeEntity
+//	@return gerr.Error
+func (g *GormOpts) FindResumeByFolderId(ctx context.Context, folderId int64) ([]entity.ResumeEntity, gerr.Error) {
+	_, resumes, err := (model.TResume{}).List(ctx, g.db, -1, -1, "folder_id = ?", folderId)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, gerr.Wraps(codex.ResumeFindFail, err)
+	}
+	var resumeEntitys []entity.ResumeEntity
+	for _, resume := range resumes {
+		resumeEntity := entity.ResumeEntity{}
+		resumeEntity.From(resume)
+		resumeEntitys = append(resumeEntitys, resumeEntity)
+	}
+	return resumeEntitys, nil
+}
+
+// CreateFolder
+//
+//	@Description: 创建简历文件夹
+//	@receiver g
+//	@param ctx
+//	@param userId
+//	@param folderName
+//	@return gerr.Error
+func (g *GormOpts) CreateFolder(ctx context.Context, userId int64, folderName string) (model.TFolder, gerr.Error) {
+
+	folder := &model.TFolder{
+		Name:   folderName,
+		UserId: userId,
+	}
+	folder, err := folder.Save(ctx, g.db, *folder)
+	if err != nil {
+		return model.TFolder{}, gerr.Wraps(codex.FolderCreateFail, err)
+	}
+	return *folder, nil
+}
+
+// ListFolder
+//
+//	@Description: 列出简历文件夹
+//	@receiver g
+//	@param ctx
+//	@param userId
+//	@param folderName
+//	@return gerr.Error
+func (g *GormOpts) ListFolder(ctx context.Context, userId int64) ([]model.TFolder, gerr.Error) {
+	_, folders, err := (model.TFolder{}).List(ctx, g.db, -1, -1, "user_id = ?", userId)
+	if err != nil {
+		return nil, gerr.Wraps(codex.FolderListFail, err)
+	}
+	return folders, nil
+}
+
+// DeleteFolder
+//
+//	@Description: 删除简历文件夹
+//	@receiver g
+//	@param ctx
+//	@param userId
+//	@param folderName
+//	@return []model.TFolder
+//	@return gerr.Error
+func (g *GormOpts) DeleteFolder(ctx context.Context, id int64) gerr.Error {
+	err := (model.TFolder{}).Delete(ctx, g.db, id)
+	if err != nil {
+		return gerr.Wraps(codex.FolderDeleteFail, err)
+	}
+	return nil
+}
+
+// UpdateFolder
+//
+//	@Description: 更新简历文件夹
+//	@receiver g
+//	@param ctx
+//	@param userId
+//	@param folderName
+//	@return model.TFolder
+//	@return gerr.Error
+func (g *GormOpts) UpdateFolder(ctx context.Context, id int64, folderName string) (model.TFolder, gerr.Error) {
+	folder, err := (model.TFolder{}).UpdateOne(ctx, g.db, model.TFolder{
+		CommonModel: model.CommonModel{
+			ID: id,
+		},
+		Name: folderName,
+	})
+	if err != nil {
+		return model.TFolder{}, gerr.Wraps(codex.FolderUpdateFail, err)
+	}
+	return *folder, nil
+}
+
+// FindFolderById
+//
+//	@Description: 根据id查找简历文件夹
+//	@receiver g
+//	@param ctx
+//	@param id
+//	@return model.TFolder
+//	@return gerr.Error
+func (g *GormOpts) FindFolderById(ctx context.Context, id int64) (model.TFolder, gerr.Error) {
+	folder, err := (model.TFolder{}).GetOne(ctx, g.db, "id = ?", id)
+	if err != nil {
+		return model.TFolder{}, gerr.Wraps(codex.FolderFindFail, err)
+	}
+	return *folder, nil
 }

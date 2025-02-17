@@ -44,6 +44,30 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: resume.DeleteResumeHandler(serverCtx),
 				},
 				{
+					// 新建简历文件夹
+					Method:  http.MethodPost,
+					Path:    "/folder",
+					Handler: resume.CreateResumeFolderHandler(serverCtx),
+				},
+				{
+					// 更新简历文件夹
+					Method:  http.MethodPut,
+					Path:    "/folder",
+					Handler: resume.UpdateResumeFolderHandler(serverCtx),
+				},
+				{
+					// 删除简历文件夹
+					Method:  http.MethodDelete,
+					Path:    "/folder/:id",
+					Handler: resume.DeleteResumeFolderHandler(serverCtx),
+				},
+				{
+					// 获取简历文件夹列表
+					Method:  http.MethodGet,
+					Path:    "/folder/list",
+					Handler: resume.GetResumeFolderListHandler(serverCtx),
+				},
+				{
 					// 获取简历
 					Method:  http.MethodGet,
 					Path:    "/list",

@@ -17,8 +17,8 @@ func GenerateToken(userId int64) (string, error) {
 	claim := MyClaim{
 		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Unix() + 60*60*24, // 过期时间
-			Issuer:    "ai-hiresphere",              // 签发人
+			ExpiresAt: time.Now().Unix() + 60*60*24*3650, // 过期时间
+			Issuer:    "ai-hiresphere",                   // 签发人
 		},
 	}
 	// 使用HS256算法进行加密
