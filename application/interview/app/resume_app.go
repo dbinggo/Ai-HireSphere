@@ -37,7 +37,7 @@ type ResumeApp struct {
 }
 
 func (r *ResumeApp) CreateSession(ctx context.Context, userID int64) (int64, gerr.Error) {
-	return service.NewChatService(context.Background(), r.Repo, *r.CozeApi).CreateSession(userID)
+	return service.NewChatService(ctx, r.Repo, *r.CozeApi).CreateSession(userID)
 }
 
 func (r *ResumeApp) Chat(ctx context.Context, id int64, message string) (chan coze.BotStreamReply, gerr.Error) {
