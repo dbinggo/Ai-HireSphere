@@ -9,8 +9,8 @@ type ChatEntity struct {
 	SessionTitle string
 }
 
-func (c *ChatEntity) Transform() *model.TChat {
-	return &model.TChat{
+func (c *ChatEntity) Transform() model.TChat {
+	return model.TChat{
 		CommonModel: model.CommonModel{
 			ID: c.ID,
 		},
@@ -21,12 +21,12 @@ func (c *ChatEntity) Transform() *model.TChat {
 	}
 }
 
-func (c *ChatEntity) From(f *model.TChat) *ChatEntity {
+func (c *ChatEntity) From(f model.TChat) ChatEntity {
 	c.ID = f.ID
 	c.SessionID = f.SessionID
 	c.SessionTitle = f.SessionTitle
 	c.UserID = f.UserID
-	return c
+	return *c
 }
 
-var _ model.ICommonEntity[*ChatEntity, *model.TChat] = &ChatEntity{}
+var _ model.ICommonEntity[ChatEntity, model.TChat] = &ChatEntity{}

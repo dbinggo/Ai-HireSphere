@@ -31,7 +31,7 @@ func (g *GormOpts) GetOneChat(ctx context.Context, id int64) (entity.ChatEntity,
 		return entity.ChatEntity{}, gerr.Wraps(codex.ChatSessionNotExist, err)
 	}
 	chat := new(entity.ChatEntity)
-	chat.From(chatModel)
+	chat.From(*chatModel)
 
 	return *chat, nil
 }
@@ -56,7 +56,7 @@ func (g *GormOpts) ListChatSession(ctx context.Context, userID int64, page, page
 	chatEntitys := make([]entity.ChatEntity, 0)
 	for _, chatModel := range chats {
 		chat := entity.ChatEntity{}
-		chat.From(&chatModel)
+		chat.From(chatModel)
 		chatEntitys = append(chatEntitys, chat)
 	}
 	return count, chatEntitys, nil

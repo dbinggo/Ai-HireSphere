@@ -22,7 +22,7 @@ func (g *GormOpts) SaveResume(ctx context.Context, resume *entity.ResumeEntity) 
 	if err != nil {
 		return gerr.Wraps(codex.ResumeUploadFail, err)
 	}
-	resume.From(*resumeModel)
+	resume.From(resumeModel)
 
 	return nil
 }
@@ -119,15 +119,15 @@ func (g *GormOpts) FindResumeByFolderId(ctx context.Context, folderId int64) ([]
 //	@return gerr.Error
 func (g *GormOpts) CreateFolder(ctx context.Context, userId int64, folderName string) (model.TFolder, gerr.Error) {
 
-	folder := &model.TFolder{
+	folder := model.TFolder{
 		Name:   folderName,
 		UserId: userId,
 	}
-	folder, err := folder.Save(ctx, g.db, *folder)
+	folder, err := folder.Save(ctx, g.db, folder)
 	if err != nil {
 		return model.TFolder{}, gerr.Wraps(codex.FolderCreateFail, err)
 	}
-	return *folder, nil
+	return folder, nil
 }
 
 // ListFolder
@@ -174,7 +174,7 @@ func (g *GormOpts) DeleteFolder(ctx context.Context, id int64) gerr.Error {
 //	@return gerr.Error
 func (g *GormOpts) UpdateFolder(ctx context.Context, id int64, folderName string) (model.TFolder, gerr.Error) {
 	tf := new(model.TFolder)
-	folder, err := tf.UpdateOne(ctx, g.db, &model.TFolder{
+	folder, err := tf.UpdateOne(ctx, g.db, model.TFolder{
 		CommonModel: model.CommonModel{
 			ID: id,
 		},
@@ -183,7 +183,7 @@ func (g *GormOpts) UpdateFolder(ctx context.Context, id int64, folderName string
 	if err != nil {
 		return model.TFolder{}, gerr.Wraps(codex.FolderUpdateFail, err)
 	}
-	return *folder, nil
+	return folder, nil
 }
 
 // FindFolderById
