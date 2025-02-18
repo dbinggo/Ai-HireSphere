@@ -36,7 +36,6 @@ func (r *ResumeEntity) Transform() model.TResume {
 		CommonModel: model.CommonModel{
 			ID: r.Id,
 		},
-		IDBAdapter: &model.CommonAdapter[model.TResume]{},
 		Url:        r.Url,
 		UserID:     r.UserId,
 		Size:       r.Handler.Size,

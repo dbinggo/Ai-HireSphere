@@ -1,7 +1,7 @@
 package resume
 
 import (
-	"Ai-HireSphere/common/utils"
+	"Ai-HireSphere/common/zlog"
 	"context"
 
 	"Ai-HireSphere/application/interview/interfaces/api/internal/svc"
@@ -24,18 +24,23 @@ func NewGetResumeFolderListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *GetResumeFolderListLogic) GetResumeFolderList(req *types.GetResumeFolderListReq) (resp *types.GetResumeFolderListResp, err error) {
-	total, res, err := l.svcCtx.ResumeAPP.ListResume(l.ctx, utils.GetUserId(l.ctx), req.Page, req.PageSize)
+func (l *GetResumeFolderListLogic) GetResumeFolderList() (resp *types.GetResumeFolderListResp, err error) {
+	zlog.InfofCtx(l.ctx, "%s", l.svcCtx.ResumeAPP)
+	res, err := l.svcCtx.ResumeAPP.ListFolder(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	resp = &types.GetResumeFolderListResp{
+		CommonListResp: types.CommonListResp{
+			Total: int64(len(res)),
+		},
+		List: make([]types.FolderInfo, 0),
+	}
 	for _, v := range res {
-		temp := types.FolderInfo{
-			FolderId:   v.FolderId,
-			FolderName: v.FileName,
-		}
-		resp.List = append(resp.List, temp)
-		resp.Total = total
+		resp.List = append(resp.List, types.FolderInfo{
+			FolderId:   v.ID,
+			FolderName: v.Name,
+		})
 	}
 	return resp, nil
 }

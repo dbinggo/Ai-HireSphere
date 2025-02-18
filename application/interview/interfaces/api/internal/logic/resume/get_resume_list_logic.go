@@ -25,7 +25,7 @@ func NewGetResumeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 func (l *GetResumeListLogic) GetResumeList(req *types.GetResumeListReq) (resp *types.GetResumeListResp, err error) {
-	count, info, err := l.svcCtx.ResumeAPP.ListResume(l.ctx, utils.GetUserId(l.ctx), req.Page, req.PageSize)
+	count, info, err := l.svcCtx.ResumeAPP.ListResume(l.ctx, utils.GetUserId(l.ctx), req.Page, req.PageSize, req.FolderID)
 	if err != nil {
 		return nil, err
 	}

@@ -72,7 +72,3 @@ func (r *ResumeService) DeleteResume(id int64) gerr.Error {
 	// 删除数据库信息
 	return r.resumeRepo.DeleteResume(r.ctx, id)
 }
-func (r *ResumeService) ListResume(page, pageSize int) (int64, []entity.ResumeEntity, gerr.Error) {
-	userId := utils.GetUserId(r.ctx)
-	return r.resumeRepo.ListResume(r.ctx, userId, page, pageSize)
-}

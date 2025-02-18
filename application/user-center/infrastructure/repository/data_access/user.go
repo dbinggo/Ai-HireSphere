@@ -21,7 +21,7 @@ func (o *GormOpts) SaveUser(ctx context.Context, user *entity.UserEntity) (*enti
 
 	userModel := user.Transform()
 
-	userModel, err := userModel.Save(ctx, o.db, userModel)
+	userModel, err := userModel.Save(ctx, o.db, *userModel)
 	if err != nil {
 		err = gerr.Wraps(codex.ServerErr, err)
 		return nil, err.(gerr.Error)

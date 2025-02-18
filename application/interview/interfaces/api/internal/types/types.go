@@ -33,10 +33,6 @@ type FolderInfo struct {
 	FolderName string `json:"name"`
 }
 
-type GetResumeFolderListReq struct {
-	CommonListReq
-}
-
 type GetResumeFolderListResp struct {
 	CommonListResp
 	List []FolderInfo `json:"list"` // 简历文件夹信息
@@ -76,5 +72,5 @@ type UploadResumeResp struct {
 }
 
 type UploadReusmeReq struct {
-	FolderId int64 `json:"folder_id"` // 文件夹名称
+	FolderId int64 `form:"folder_id"` // 文件夹id
 }

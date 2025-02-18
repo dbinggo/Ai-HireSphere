@@ -37,8 +37,8 @@ func (g *GormOpts) SaveResume(ctx context.Context, resume *entity.ResumeEntity) 
 //	@param pageSize
 //	@return []entity.ResumeEntity
 //	@return gerr.Error
-func (g *GormOpts) ListResume(ctx context.Context, userId int64, page, pageSize int) (int64, []entity.ResumeEntity, gerr.Error) {
-	count, resumeModels, err := (&model.CommonAdapter[model.TResume]{}).List(ctx, g.db, pageSize, page-1, "user_id = ?", userId)
+func (g *GormOpts) ListResume(ctx context.Context, userId int64, page, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error) {
+	count, resumeModels, err := (&model.CommonAdapter[model.TResume]{}).List(ctx, g.db, pageSize, page-1, "user_id = ? and folder_id = ?", userId, folderId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, []entity.ResumeEntity{}, nil
@@ -139,7 +139,7 @@ func (g *GormOpts) CreateFolder(ctx context.Context, userId int64, folderName st
 //	@param folderName
 //	@return gerr.Error
 func (g *GormOpts) ListFolder(ctx context.Context, userId int64) ([]model.TFolder, gerr.Error) {
-	_, folders, err := (model.TFolder{}).List(ctx, g.db, -1, -1, "user_id = ?", userId)
+	_, folders, err := (&model.TFolder{}).List(ctx, g.db, -1, -1, "user_id = ?", userId)
 	if err != nil {
 		return nil, gerr.Wraps(codex.FolderListFail, err)
 	}
@@ -156,7 +156,7 @@ func (g *GormOpts) ListFolder(ctx context.Context, userId int64) ([]model.TFolde
 //	@return []model.TFolder
 //	@return gerr.Error
 func (g *GormOpts) DeleteFolder(ctx context.Context, id int64) gerr.Error {
-	err := (model.TFolder{}).Delete(ctx, g.db, id)
+	err := (&model.TFolder{}).Delete(ctx, g.db, id)
 	if err != nil {
 		return gerr.Wraps(codex.FolderDeleteFail, err)
 	}
@@ -173,7 +173,8 @@ func (g *GormOpts) DeleteFolder(ctx context.Context, id int64) gerr.Error {
 //	@return model.TFolder
 //	@return gerr.Error
 func (g *GormOpts) UpdateFolder(ctx context.Context, id int64, folderName string) (model.TFolder, gerr.Error) {
-	folder, err := (model.TFolder{}).UpdateOne(ctx, g.db, model.TFolder{
+	tf := new(model.TFolder)
+	folder, err := tf.UpdateOne(ctx, g.db, &model.TFolder{
 		CommonModel: model.CommonModel{
 			ID: id,
 		},
@@ -194,7 +195,7 @@ func (g *GormOpts) UpdateFolder(ctx context.Context, id int64, folderName string
 //	@return model.TFolder
 //	@return gerr.Error
 func (g *GormOpts) FindFolderById(ctx context.Context, id int64) (model.TFolder, gerr.Error) {
-	folder, err := (model.TFolder{}).GetOne(ctx, g.db, "id = ?", id)
+	folder, err := (&model.TFolder{}).GetOne(ctx, g.db, "id = ?", id)
 	if err != nil {
 		return model.TFolder{}, gerr.Wraps(codex.FolderFindFail, err)
 	}

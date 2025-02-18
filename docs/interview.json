@@ -171,22 +171,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": true,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
         "tags": [
           "resume"
         ],
@@ -307,6 +291,9 @@
         "tags": [
           "resume"
         ],
+        "consumes": [
+          "multipart/form-data"
+        ],
         "security": [
           {
             "apiKey": []
@@ -404,20 +391,6 @@
         "id",
         "name"
       ]
-    },
-    "GetResumeFolderListReq": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32"
-        }
-      },
-      "title": "GetResumeFolderListReq"
     },
     "GetResumeFolderListResp": {
       "type": "object",
@@ -567,7 +540,7 @@
         "folder_id": {
           "type": "integer",
           "format": "int64",
-          "description": " 文件夹名称"
+          "description": " 文件夹id"
         }
       },
       "title": "UploadReusmeReq",

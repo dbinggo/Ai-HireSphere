@@ -24,7 +24,5 @@ func NewCreateResumeFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *CreateResumeFolderLogic) CreateResumeFolder(req *types.CreqteResumeFolderReq) error {
-	// todo: add your logic here and delete this line
-
-	return nil
+	return l.svcCtx.ResumeAPP.CreateFolder(l.ctx, req.ResumeName)
 }

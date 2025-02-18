@@ -8,6 +8,7 @@ import (
 	"Ai-HireSphere/common/coze"
 	"Ai-HireSphere/common/model"
 	"Ai-HireSphere/common/utils"
+	"Ai-HireSphere/common/zlog"
 	"context"
 	"github.com/dbinggo/gerr"
 	"mime/multipart"
@@ -15,7 +16,7 @@ import (
 
 type IResumeApp interface {
 	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error)
-	ListResume(ctx context.Context, userId int64, page int, pageSize int) (int64, []entity.ResumeEntity, gerr.Error)
+	ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error)
 	DeleteResume(ctx context.Context, id int64) gerr.Error
 
 	CreateFolder(ctx context.Context, folderName string) gerr.Error
@@ -73,8 +74,8 @@ func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handl
 	return resume.Url, nil
 }
 
-func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, pageSize int) (int64, []entity.ResumeEntity, gerr.Error) {
-	count, resp, err := r.Repo.ListResume(ctx, userId, page, pageSize)
+func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error) {
+	count, resp, err := r.Repo.ListResume(ctx, userId, page, pageSize, folderId)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -95,6 +96,7 @@ func (r *ResumeApp) CreateFolder(ctx context.Context, folderName string) gerr.Er
 func (r *ResumeApp) ListFolder(ctx context.Context) ([]model.TFolder, gerr.Error) {
 	// 获取用户uid
 	userId := utils.GetUserId(ctx)
+	zlog.DebugfCtx(ctx, "userId:%d,repo %+v", userId, r.Repo)
 	folders, err := r.Repo.ListFolder(ctx, userId)
 	if err != nil {
 		return nil, err

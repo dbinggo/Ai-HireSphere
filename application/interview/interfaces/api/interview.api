@@ -31,7 +31,7 @@ service interview-api {
 
 	@doc "获取简历文件夹列表"
 	@handler GetResumeFolderListHandler
-	get /folder/list (GetResumeFolderListReq) returns (GetResumeFolderListResp)
+	get /folder/list returns (GetResumeFolderListResp)
 
 	@doc "更新简历文件夹"
 	@handler UpdateResumeFolderHandler
@@ -87,7 +87,7 @@ type (
 		FolderName string `json:"name"`
 	}
 	UploadReusmeReq {
-		FolderId int64 `json:"folder_id"` // 文件夹名称
+		FolderId int64 `form:"folder_id"` // 文件夹id
 	}
 	UploadResumeResp {
 		Address string `json:"address"`
@@ -108,9 +108,6 @@ type (
 	}
 	DeleteResumeFolderReq {
 		FolderId int64 `path:"id"` // 要删除的文件夹Id
-	}
-	GetResumeFolderListReq {
-		CommonListReq
 	}
 	GetResumeFolderListResp {
 		CommonListResp
