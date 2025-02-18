@@ -2,6 +2,7 @@ package interview
 
 import (
 	"Ai-HireSphere/common/coze"
+	"Ai-HireSphere/common/utils"
 	"context"
 
 	"Ai-HireSphere/application/interview/interfaces/api/internal/svc"
@@ -27,7 +28,7 @@ func NewChatAgentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatAge
 func (l *ChatAgentLogic) ChatAgent(req *types.ChatAgentReq) (stream chan coze.BotStreamReply, err error) {
 	sessionID := req.SessionID
 	if req.IsNew {
-		sessionID, err = l.svcCtx.ResumeAPP.CreateSession(l.ctx, 123)
+		sessionID, err = l.svcCtx.ResumeAPP.CreateSession(l.ctx, utils.GetUserId(l.ctx))
 		if err != nil {
 			return nil, err
 		}
