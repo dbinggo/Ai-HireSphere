@@ -22,8 +22,8 @@ var _ idataaccess.IUserGorm = (*GormOpts)(nil)
 func (o *GormOpts) SaveUser(ctx context.Context, user *entity.UserEntity) (*entity.UserEntity, gerr.Error) {
 
 	userModel := user.Transform()
-
-	userModel, err := userModel.Save(ctx, o.db, *userModel)
+	var err error
+	*userModel, err = (&model.CommonAdapter[model.TUser]{}).Save(ctx, o.db, *userModel)
 	if err != nil {
 		err = gerr.Wraps(codex.ServerErr, err)
 		return nil, err.(gerr.Error)
