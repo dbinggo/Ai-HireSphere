@@ -40,9 +40,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	//userRpc := userClient.NewUser(zrpc.MustNewClient(c.UserRpc))
 
 	// 第四部初始化APP层
-	userApp := app.NewUserApp(repo, nil)
 
 	smsClient := sms.MustNewAliyunSMSClient(c.AliyunSMS.AccessKeyId, c.AliyunSMS.AccessKeySecret)
+	userApp := app.NewUserApp(repo, nil, smsClient)
 	baseApp := app.NewBaseApp(repo, smsClient)
 
 	return &ServiceContext{

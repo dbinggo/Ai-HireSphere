@@ -7,7 +7,9 @@ import (
 	"Ai-HireSphere/common/model"
 	"Ai-HireSphere/common/model/enums"
 	"context"
+	"errors"
 	"github.com/dbinggo/gerr"
+	"gorm.io/gorm"
 )
 
 // IResumeGorm is an interface that defines the methods for accessing data from MySQL
@@ -49,9 +51,11 @@ func (o *GormOpts) FindUserByLoginType(ctx context.Context, loginType enums.User
 		return user, nil
 	} else {
 		z, err := (&model.CommonAdapter[model.TUser]{}).GetOne(ctx, o.db, "phone = ?", data)
-		if err != nil {
+		if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 			err = gerr.Wraps(codex.ServerErr, err)
 			return nil, err.(gerr.Error)
+		} else if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, gerr.Wraps(codex.UserRegisterExist)
 		}
 		return (&entity.UserEntity{}).From(z), nil
 	}

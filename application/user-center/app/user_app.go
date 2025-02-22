@@ -2,6 +2,7 @@ package app
 
 import (
 	"Ai-HireSphere/application/user-center/domain/irepository"
+	"Ai-HireSphere/application/user-center/domain/irepository/isms"
 	"Ai-HireSphere/application/user-center/domain/model/entity"
 	"Ai-HireSphere/application/user-center/domain/services"
 	userClient "Ai-HireSphere/common/call/userrpc"
@@ -25,12 +26,14 @@ type UserApp struct {
 	// 这里主要是依赖
 	Repo    irepository.IRepoBroker
 	UserRpc userClient.UserRpc
+	Sms     isms.ISms
 }
 
-func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.UserRpc) *UserApp {
+func NewUserApp(repo irepository.IRepoBroker, userRpc userClient.UserRpc, sms isms.ISms) *UserApp {
 	return &UserApp{
 		Repo:    repo,
 		UserRpc: userRpc,
+		Sms:     sms,
 	}
 }
 
@@ -48,7 +51,7 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterMethod
 	// 首先校验code正确性
 
 	// 基础校验校验验证码
-	if err := services.NewBaseCaptcha(ctx, u.Repo, nil).CaptchaCheck(enums.CaptchaWayTypeRegister, data, code); err != nil {
+	if err := services.NewBaseCaptcha(ctx, u.Repo, u.Sms).CaptchaCheck(enums.CaptchaWayTypeRegister, data, code); err != nil {
 		return "", err
 	}
 	// 用户服务注册
@@ -85,7 +88,7 @@ func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.UserEntit
 func (u *UserApp) LoginUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error) {
 
 	// 基础校验校验验证码
-	if err := services.NewBaseCaptcha(ctx, u.Repo, nil).CaptchaCheck(enums.CaptchaWayTypeLogin, data, code); err != nil {
+	if err := services.NewBaseCaptcha(ctx, u.Repo, u.Sms).CaptchaCheck(enums.CaptchaWayTypeLogin, data, code); err != nil {
 		return "", err
 	}
 
