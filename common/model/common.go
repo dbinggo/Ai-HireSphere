@@ -96,10 +96,10 @@ func _list[T ICommonModel](ctx context.Context, tx *gorm.DB, limit int, offset i
 	var ret []T
 	var name T
 	var count int64
-	query := tx.WithContext(ctx).Model(&name).Where(where, args...)
+	query := tx.WithContext(ctx).Model(&name).Where(where, args...).Count(&count)
 	if limit > 0 && offset >= 0 {
 		query = query.Limit(limit).Offset(offset)
 	}
-	err := query.Count(&count).Find(&ret).Error
+	err := query.Find(&ret).Error
 	return count, ret, err
 }

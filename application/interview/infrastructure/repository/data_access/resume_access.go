@@ -156,9 +156,23 @@ func (g *GormOpts) ListFolder(ctx context.Context, userId int64) ([]model.TFolde
 //	@return []model.TFolder
 //	@return gerr.Error
 func (g *GormOpts) DeleteFolder(ctx context.Context, id int64) gerr.Error {
-	err := (&model.TFolder{}).Delete(ctx, g.db, id)
+	// 要删除简历文件夹就要直接删除所有简历
+
+	list, err := g.FindResumeByFolderId(ctx, id)
 	if err != nil {
-		return gerr.Wraps(codex.FolderDeleteFail, err)
+		return err
+	}
+	// 删除
+	for _, resume := range list {
+		err := g.DeleteResume(ctx, resume.Id)
+		if err != nil {
+			return err
+		}
+	}
+
+	err1 := (&model.TFolder{}).Delete(ctx, g.db, id)
+	if err1 != nil {
+		return gerr.Wraps(codex.FolderDeleteFail, err1)
 	}
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/dbinggo/gerr"
 	"mime/multipart"
+	"strings"
 	"time"
 )
 
@@ -106,6 +107,7 @@ func (r *ResumeEntity) UploadResume(oss ioss.Ioss) gerr.Error {
 
 func (r *ResumeEntity) GeneratePathAndUrl() {
 	r.Path = fmt.Sprintf("resume/%d/%d_%s", r.UserId, time.Now().Unix(), r.FileName)
+	strings.ReplaceAll(r.Path, " ", "%20") // 针对简历空格情况用%20填充
 	r.Url = fmt.Sprintf("https://%s%s", "ai-hiresphere.oss-cn-beijing.aliyuncs.com/", r.Path)
 }
 

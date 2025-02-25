@@ -24,5 +24,5 @@ func NewDeleteResumeFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *DeleteResumeFolderLogic) DeleteResumeFolder(req *types.DeleteResumeFolderReq) error {
-	return l.svcCtx.ResumeAPP.DeleteResume(l.ctx, req.FolderId)
+	return l.svcCtx.ResumeAPP.DeleteFolder(l.ctx, req.FolderId)
 }
