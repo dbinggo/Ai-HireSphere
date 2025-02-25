@@ -113,7 +113,7 @@ func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) g
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			// 验证码过期
-			err = gerr.Wraps(ErrorCaptchaExpire)
+			err = gerr.WithStack(ErrorCaptchaExpire)
 			zlog.ErrorfCtx(b.ctx, "%+v", err)
 			return err.(gerr.Error)
 		}
@@ -137,7 +137,7 @@ func (b *BaseService) CaptchaCheck(way enums.CaptchaWayType, key, code string) g
 
 	if ret != code {
 		// 验证码错误
-		err = gerr.Wraps(ErrorCaptchaCheck)
+		err = gerr.WithStack(ErrorCaptchaCheck)
 		return err.(gerr.Error)
 	}
 

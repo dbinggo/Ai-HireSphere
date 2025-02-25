@@ -42,6 +42,7 @@ service interview-api {
 	group:      interview
 	middleware: CorsMiddleware
 	prefix:     /v1/interview
+	jwt:        Auth
 )
 service interview-api {
 	@doc "进行单次对话"

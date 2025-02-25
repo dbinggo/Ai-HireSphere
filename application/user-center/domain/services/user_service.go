@@ -43,15 +43,15 @@ func (s *UserService) RegisterUser(user *entity.UserEntity, way enums.UserRegist
 		return token, err
 	}
 	// 查看是否有这个用户
-	user, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
+	_, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
 	if err == nil {
-		return token, gerr.Wraps(codex.UserRegisterExist)
-	} else if errors.Is(err, gorm.ErrRecordNotFound) {
-		return token, gerr.Wraps(codex.UserRegisterExist)
+		return token, gerr.WithStack(codex.UserRegisterExist)
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return token, gerr.Wraps(codex.ServerErr, err)
 	}
 
 	// 调用仓储方法进行保存
-	user, err = s.useRepo.SaveUser(s.ctx, user)
+	*user, err = s.useRepo.SaveUser(s.ctx, *user)
 	if err != nil {
 		return token, err
 	}
@@ -70,10 +70,9 @@ func (s *UserService) LoginUser(user *entity.UserEntity, way enums.UserRegisterM
 	case enums.UserRegisterWayTypePhone:
 		data = user.Phone
 	}
-	user, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
+	*user, err = s.useRepo.FindUserByLoginType(s.ctx, way, data)
 	if err != nil {
 		return token, err
 	}
 	return user.GenerateToken()
-
 }

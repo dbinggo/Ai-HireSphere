@@ -5,7 +5,7 @@ go 1.23.3
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.84
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
-	github.com/dbinggo/gerr v0.0.0-20250130142419-e2ae258e3bb0
+	github.com/dbinggo/gerr v0.0.0-20250222155707-198c493f6cb9
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang/protobuf v1.5.4
 	github.com/jinzhu/copier v0.4.0

@@ -32,6 +32,14 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dbinggo/gerr v0.0.0-20250130142419-e2ae258e3bb0 h1:BzG5enOGg24EVdu8aZSf2DaayqqArYsLL2GQD8qZE9o=
 github.com/dbinggo/gerr v0.0.0-20250130142419-e2ae258e3bb0/go.mod h1:w8aEEJMmpeMm7gyTIWTQnZLFOsUcRvFSr+RDQzg28R0=
+github.com/dbinggo/gerr v0.0.0-20250222154234-fb73aa13c1b9 h1:aPsmv3oEm6/NSzxO/g5Cn7Q2/XRTmiZ/M0x6YhzcZF0=
+github.com/dbinggo/gerr v0.0.0-20250222154234-fb73aa13c1b9/go.mod h1:w8aEEJMmpeMm7gyTIWTQnZLFOsUcRvFSr+RDQzg28R0=
+github.com/dbinggo/gerr v0.0.0-20250222154704-2ebf03e98133 h1:ZAHuxu54jBVl70dWVF4heyD/sBirliUMOuR0e3iX3Ys=
+github.com/dbinggo/gerr v0.0.0-20250222154704-2ebf03e98133/go.mod h1:w8aEEJMmpeMm7gyTIWTQnZLFOsUcRvFSr+RDQzg28R0=
+github.com/dbinggo/gerr v0.0.0-20250222155320-7b9211642161 h1:W4qT6MqGDXBmis/B52frCCDwKizrctcMSrJrsrbTz28=
+github.com/dbinggo/gerr v0.0.0-20250222155320-7b9211642161/go.mod h1:w8aEEJMmpeMm7gyTIWTQnZLFOsUcRvFSr+RDQzg28R0=
+github.com/dbinggo/gerr v0.0.0-20250222155707-198c493f6cb9 h1:r0ApzL2WG2XAOiPTyigmvMCyIYI24LxhWGuoK2pzRYk=
+github.com/dbinggo/gerr v0.0.0-20250222155707-198c493f6cb9/go.mod h1:w8aEEJMmpeMm7gyTIWTQnZLFOsUcRvFSr+RDQzg28R0=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/emicklei/go-restful/v3 v3.11.0 h1:rAQeMHw1c7zTmncogyy8VvRZwtkmkZ4FxERmMY4rD+g=

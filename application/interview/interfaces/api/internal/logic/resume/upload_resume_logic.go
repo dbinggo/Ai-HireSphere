@@ -37,7 +37,7 @@ func (l *UploadResumeLogic) UploadResume(r *http.Request, req *types.UploadReusm
 		return nil, err
 	}
 	if req.FolderId == 0 {
-		return nil, gerr.Wraps(codex.FolderNameIsEmpty)
+		return nil, gerr.WithStack(codex.FolderNameIsEmpty)
 	}
 
 	file, header, err := r.FormFile("resume")

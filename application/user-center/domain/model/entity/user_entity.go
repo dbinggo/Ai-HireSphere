@@ -29,10 +29,10 @@ type UserEntity struct {
 // 充血模型
 
 // 实体与schema互转
-var _ model.ICommonEntity[*UserEntity, *model.TUser] = &UserEntity{}
+var _ model.ICommonEntity[UserEntity, model.TUser] = &UserEntity{}
 
-func (u *UserEntity) Transform() *model.TUser {
-	return &model.TUser{
+func (u *UserEntity) Transform() model.TUser {
+	return model.TUser{
 		CommonModel: model.CommonModel{
 			ID: u.Id,
 		},
@@ -46,7 +46,7 @@ func (u *UserEntity) Transform() *model.TUser {
 	}
 }
 
-func (u *UserEntity) From(a *model.TUser) *UserEntity {
+func (u *UserEntity) From(a model.TUser) UserEntity {
 	u.Id = a.ID
 	u.Sex = enums.UserSex(a.Sex)
 	u.Role = enums.UserRole(a.Role)
@@ -54,7 +54,7 @@ func (u *UserEntity) From(a *model.TUser) *UserEntity {
 	u.UserName = a.Username
 	u.Email = a.Email
 	u.Phone = a.Phone
-	return u
+	return *u
 }
 
 func (u *UserEntity) Register(way enums.UserRegisterMethodType) gerr.Error {

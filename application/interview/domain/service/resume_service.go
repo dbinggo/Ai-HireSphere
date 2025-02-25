@@ -63,7 +63,7 @@ func (r *ResumeService) DeleteResume(id int64) gerr.Error {
 		return err
 	}
 	if resume.UserId != utils.GetUserId(r.ctx) {
-		return gerr.Wraps(codex.ResumeDeleteNotPermission)
+		return gerr.WithStack(codex.ResumeDeleteNotPermission)
 	}
 	// 删除oss文件
 	if err = resume.DeleteResume(r.oss); err != nil {

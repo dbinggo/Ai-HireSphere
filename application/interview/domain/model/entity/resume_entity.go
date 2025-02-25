@@ -66,24 +66,24 @@ func (r *ResumeEntity) From(f model.TResume) ResumeEntity {
 //	@return gerr.Error
 func (r *ResumeEntity) ValidateUpload() gerr.Error {
 	if r.Handler == nil {
-		return gerr.Wraps(codex.ResumeUploadEmpty)
+		return gerr.WithStack(codex.ResumeUploadEmpty)
 	}
 	const MAX_RESUME_SIZE = 1024 * 1024 * 20 // 20M
 
 	if r.Handler.Size > MAX_RESUME_SIZE {
-		return gerr.Wraps(codex.ResumeUploadMAX)
+		return gerr.WithStack(codex.ResumeUploadMAX)
 	}
 	if r.File == nil {
-		return gerr.Wraps(codex.ResumeUploadEmpty)
+		return gerr.WithStack(codex.ResumeUploadEmpty)
 	}
 	if r.UserId == 0 {
-		return gerr.Wraps(codex.ResumeUploadFail)
+		return gerr.WithStack(codex.ResumeUploadFail)
 	}
 	if r.FileName == "" {
-		return gerr.Wraps(codex.ResumeUploadEmpty)
+		return gerr.WithStack(codex.ResumeUploadEmpty)
 	}
 	if r.Handler.Size == 0 {
-		return gerr.Wraps(codex.ResumeUploadEmpty)
+		return gerr.WithStack(codex.ResumeUploadEmpty)
 	}
 	return nil
 }
@@ -111,7 +111,7 @@ func (r *ResumeEntity) GeneratePathAndUrl() {
 
 func (r *ResumeEntity) DeleteResume(oss ioss.Ioss) gerr.Error {
 	if r.Path == "" {
-		return gerr.Wraps(codex.ResumeDeleteEmpty)
+		return gerr.WithStack(codex.ResumeDeleteEmpty)
 	}
 	err := oss.DeleteFile(r.Path)
 	if err != nil {

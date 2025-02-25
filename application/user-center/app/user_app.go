@@ -18,7 +18,7 @@ type IUserApp interface {
 	// 注册用户
 	RegisterUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error)
 	// 查询用户
-	FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error)
+	FindUserById(ctx context.Context, id int64) (entity.UserEntity, gerr.Error)
 	// 用户登陆
 	LoginUser(ctx context.Context, method enums.UserRegisterMethodType, data string, code string) (string, gerr.Error)
 }
@@ -81,7 +81,7 @@ func (u *UserApp) RegisterUser(ctx context.Context, way enums.UserRegisterMethod
 //	@param id
 //	@return entity.UserEntity
 //	@return error
-func (u *UserApp) FindUserById(ctx context.Context, id int64) (*entity.UserEntity, gerr.Error) {
+func (u *UserApp) FindUserById(ctx context.Context, id int64) (entity.UserEntity, gerr.Error) {
 	return u.Repo.FindUserById(ctx, id)
 }
 
