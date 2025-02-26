@@ -45,7 +45,7 @@ func (g *GormOpts) UpdateChat(ctx context.Context, chat *entity.ChatEntity) gerr
 }
 
 func (g *GormOpts) ListChatSession(ctx context.Context, userID int64, page, pageSize int) (int64, []entity.ChatEntity, gerr.Error) {
-	count, chats, err := (&model.CommonAdapter[model.TChat]{}).List(ctx, g.db, pageSize, page-1, "user_id = ?", userID)
+	count, chats, err := (&model.CommonAdapter[model.TChat]{}).List(ctx, g.db, pageSize, (page-1)*pageSize, "user_id = ?", userID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, []entity.ChatEntity{}, nil
