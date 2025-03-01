@@ -18,13 +18,13 @@ const (
 	CreateSessionAPI     = "https://api.coze.cn/v1/conversation/create"
 	ChatAPIFormat        = "https://api.coze.cn/v3/chat?conversation_id=%d"
 	ChatHistortAPIFormat = " https://api.coze.cn/v1/conversation/message/list?conversation_id=%d"
-	botID                = "7463508586472423465"
 
 	ErrTimeout = `{"code":500, "msg":"timeout"}`
 )
 
 type BotApi struct {
 	Header BotHeader
+	BotID  string
 }
 
 type BotHeader struct {
@@ -61,12 +61,13 @@ type BotStreamReply struct {
 	Data  string `json:"data"`
 }
 
-func NewBotApi(token string) *BotApi {
+func NewBotApi(token string, botID string) *BotApi {
 	return &BotApi{
 		Header: BotHeader{
 			Authorization: "Bearer " + token,
 			ContentType:   "application/json",
 		},
+		BotID: botID,
 	}
 }
 
@@ -133,7 +134,7 @@ func (bot *BotApi) Chat(sessionID int64, message string) (ch chan BotStreamReply
 	var req *http.Request
 	body := new(bytes.Buffer)
 	bodyData := BotChatBody{
-		BotID:              botID,
+		BotID:              bot.BotID,
 		UserID:             "1",
 		Stream:             true,
 		AdditionalMessages: []BotMessage{{Role: "user", ContentType: "text", Content: message}},
