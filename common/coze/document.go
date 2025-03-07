@@ -50,6 +50,13 @@ func NewCozeDocApi(token, datasetID string) *CozeDocApi {
 	}
 }
 
+func (api *CozeDocApi) SetDocsID(id string) *CozeDocApi {
+	return &CozeDocApi{
+		Token:     api.Token,
+		DataSetID: id,
+	}
+}
+
 func (api *CozeDocApi) CreateDoc(files []utils.FileBase) error {
 	var body createDocBody
 	var header docHeader

@@ -36,6 +36,10 @@ service interview-api {
 	@doc "更新简历文件夹"
 	@handler UpdateResumeFolderHandler
 	put /folder (UpdateResumeFolderReq)
+
+	@doc "筛选简历"
+	@handler CheckResumeHandler
+	post /check (CheckResumeReq)
 }
 
 @server (
@@ -117,6 +121,12 @@ type (
 	UpdateResumeFolderReq {
 		FolderId   int64  `json:"folder_id"`
 		FolderName string `json:"name"`
+	}
+	CheckResumeReq {
+		Condition string   `json:"condition"`
+		NeedNum   int      `json:"need_num"`
+		PdfNum    int      `json:"pdf_num,optional"`
+		PdfUrls   []string `json:"pdf_urls,optional"`
 	}
 )
 

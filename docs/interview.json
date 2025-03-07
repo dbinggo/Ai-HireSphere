@@ -75,6 +75,36 @@
         ]
       }
     },
+    "/v1/resume/check": {
+      "post": {
+        "summary": "筛选简历",
+        "operationId": "CheckResumeHandler",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckResumeReq"
+            }
+          }
+        ],
+        "tags": [
+          "resume"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/delete/{id}": {
       "delete": {
         "summary": "删除简历",
@@ -332,6 +362,33 @@
       "required": [
         "is_new",
         "message"
+      ]
+    },
+    "CheckResumeReq": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string"
+        },
+        "need_num": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pdf_num": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pdf_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "CheckResumeReq",
+      "required": [
+        "condition",
+        "need_num"
       ]
     },
     "CommonListReq": {

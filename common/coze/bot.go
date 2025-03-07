@@ -71,6 +71,13 @@ func NewBotApi(token string, botID string) *BotApi {
 	}
 }
 
+func (bot *BotApi) SetBotID(botID string) *BotApi {
+	return &BotApi{
+		Header: bot.Header,
+		BotID:  botID,
+	}
+}
+
 // 创建会话
 func (bot *BotApi) CreateSession() int64 {
 	request, err := http.NewRequest("POST", CreateSessionAPI, nil)
@@ -166,20 +173,6 @@ func (bot *BotApi) Chat(sessionID int64, message string) (ch chan BotStreamReply
 		req.Header.Set(key, value)
 	}
 
-	//connection := ssex.Client.NewConnection(req)
-	//connection.SubscribeToAll(func(msg sse.Event) {
-	//	logrus.Debugf("sse message: %v", msg)
-	//	ch <- msg.Data
-	//})
-	//go func() {
-	//	err = connection.Connect()
-	//	if !errors.Is(err, context.Canceled) {
-	//		// 结束了会返回 EOF
-	//		logrus.Debugf("sse finish: %v", err)
-	//	}
-	//	logrus.Debugf("sse finish: %v", err)
-	//	close(ch)
-	//}()
 	var strCh chan string
 	strCh, err = ssex.Connect(req)
 	if err != nil {

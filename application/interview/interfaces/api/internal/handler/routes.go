@@ -39,6 +39,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.CorsMiddleware},
 			[]rest.Route{
 				{
+					// 筛选简历
+					Method:  http.MethodPost,
+					Path:    "/check",
+					Handler: resume.CheckResumeHandler(serverCtx),
+				},
+				{
 					// 删除简历
 					Method:  http.MethodDelete,
 					Path:    "/delete/:id",
