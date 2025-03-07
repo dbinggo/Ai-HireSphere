@@ -1,52 +1,22 @@
 package coze
 
 import (
+	"Ai-HireSphere/common/ssex"
+	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const (
-	WorkFlowApI = "https://api.coze.cn/v1/workflow/run"
+	WorkFlowApI       = "https://api.coze.cn/v1/workflow/run"
+	WorkFlowStreamApi = "https://api.coze.cn/v1/workflow/stream_run"
 )
-
-// 异步执行工作流
-func (bot *BotApi) UseWorkFlowASync(workflowId string, parameters map[string]interface{}) (string, error) {
-	var req = workFlowReq{
-		WorkflowId: workflowId,
-		Parameters: parameters,
-		IsASync:    true,
-	}
-
-	var resp workFlowAsyncResp
-	err := bot.newRequest("POST", WorkFlowApI, req, &resp)
-	if err != nil {
-		return "", err
-	}
-	if resp.Code != 0 {
-		return "", errors.New(resp.Msg)
-	}
-	return resp.ExecuteId, nil
-}
-
-// 获得异步执行工作流结果
-func (bot *BotApi) GetASyncResult() (string, string, error) {
-	var req = getWorkFlowASyncResultReq{
-		WorkFlowId: "workflow_id",
-		ExecuteId:  "execute_id",
-	}
-	var resp getWorkFlowASyncResultResp
-	err := bot.newRequest("POST", WorkFlowApI, req, &resp)
-	if err != nil {
-		return "", "", err
-	}
-	if resp.Code != 0 {
-		return "", "", errors.New(resp.Msg)
-	}
-	return resp.Data[0].ExecuteStatus, resp.Data[0].Output, nil
-}
 
 type workFlowReq struct {
 	WorkflowId string                 `json:"workflow_id"`
@@ -90,6 +60,53 @@ type getWorkFlowASyncResultRespData struct {
 	CreateTime    int    `json:"create_time"`
 }
 
+type WorkFlowDoBody struct {
+	WorkFlowID string                 `json:"workflow_id"`
+	Parameters map[string]interface{} `json:"parameters"`
+}
+
+type WorkFlowStreamResp struct {
+	ID    int    `json:"id"`
+	Event string `json:"event"`
+	Data  string `json:"data"`
+}
+
+// 异步执行工作流
+func (bot *BotApi) UseWorkFlowASync(workflowId string, parameters map[string]interface{}) (string, error) {
+	var req = workFlowReq{
+		WorkflowId: workflowId,
+		Parameters: parameters,
+		IsASync:    true,
+	}
+
+	var resp workFlowAsyncResp
+	err := bot.newRequest("POST", WorkFlowApI, req, &resp)
+	if err != nil {
+		return "", err
+	}
+	if resp.Code != 0 {
+		return "", errors.New(resp.Msg)
+	}
+	return resp.ExecuteId, nil
+}
+
+// 获得异步执行工作流结果
+func (bot *BotApi) GetASyncResult() (string, string, error) {
+	var req = getWorkFlowASyncResultReq{
+		WorkFlowId: "workflow_id",
+		ExecuteId:  "execute_id",
+	}
+	var resp getWorkFlowASyncResultResp
+	err := bot.newRequest("POST", WorkFlowApI, req, &resp)
+	if err != nil {
+		return "", "", err
+	}
+	if resp.Code != 0 {
+		return "", "", errors.New(resp.Msg)
+	}
+	return resp.Data[0].ExecuteStatus, resp.Data[0].Output, nil
+}
+
 // 快捷请求
 func (bot *BotApi) newRequest(method string, url string, req interface{}, respRet interface{}) error {
 	headerMap := make(map[string]string)
@@ -129,4 +146,86 @@ func (bot *BotApi) newRequest(method string, url string, req interface{}, respRe
 
 	err = json.Unmarshal(dataByte, &respRet)
 	return err
+}
+
+func (bot *BotApi) StreamWorkFlow(workFlowID string, parameters map[string]interface{}) (chan WorkFlowStreamResp, error) {
+	c, _ := context.WithTimeout(context.Background(), 5*time.Minute)
+	c = context.Background()
+	var req *http.Request
+	body := new(bytes.Buffer)
+	bodyData := WorkFlowDoBody{
+		WorkFlowID: workFlowID,
+		Parameters: parameters,
+	}
+	err := json.NewEncoder(body).Encode(bodyData)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err = http.NewRequestWithContext(c, "POST", WorkFlowStreamApi, body)
+	if err != nil {
+		return nil, err
+	}
+
+	headerMap := make(map[string]string)
+	var headerByte []byte
+
+	headerByte, err = json.Marshal(bot.Header)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(headerByte, &headerMap)
+	if err != nil {
+		return nil, err
+	}
+
+	for key, value := range headerMap {
+		req.Header.Set(key, value)
+	}
+
+	var strCh chan string
+	strCh, err = ssex.Connect(req)
+	if err != nil {
+		return nil, err
+	}
+	ch := make(chan WorkFlowStreamResp)
+	go func() {
+		defer close(ch)
+		var reply WorkFlowStreamResp
+		for reply.Data == "" {
+			timer := time.NewTimer(time.Minute * 5)
+			select {
+			case msg := <-strCh:
+				if strings.HasPrefix(msg, "id") {
+					_, err = fmt.Sscanf(msg, "id: %d", &reply.ID)
+					if err != nil {
+						reply.Event = "Error"
+						reply.Data = ErrTimeout
+						ch <- reply
+						return
+					}
+				}
+				if strings.HasPrefix(msg, "event") {
+					reply.Event = strings.TrimPrefix(msg, "event:")
+				}
+				if strings.HasPrefix(msg, "data") {
+					reply.Data = strings.TrimPrefix(msg, "data:")
+					ch <- reply
+					//清空数据
+					if strings.Contains(reply.Event, "Done") || strings.Contains(reply.Event, "Error") {
+						return
+					}
+					reply = WorkFlowStreamResp{}
+				}
+			case <-timer.C:
+				reply.Event = "Error"
+				reply.Data = ErrTimeout
+				ch <- reply
+				return
+			}
+		}
+	}()
+
+	return ch, nil
 }

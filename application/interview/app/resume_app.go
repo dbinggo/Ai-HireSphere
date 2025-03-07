@@ -18,6 +18,7 @@ type IResumeApp interface {
 	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error)
 	ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error)
 	DeleteResume(ctx context.Context, id int64) gerr.Error
+	CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error)
 
 	CreateFolder(ctx context.Context, folderName string) gerr.Error
 	ListFolder(ctx context.Context) ([]model.TFolder, gerr.Error)
@@ -67,7 +68,7 @@ func NewResumeApp(oss ioss.Ioss, repo irepository.IRepoBroker, api *coze.CozeApi
 
 func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error) {
 	// 调用服务
-	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo).UploadResume(file, handler, folderId)
+	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo, nil).UploadResume(file, handler, folderId)
 	if err != nil {
 		return "", err
 	}
@@ -83,9 +84,15 @@ func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, page
 }
 
 func (r *ResumeApp) DeleteResume(ctx context.Context, id int64) gerr.Error {
-	err := service.NewResumeService(ctx, r.Oss, r.Repo).DeleteResume(id)
+	err := service.NewResumeService(ctx, r.Oss, r.Repo, nil).DeleteResume(id)
 	return err
 }
+
+func (r *ResumeApp) CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error) {
+	// 调用服务
+	return service.NewResumeService(ctx, r.Oss, r.Repo, r.CozeApi).CheckResume(ctx, condition, needNum, pdfNum, pdfUrls)
+}
+
 func (r *ResumeApp) CreateFolder(ctx context.Context, folderName string) gerr.Error {
 	// 获取用户id
 	userId := utils.GetUserId(ctx)

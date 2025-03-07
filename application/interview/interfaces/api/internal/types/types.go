@@ -7,6 +7,13 @@ type ChatAgentReq struct {
 	SessionID int64  `json:"session_id,optional"`
 }
 
+type CheckResumeReq struct {
+	Condition string   `json:"condition"`
+	NeedNum   int      `json:"need_num"`
+	PdfNum    int      `json:"pdf_num,optional"`
+	PdfUrls   []string `json:"pdf_urls,optional"`
+}
+
 type CommonListReq struct {
 	Page     int `form:"page"`
 	PageSize int `form:"page_size"`

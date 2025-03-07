@@ -5,6 +5,7 @@ import (
 	"Ai-HireSphere/application/interview/domain/irepository/ioss"
 	"Ai-HireSphere/application/interview/domain/model/entity"
 	"Ai-HireSphere/common/codex"
+	"Ai-HireSphere/common/coze"
 	"Ai-HireSphere/common/utils"
 	"context"
 	"github.com/dbinggo/gerr"
@@ -15,19 +16,22 @@ import (
 type IResumeService interface {
 	UploadResume(file multipart.File, handler *multipart.FileHeader, folderId int64) (*entity.ResumeEntity, gerr.Error)
 	DeleteResume(id int64) gerr.Error
+	CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error)
 }
 
 type ResumeService struct {
 	oss        ioss.Ioss
 	ctx        context.Context
 	resumeRepo idataaccess.IResumeAccess
+	cozeApi    *coze.CozeApi
 }
 
-func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResumeAccess) IResumeService {
+func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResumeAccess, cozeApi *coze.CozeApi) IResumeService {
 	return &ResumeService{
 		oss:        oss,
 		ctx:        ctx,
 		resumeRepo: repo,
+		cozeApi:    cozeApi,
 	}
 }
 
@@ -71,4 +75,27 @@ func (r *ResumeService) DeleteResume(id int64) gerr.Error {
 	}
 	// 删除数据库信息
 	return r.resumeRepo.DeleteResume(r.ctx, id)
+}
+
+func (r *ResumeService) CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error) {
+	const WorkFlowID = "7477847478902997044"
+	parameters := map[string]interface{}{
+		"condition": condition,
+		"need_num":  needNum,
+	}
+
+	if pdfNum > 0 && pdfUrls != nil {
+		parameters["pdf_num"] = pdfNum
+		parameters["pdf_urls"] = pdfUrls
+	} else {
+		parameters["pdf_num"] = 0
+		parameters["pdf_urls"] = []string{}
+	}
+
+	flow, err := r.cozeApi.Bot.StreamWorkFlow(WorkFlowID, parameters)
+	if err != nil {
+		return nil, gerr.WithStack(codex.ResumeFindFail)
+	}
+
+	return flow, nil
 }
