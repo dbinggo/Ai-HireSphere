@@ -1,4 +1,4 @@
-FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:1.23-build AS builder
+FROM 8.134.142.155:8888/ops/golang:1.23-builder AS builder
 
 LABEL stage=gobuilder
 
@@ -6,7 +6,6 @@ ENV CGO_ENABLED 0
 ENV GOPROXY https://goproxy.cn,direct
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN apk update --no-cache && apk add --no-cache tzdata
 
 WORKDIR /build
 
@@ -14,7 +13,6 @@ ADD go.mod .
 ADD go.sum .
 RUN go mod download
 COPY . .
-COPY application/user-center/interfaces/rpc/etc /app/etc
 RUN go build -ldflags="-s -w" -o /app/user-rpc application/user-center/interfaces/rpc/user.go
 
 
@@ -26,6 +24,5 @@ ENV TZ Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/user-rpc /app/user-rpc
-COPY --from=builder /app/etc /app/etc
 
 CMD ["./user-rpc", "-f", "etc/user.yaml"]
