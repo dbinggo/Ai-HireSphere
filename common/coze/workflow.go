@@ -191,12 +191,17 @@ func (bot *BotApi) StreamWorkFlow(workFlowID string, parameters map[string]inter
 	}
 	ch := make(chan WorkFlowStreamResp)
 	go func() {
-		defer close(ch)
+		defer func() {
+			close(ch)
+		}()
+
 		var reply WorkFlowStreamResp
-		for reply.Data == "" {
+		for reply.Data == "" || (!(strings.Contains(reply.Event, "done") &&
+			strings.Contains(reply.Event, "conversation.chat.failed"))) {
 			timer := time.NewTimer(time.Minute * 5)
 			select {
 			case msg := <-strCh:
+				reply = WorkFlowStreamResp{}
 				if strings.HasPrefix(msg, "id") {
 					_, err = fmt.Sscanf(msg, "id: %d", &reply.ID)
 					if err != nil {
@@ -211,13 +216,9 @@ func (bot *BotApi) StreamWorkFlow(workFlowID string, parameters map[string]inter
 				}
 				if strings.HasPrefix(msg, "data") {
 					reply.Data = strings.TrimPrefix(msg, "data:")
-					ch <- reply
-					//清空数据
-					if strings.Contains(reply.Event, "Done") || strings.Contains(reply.Event, "Error") {
-						return
-					}
-					reply = WorkFlowStreamResp{}
 				}
+				ch <- reply
+
 			case <-timer.C:
 				reply.Event = "Error"
 				reply.Data = ErrTimeout

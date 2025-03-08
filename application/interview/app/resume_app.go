@@ -19,7 +19,7 @@ type IResumeApp interface {
 	ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error)
 	DeleteResume(ctx context.Context, id int64) gerr.Error
 	CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error)
-
+	EvaluateResume(ctx context.Context, pdfUrl string, content string, jd string) (chan coze.WorkFlowStreamResp, gerr.Error)
 	CreateFolder(ctx context.Context, folderName string) gerr.Error
 	ListFolder(ctx context.Context) ([]model.TFolder, gerr.Error)
 	UpdateFolder(ctx context.Context, id int64, folderName string) gerr.Error
@@ -92,7 +92,10 @@ func (r *ResumeApp) CheckResume(ctx context.Context, condition string, needNum i
 	// 调用服务
 	return service.NewResumeService(ctx, r.Oss, r.Repo, entity.NewInterviewAgent(r.CozeApi)).CheckResume(ctx, condition, needNum, folderId)
 }
-
+func (r *ResumeApp) EvaluateResume(ctx context.Context, pdfUrl string, content string, jd string) (chan coze.WorkFlowStreamResp, gerr.Error) {
+	// 调用服务
+	return service.NewResumeService(ctx, r.Oss, r.Repo, entity.NewInterviewAgent(r.CozeApi)).EvaluateResume(ctx, pdfUrl, content, jd)
+}
 func (r *ResumeApp) CreateFolder(ctx context.Context, folderName string) gerr.Error {
 	// 获取用户id
 	userId := utils.GetUserId(ctx)

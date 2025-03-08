@@ -194,7 +194,7 @@
       }
     },
     "/v1/resume/evaluate": {
-      "get": {
+      "post": {
         "summary": "简历评估",
         "operationId": "EvaluateResumeHandler",
         "responses": {
@@ -205,25 +205,12 @@
         },
         "parameters": [
           {
-            "name": "resume_url",
-            "description": " 简历地址",
-            "in": "query",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "content",
-            "description": " 简历内容",
-            "in": "query",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "jd",
-            "description": " 职位描述",
-            "in": "query",
-            "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/EvaluateResumeReq"
+            }
           }
         ],
         "tags": [

@@ -64,7 +64,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					// 简历评估
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/evaluate",
 					Handler: resume.EvaluateResumeHandler(serverCtx),
 				},

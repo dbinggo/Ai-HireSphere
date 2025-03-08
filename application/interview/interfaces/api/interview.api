@@ -43,7 +43,7 @@ service interview-api {
 
 	@doc "简历评估"
 	@handler EvaluateResumeHandler
-	get /evaluate (EvaluateResumeReq)
+	post /evaluate (EvaluateResumeReq)
 }
 
 @server (

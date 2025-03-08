@@ -18,6 +18,7 @@ type IResumeService interface {
 	UploadResume(file multipart.File, handler *multipart.FileHeader, folderId int64) (*entity.ResumeEntity, gerr.Error)
 	DeleteResume(id int64) gerr.Error
 	CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error)
+	EvaluateResume(ctx context.Context, pdfUrl string, content string, jd string) (chan coze.WorkFlowStreamResp, gerr.Error)
 }
 
 type ResumeService struct {
@@ -98,6 +99,21 @@ func (r *ResumeService) CheckResume(ctx context.Context, condition string, needN
 	log.Printf("pdf_urls:%v", pdfUrls)
 	parameters["pdf_urls"] = pdfUrls
 	parameters["pdf_num"] = len(pdfUrls)
+
+	flow, err1 := r.bot.StreamWorkFlow(WorkFlowID, parameters)
+	if err1 != nil {
+		return nil, gerr.WithStack(codex.ResumeFindFail)
+	}
+
+	return flow, nil
+}
+func (r *ResumeService) EvaluateResume(ctx context.Context, pdfUrl string, content string, jd string) (chan coze.WorkFlowStreamResp, gerr.Error) {
+	const WorkFlowID = "7477921759489327104"
+	parameters := map[string]interface{}{
+		"file":    pdfUrl,
+		"content": content,
+		"jd":      jd,
+	}
 
 	flow, err1 := r.bot.StreamWorkFlow(WorkFlowID, parameters)
 	if err1 != nil {

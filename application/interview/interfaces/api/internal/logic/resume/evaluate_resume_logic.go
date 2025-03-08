@@ -1,6 +1,7 @@
 package resume
 
 import (
+	"Ai-HireSphere/common/coze"
 	"context"
 
 	"Ai-HireSphere/application/interview/interfaces/api/internal/svc"
@@ -23,8 +24,12 @@ func NewEvaluateResumeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ev
 	}
 }
 
-func (l *EvaluateResumeLogic) EvaluateResume(req *types.EvaluateResumeReq) error {
-	// todo: add your logic here and delete this line
+func (l *EvaluateResumeLogic) EvaluateResume(req *types.EvaluateResumeReq) (chan coze.WorkFlowStreamResp, error) {
+	evaluate, g := l.svcCtx.ResumeAPP.EvaluateResume(l.ctx, req.ResumeUrl, req.Content, req.Jd)
+	if g != nil {
+		l.Logger.Error(g)
+		return nil, g
+	}
 
-	return nil
+	return evaluate, g
 }
