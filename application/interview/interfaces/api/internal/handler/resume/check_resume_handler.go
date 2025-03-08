@@ -4,6 +4,7 @@ import (
 	"Ai-HireSphere/common/ssex"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"Ai-HireSphere/application/interview/interfaces/api/internal/logic/resume"
@@ -39,7 +40,9 @@ func CheckResumeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				event.Event = msg.Event
 				event.Data = msg.Data
 				event.Id = strconv.Itoa(msg.ID)
-				sse.WriteEvent(event)
+				if !strings.Contains(event.Event, "Done") {
+					sse.WriteEvent(event)
+				}
 				if !ok {
 					return
 				}
