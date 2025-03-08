@@ -23,10 +23,9 @@ type CheckInterviewResp struct {
 }
 
 type CheckResumeReq struct {
-	Condition string   `json:"condition"`
-	NeedNum   int      `json:"need_num"`
-	PdfNum    int      `json:"pdf_num,optional"`
-	PdfUrls   []string `json:"pdf_urls,optional"`
+	Condition string `json:"condition"`
+	NeedNum   int    `json:"need_num"`
+	FolderID  int64  `json:"folder_id"`
 }
 
 type CommonListReq struct {

@@ -18,7 +18,7 @@ type IResumeApp interface {
 	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error)
 	ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error)
 	DeleteResume(ctx context.Context, id int64) gerr.Error
-	CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error)
+	CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error)
 
 	CreateFolder(ctx context.Context, folderName string) gerr.Error
 	ListFolder(ctx context.Context) ([]model.TFolder, gerr.Error)
@@ -88,9 +88,9 @@ func (r *ResumeApp) DeleteResume(ctx context.Context, id int64) gerr.Error {
 	return err
 }
 
-func (r *ResumeApp) CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error) {
+func (r *ResumeApp) CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error) {
 	// 调用服务
-	return service.NewResumeService(ctx, r.Oss, r.Repo, r.CozeApi).CheckResume(ctx, condition, needNum, pdfNum, pdfUrls)
+	return service.NewResumeService(ctx, r.Oss, r.Repo, r.CozeApi).CheckResume(ctx, condition, needNum, folderId)
 }
 
 func (r *ResumeApp) CreateFolder(ctx context.Context, folderName string) gerr.Error {

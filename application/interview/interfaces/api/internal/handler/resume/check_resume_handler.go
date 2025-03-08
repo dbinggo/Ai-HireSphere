@@ -24,6 +24,7 @@ func CheckResumeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		stream, err := l.CheckResume(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
+			return
 		}
 
 		sse := ssex.Upgrade(ctx, w)

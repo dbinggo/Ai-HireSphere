@@ -25,7 +25,7 @@ func NewCheckResumeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Check
 }
 
 func (l *CheckResumeLogic) CheckResume(req *types.CheckResumeReq) (chan coze.WorkFlowStreamResp, error) {
-	resume, g := l.svcCtx.ResumeAPP.CheckResume(l.ctx, req.Condition, req.NeedNum, req.PdfNum, req.PdfUrls)
+	resume, g := l.svcCtx.ResumeAPP.CheckResume(l.ctx, req.Condition, req.NeedNum, req.FolderID)
 	if g != nil {
 		l.Logger.Error(g)
 		return nil, g

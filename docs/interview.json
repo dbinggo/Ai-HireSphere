@@ -510,21 +510,16 @@
           "type": "integer",
           "format": "int32"
         },
-        "pdf_num": {
+        "folder_id": {
           "type": "integer",
-          "format": "int32"
-        },
-        "pdf_urls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+          "format": "int64"
         }
       },
       "title": "CheckResumeReq",
       "required": [
         "condition",
-        "need_num"
+        "need_num",
+        "folder_id"
       ]
     },
     "CommonListReq": {

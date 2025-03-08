@@ -9,6 +9,7 @@ import (
 	"Ai-HireSphere/common/utils"
 	"context"
 	"github.com/dbinggo/gerr"
+	"log"
 	"mime/multipart"
 	"time"
 )
@@ -16,7 +17,7 @@ import (
 type IResumeService interface {
 	UploadResume(file multipart.File, handler *multipart.FileHeader, folderId int64) (*entity.ResumeEntity, gerr.Error)
 	DeleteResume(id int64) gerr.Error
-	CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error)
+	CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error)
 }
 
 type ResumeService struct {
@@ -77,23 +78,31 @@ func (r *ResumeService) DeleteResume(id int64) gerr.Error {
 	return r.resumeRepo.DeleteResume(r.ctx, id)
 }
 
-func (r *ResumeService) CheckResume(ctx context.Context, condition string, needNum, pdfNum int, pdfUrls []string) (chan coze.WorkFlowStreamResp, gerr.Error) {
+func (r *ResumeService) CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error) {
 	const WorkFlowID = "7477847478902997044"
 	parameters := map[string]interface{}{
 		"condition": condition,
 		"need_num":  needNum,
 	}
 
-	if pdfNum > 0 && pdfUrls != nil {
-		parameters["pdf_num"] = pdfNum
-		parameters["pdf_urls"] = pdfUrls
-	} else {
-		parameters["pdf_num"] = 0
-		parameters["pdf_urls"] = []string{}
+	resumes, err := r.resumeRepo.FindResumeByFolderId(ctx, folderId)
+	if err != nil {
+		return nil, gerr.WithStack(codex.ResumeFindFail)
 	}
 
-	flow, err := r.cozeApi.Bot.StreamWorkFlow(WorkFlowID, parameters)
-	if err != nil {
+	pdfUrls := make([]string, 0, len(resumes))
+	for _, resume := range resumes {
+		pdfUrls = append(pdfUrls, resume.Url)
+	}
+	if len(pdfUrls) == 0 {
+		return nil, gerr.WithStack(codex.ResumeFindFail)
+	}
+	log.Printf("pdf_urls:%v", pdfUrls)
+	parameters["pdf_urls"] = pdfUrls
+	parameters["pdf_num"] = len(pdfUrls)
+
+	flow, err1 := r.cozeApi.Bot.StreamWorkFlow(WorkFlowID, parameters)
+	if err1 != nil {
 		return nil, gerr.WithStack(codex.ResumeFindFail)
 	}
 
