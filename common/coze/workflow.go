@@ -200,7 +200,10 @@ func (bot *BotApi) StreamWorkFlow(workFlowID string, parameters map[string]inter
 			strings.Contains(reply.Event, "conversation.chat.failed"))) {
 			timer := time.NewTimer(time.Minute * 5)
 			select {
-			case msg := <-strCh:
+			case msg, ok := <-strCh:
+				if !ok {
+					return
+				}
 				reply = WorkFlowStreamResp{}
 				if strings.HasPrefix(msg, "id") {
 					_, err = fmt.Sscanf(msg, "id: %d", &reply.ID)

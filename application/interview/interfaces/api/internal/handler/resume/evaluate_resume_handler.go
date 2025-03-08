@@ -40,9 +40,7 @@ func EvaluateResumeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				event.Data = msg.Data
 				event.Id = strconv.Itoa(msg.ID)
 				sse.WriteEvent(event)
-
-				timer.Reset(time.Minute * 5)
-				if !ok || msg.Event == "end" {
+				if !ok || msg.Event == "done" {
 					return
 				}
 			case <-timer.C:

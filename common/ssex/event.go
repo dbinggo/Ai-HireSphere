@@ -13,6 +13,7 @@ const (
 	SseEventTypeData  = "data: "
 	SseEventTypeEvent = "event: "
 	sseEnd            = "\n\n"
+	sseN              = "\n"
 )
 
 var ()
@@ -27,13 +28,13 @@ type SseEvent struct {
 func (s SseEvent) build() string {
 	var ret string
 	if s.Retry > 0 {
-		ret += SseEventTypeRetry + strconv.Itoa(s.Retry) + sseEnd
+		ret += SseEventTypeRetry + strconv.Itoa(s.Retry) + sseN
 	}
-	if s.Id != "" {
-		ret += SseEventTypeId + s.Id + sseEnd
+	if s.Id != "" && s.Id != "0" {
+		ret += SseEventTypeId + s.Id + sseN
 	}
 	if s.Event != "" {
-		ret += SseEventTypeEvent + s.Event + sseEnd
+		ret += SseEventTypeEvent + s.Event + sseN
 	}
 	if s.Data != "" {
 		b, _ := json.Marshal(s.Data)

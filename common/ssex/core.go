@@ -54,7 +54,11 @@ func (server *Server) Write(msg string) *Server {
 	return server
 }
 func (server *Server) WriteEvent(Event SseEvent) *Server {
-	return server.Write(Event.build())
+	data := Event.build()
+	if data == "" {
+		return server
+	}
+	return server.Write(data)
 }
 
 // 不断写入
