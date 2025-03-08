@@ -2,6 +2,14 @@ package entity
 
 import "Ai-HireSphere/common/model"
 
+var (
+	Level = map[int]string{
+		1: "简单",
+		2: "正常",
+		3: "困难",
+	}
+)
+
 type ChatEntity struct {
 	ID           int64
 	UserID       int64

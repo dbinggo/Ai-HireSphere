@@ -75,6 +75,28 @@
         ]
       }
     },
+    "/v1/interview/chat/new": {
+      "post": {
+        "summary": "生成会话 id ",
+        "operationId": "ChatNew",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ChatNewResp"
+            }
+          }
+        },
+        "tags": [
+          "interview"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/check": {
       "post": {
         "summary": "筛选简历",
@@ -346,11 +368,18 @@
     "ChatAgentReq": {
       "type": "object",
       "properties": {
-        "is_new": {
-          "type": "boolean",
-          "format": "boolean"
+        "question_num": {
+          "type": "integer",
+          "format": "int32"
         },
-        "message": {
+        "hc": {
+          "type": "string"
+        },
+        "level": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "answer": {
           "type": "string"
         },
         "session_id": {
@@ -360,8 +389,20 @@
       },
       "title": "ChatAgentReq",
       "required": [
-        "is_new",
-        "message"
+        "session_id"
+      ]
+    },
+    "ChatNewResp": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "ChatNewResp",
+      "required": [
+        "session_id"
       ]
     },
     "CheckResumeReq": {

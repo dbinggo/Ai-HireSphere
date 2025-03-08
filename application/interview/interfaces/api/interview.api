@@ -56,6 +56,10 @@ service interview-api {
 	@doc "与智能体进行对话"
 	@handler ChatAgent
 	post /chat/agent (ChatAgentReq)
+
+	@doc "生成会话 id "
+	@handler ChatNew
+	post /chat/new returns (ChatNewResp)
 }
 
 type SSEReq {
@@ -64,9 +68,14 @@ type SSEReq {
 
 type (
 	ChatAgentReq {
-		IsNew     bool   `json:"is_new"`
-		Message   string `json:"message"`
-		SessionID int64  `json:"session_id,optional"`
+		QuestionNum int    `json:"question_num,optional"`
+		Hc          string `json:"hc,optional"`
+		Level       int    `json:"level,optional"`
+		Answer      string `json:"answer,optional"`
+		SessionID   int64  `json:"session_id"`
+	}
+	ChatNewResp {
+		SessionID int64 `json:"session_id"`
 	}
 )
 

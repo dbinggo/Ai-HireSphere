@@ -1,9 +1,10 @@
 package interview
 
 import (
+	"Ai-HireSphere/application/interview/domain/model/entity"
 	"Ai-HireSphere/common/coze"
-	"Ai-HireSphere/common/utils"
 	"context"
+	"fmt"
 
 	"Ai-HireSphere/application/interview/interfaces/api/internal/svc"
 	"Ai-HireSphere/application/interview/interfaces/api/internal/types"
@@ -27,12 +28,23 @@ func NewChatAgentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ChatAge
 
 func (l *ChatAgentLogic) ChatAgent(req *types.ChatAgentReq) (stream chan coze.BotStreamReply, err error) {
 	sessionID := req.SessionID
-	if req.IsNew {
-		sessionID, err = l.svcCtx.ResumeAPP.CreateSession(l.ctx, utils.GetUserId(l.ctx))
-		if err != nil {
-			return nil, err
+	var message string
+	if req.Hc != "" && req.QuestionNum > 0 && req.Level > 0 {
+		var level string
+		var ok bool
+		if level, ok = entity.Level[req.Level]; !ok {
+			return nil, fmt.Errorf("level error")
 		}
+		message = fmt.Sprintf("面试岗位:%s, 面试难度:%s, 面试题个数:%d", req.Hc, level, req.QuestionNum)
 	}
 
-	return l.svcCtx.ResumeAPP.Chat(l.ctx, sessionID, req.Message)
+	if req.Answer != "" && req.SessionID > 0 {
+		message = req.Answer
+	}
+
+	chat, g := l.svcCtx.ResumeAPP.Chat(l.ctx, sessionID, message)
+	if g != nil {
+		return nil, g
+	}
+	return chat, nil
 }

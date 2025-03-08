@@ -2,9 +2,15 @@
 package types
 
 type ChatAgentReq struct {
-	IsNew     bool   `json:"is_new"`
-	Message   string `json:"message"`
-	SessionID int64  `json:"session_id,optional"`
+	QuestionNum int    `json:"question_num,optional"`
+	Hc          string `json:"hc,optional"`
+	Level       int    `json:"level,optional"`
+	Answer      string `json:"answer,optional"`
+	SessionID   int64  `json:"session_id"`
+}
+
+type ChatNewResp struct {
+	SessionID int64 `json:"session_id"`
 }
 
 type CheckResumeReq struct {
