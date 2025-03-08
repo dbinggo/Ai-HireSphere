@@ -55,7 +55,6 @@ type JWTParam struct {
 
 type AuthResp struct {
 	AccessToken string `json:"access_token"`
-	ExpiresIn   int64  `json:"expires_in"`
 }
 
 type APIResp struct {

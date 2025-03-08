@@ -31,33 +31,7 @@ type IResumeApp interface {
 	GetChatHistory(ctx context.Context, id int64) ([]coze.BotMessage, gerr.Error)
 }
 
-type ResumeApp struct {
-	Oss     ioss.Ioss
-	CozeApi *coze.CozeApi
-	Repo    irepository.IRepoBroker
-}
-
-func (r *ResumeApp) CreateSession(ctx context.Context, userID int64) (int64, gerr.Error) {
-	return service.NewChatService(ctx, r.Repo, *r.CozeApi).CreateSession(userID)
-}
-
-func (r *ResumeApp) Chat(ctx context.Context, id int64, message string) (chan coze.BotStreamReply, gerr.Error) {
-	return service.NewChatService(ctx, r.Repo, *r.CozeApi).Chat(id, message)
-}
-
-func (r *ResumeApp) UpdateChatName(ctx context.Context, id int64, name string) gerr.Error {
-	return service.NewChatService(ctx, r.Repo, *r.CozeApi).UpdateChatName(id, name)
-}
-
-func (r *ResumeApp) ListChats(ctx context.Context, userID int64, pageSize, pageNum int) (int64, []entity.ChatEntity, gerr.Error) {
-	return service.NewChatService(ctx, r.Repo, *r.CozeApi).ListChats(userID, pageSize, pageNum)
-}
-
-func (r *ResumeApp) GetChatHistory(ctx context.Context, id int64) ([]coze.BotMessage, gerr.Error) {
-	return service.NewChatService(ctx, r.Repo, *r.CozeApi).GetChatHistory(id)
-}
-
-func NewResumeApp(oss ioss.Ioss, repo irepository.IRepoBroker, api *coze.CozeApi) *ResumeApp {
+func NewResumeApp(oss ioss.Ioss, repo irepository.IRepoBroker, api coze.CozeApi) *ResumeApp {
 	return &ResumeApp{
 		Oss:     oss,
 		CozeApi: api,
@@ -66,9 +40,35 @@ func NewResumeApp(oss ioss.Ioss, repo irepository.IRepoBroker, api *coze.CozeApi
 
 }
 
+type ResumeApp struct {
+	Oss     ioss.Ioss
+	CozeApi coze.CozeApi
+	Repo    irepository.IRepoBroker
+}
+
+func (r *ResumeApp) CreateSession(ctx context.Context, userID int64) (int64, gerr.Error) {
+	return service.NewChatService(ctx, r.Repo, entity.NewInterviewAgent(r.CozeApi)).CreateSession(userID)
+}
+
+func (r *ResumeApp) Chat(ctx context.Context, id int64, message string) (chan coze.BotStreamReply, gerr.Error) {
+	return service.NewChatService(ctx, r.Repo, entity.NewInterviewAgent(r.CozeApi)).Chat(id, message)
+}
+
+func (r *ResumeApp) UpdateChatName(ctx context.Context, id int64, name string) gerr.Error {
+	return service.NewChatService(ctx, r.Repo, entity.NewInterviewAgent(r.CozeApi)).UpdateChatName(id, name)
+}
+
+func (r *ResumeApp) ListChats(ctx context.Context, userID int64, pageSize, pageNum int) (int64, []entity.ChatEntity, gerr.Error) {
+	return service.NewChatService(ctx, r.Repo, entity.NewInterviewAgent(r.CozeApi)).ListChats(userID, pageSize, pageNum)
+}
+
+func (r *ResumeApp) GetChatHistory(ctx context.Context, id int64) ([]coze.BotMessage, gerr.Error) {
+	return service.NewChatService(ctx, r.Repo, entity.NewInterviewAgent(r.CozeApi)).GetChatHistory(id)
+}
+
 func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error) {
 	// 调用服务
-	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo, nil).UploadResume(file, handler, folderId)
+	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo, entity.NewInterviewAgent(r.CozeApi)).UploadResume(file, handler, folderId)
 	if err != nil {
 		return "", err
 	}
@@ -84,13 +84,13 @@ func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, page
 }
 
 func (r *ResumeApp) DeleteResume(ctx context.Context, id int64) gerr.Error {
-	err := service.NewResumeService(ctx, r.Oss, r.Repo, nil).DeleteResume(id)
+	err := service.NewResumeService(ctx, r.Oss, r.Repo, entity.NewInterviewAgent(r.CozeApi)).DeleteResume(id)
 	return err
 }
 
 func (r *ResumeApp) CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error) {
 	// 调用服务
-	return service.NewResumeService(ctx, r.Oss, r.Repo, r.CozeApi).CheckResume(ctx, condition, needNum, folderId)
+	return service.NewResumeService(ctx, r.Oss, r.Repo, entity.NewInterviewAgent(r.CozeApi)).CheckResume(ctx, condition, needNum, folderId)
 }
 
 func (r *ResumeApp) CreateFolder(ctx context.Context, folderName string) gerr.Error {

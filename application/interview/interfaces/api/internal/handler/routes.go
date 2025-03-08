@@ -23,22 +23,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: interview.ChatHandler(serverCtx),
 				},
 				{
-					// 与智能体进行对话
+					// 面试对话
 					Method:  http.MethodPost,
 					Path:    "/chat/agent",
-					Handler: interview.ChatAgentHandler(serverCtx),
+					Handler: interview.ChatInterviewHandler(serverCtx),
 				},
 				{
 					// 生成会话 id
 					Method:  http.MethodPost,
 					Path:    "/chat/new",
 					Handler: interview.ChatNewHandler(serverCtx),
-				},
-				{
-					// 查看面试准备情况
-					Method:  http.MethodPost,
-					Path:    "/check_interview",
-					Handler: interview.CheckInterviewOkHandler(serverCtx),
 				},
 				{
 					// 新建一场面试

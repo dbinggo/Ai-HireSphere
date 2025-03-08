@@ -24,15 +24,15 @@ type ResumeService struct {
 	oss        ioss.Ioss
 	ctx        context.Context
 	resumeRepo idataaccess.IResumeAccess
-	cozeApi    *coze.CozeApi
+	bot        coze.BotApi
 }
 
-func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResumeAccess, cozeApi *coze.CozeApi) IResumeService {
+func NewResumeService(ctx context.Context, oss ioss.Ioss, repo idataaccess.IResumeAccess, bot coze.BotApi) IResumeService {
 	return &ResumeService{
 		oss:        oss,
 		ctx:        ctx,
 		resumeRepo: repo,
-		cozeApi:    cozeApi,
+		bot:        bot,
 	}
 }
 
@@ -99,7 +99,7 @@ func (r *ResumeService) CheckResume(ctx context.Context, condition string, needN
 	parameters["pdf_urls"] = pdfUrls
 	parameters["pdf_num"] = len(pdfUrls)
 
-	flow, err1 := r.cozeApi.Bot.StreamWorkFlow(WorkFlowID, parameters)
+	flow, err1 := r.bot.StreamWorkFlow(WorkFlowID, parameters)
 	if err1 != nil {
 		return nil, gerr.WithStack(codex.ResumeFindFail)
 	}

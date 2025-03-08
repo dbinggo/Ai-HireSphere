@@ -11,17 +11,17 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func ChatAgentHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func ChatInterviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.CreateInterview
+		var req types.ChatInterviewReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
 		ctx := r.Context()
-		l := interview.NewCreateInterviewLogic(ctx, svcCtx)
-		stream, err := l.CreateInterview(&req)
+		l := interview.NewChatInterviewLogic(ctx, svcCtx)
+		stream, err := l.ChatInterview(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return

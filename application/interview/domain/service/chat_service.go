@@ -23,10 +23,11 @@ type ChatService struct {
 	ctx  context.Context
 	repo idataaccess.IChatAccess
 	api  coze.CozeApi
+	bot  coze.BotApi
 }
 
 func (c *ChatService) CreateSession(userID int64) (int64, gerr.Error) {
-	session := c.api.Bot.CreateSession()
+	session := c.bot.CreateSession()
 	var data entity.ChatEntity
 	data.SessionID = session
 	data.UserID = userID
@@ -41,7 +42,7 @@ func (c *ChatService) Chat(id int64, message string) (chan coze.BotStreamReply, 
 		return nil, g
 	}
 	fmt.Printf("session id: %d", chat.SessionID)
-	ch, err := c.api.Bot.Chat(chat.SessionID, message)
+	ch, err := c.bot.Chat(chat.SessionID, message)
 	if err != nil {
 		return nil, gerr.Wraps(codex.ChatSessionNotExist, err)
 	}
@@ -64,18 +65,18 @@ func (c *ChatService) GetChatHistory(id int64) ([]coze.BotMessage, gerr.Error) {
 	if g != nil {
 		return nil, g
 	}
-	history, err := c.api.Bot.GetChatHistory(chat.SessionID)
+	history, err := c.bot.GetChatHistory(chat.SessionID)
 	if err != nil {
 		return nil, gerr.Wraps(codex.ChatSessionNotExist, err)
 	}
 	return history, nil
 }
 
-func NewChatService(ctx context.Context, repo idataaccess.IChatAccess, api coze.CozeApi) *ChatService {
+func NewChatService(ctx context.Context, repo idataaccess.IChatAccess, bot coze.BotApi) *ChatService {
 	return &ChatService{
 		ctx:  ctx,
 		repo: repo,
-		api:  api,
+		bot:  bot,
 	}
 }
 

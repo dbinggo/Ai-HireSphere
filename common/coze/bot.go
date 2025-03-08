@@ -61,8 +61,8 @@ type BotStreamReply struct {
 	Data  string `json:"data"`
 }
 
-func NewBotApi(token string, botID string) *BotApi {
-	return &BotApi{
+func NewBotApi(token string, botID string) BotApi {
+	return BotApi{
 		Header: BotHeader{
 			Authorization: "Bearer " + token,
 			ContentType:   "application/json",
