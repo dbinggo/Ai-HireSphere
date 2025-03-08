@@ -5,6 +5,7 @@ type ChatAgentReq struct {
 	QuestionNum int    `json:"question_num,optional"`
 	Hc          string `json:"hc,optional"`
 	Level       int    `json:"level,optional"`
+	PdfUrl      string `json:"pdf_url,optional"`
 	Answer      string `json:"answer,optional"`
 	SessionID   int64  `json:"session_id"`
 }
