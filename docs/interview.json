@@ -97,6 +97,70 @@
         ]
       }
     },
+    "/v1/interview/check_interview": {
+      "post": {
+        "summary": "查看面试准备情况",
+        "operationId": "CheckInterviewOk",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/CheckInterviewResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckInterviewReq"
+            }
+          }
+        ],
+        "tags": [
+          "interview"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/interview/new_interview": {
+      "post": {
+        "summary": "新建一场面试",
+        "operationId": "CreateInterview",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/NewInterviewResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewInterviewReq"
+            }
+          }
+        ],
+        "tags": [
+          "interview"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/check": {
       "post": {
         "summary": "筛选简历",
@@ -405,6 +469,34 @@
         "session_id"
       ]
     },
+    "CheckInterviewReq": {
+      "type": "object",
+      "properties": {
+        "interview_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": " 面试Id"
+        }
+      },
+      "title": "CheckInterviewReq",
+      "required": [
+        "interview_id"
+      ]
+    },
+    "CheckInterviewResp": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 面试准备状态 0在准备中 1准备好了 2准备失败"
+        }
+      },
+      "title": "CheckInterviewResp",
+      "required": [
+        "state"
+      ]
+    },
     "CheckResumeReq": {
       "type": "object",
       "properties": {
@@ -559,6 +651,49 @@
       "title": "GetResumeListResp",
       "required": [
         "list"
+      ]
+    },
+    "NewInterviewReq": {
+      "type": "object",
+      "properties": {
+        "resume_url": {
+          "type": "string",
+          "description": " 简历链接"
+        },
+        "level": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 难度等级 1简单 2一般 3中等 4较难 5困难"
+        },
+        "job": {
+          "type": "string",
+          "description": " 岗位名称"
+        },
+        "num": {
+          "type": "integer",
+          "format": "int32",
+          "description": " 面试题数量"
+        }
+      },
+      "title": "NewInterviewReq",
+      "required": [
+        "resume_url",
+        "level",
+        "job",
+        "num"
+      ]
+    },
+    "NewInterviewResp": {
+      "type": "object",
+      "properties": {
+        "interview_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "title": "NewInterviewResp",
+      "required": [
+        "interview_id"
       ]
     },
     "ResumeInfo": {
