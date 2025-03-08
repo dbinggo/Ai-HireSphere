@@ -40,6 +40,10 @@ service interview-api {
 	@doc "筛选简历"
 	@handler CheckResumeHandler
 	post /check (CheckResumeReq)
+
+	@doc "简历评估"
+	@handler EvaluateResume
+	get /evaluate (EvaluateResumeReq)
 }
 
 @server (
@@ -144,6 +148,11 @@ type (
 		Condition string `json:"condition"`
 		NeedNum   int    `json:"need_num"`
 		FolderID  int64  `json:"folder_id"`
+	}
+	EvaluateResumeReq {
+		ResumeUrl string `json:"resume_url"` // 简历地址
+		Content   string `json:"content"` // 简历内容
+		Jd        string `json:"jd"` // 职位描述
 	}
 )
 

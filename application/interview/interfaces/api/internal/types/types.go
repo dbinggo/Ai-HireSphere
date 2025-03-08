@@ -46,6 +46,12 @@ type DeleteResumeReq struct {
 	ResumeId int64 `path:"id"` // 要删除的简历Id
 }
 
+type EvaluateResumeReq struct {
+	ResumeUrl string `json:"resume_url"` // 简历地址
+	Content   string `json:"content"`    // 简历内容
+	Jd        string `json:"jd"`         // 职位描述
+}
+
 type FolderInfo struct {
 	FolderId   int64  `json:"id"`
 	FolderName string `json:"name"`

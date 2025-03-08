@@ -193,6 +193,49 @@
         ]
       }
     },
+    "/v1/resume/evaluate": {
+      "get": {
+        "summary": "简历评估",
+        "operationId": "EvaluateResume",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "resume_url",
+            "description": " 简历地址",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "description": " 简历内容",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "jd",
+            "description": " 职位描述",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "resume"
+        ],
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
     "/v1/resume/folder": {
       "post": {
         "summary": "新建简历文件夹",
@@ -527,6 +570,29 @@
     "DeleteResumeReq": {
       "type": "object",
       "title": "DeleteResumeReq"
+    },
+    "EvaluateResumeReq": {
+      "type": "object",
+      "properties": {
+        "resume_url": {
+          "type": "string",
+          "description": " 简历地址"
+        },
+        "content": {
+          "type": "string",
+          "description": " 简历内容"
+        },
+        "jd": {
+          "type": "string",
+          "description": " 职位描述"
+        }
+      },
+      "title": "EvaluateResumeReq",
+      "required": [
+        "resume_url",
+        "content",
+        "jd"
+      ]
     },
     "FolderInfo": {
       "type": "object",
