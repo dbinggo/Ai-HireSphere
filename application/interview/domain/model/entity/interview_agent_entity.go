@@ -12,6 +12,7 @@ const (
 
 // 面试Agent
 func NewInterviewAgent(api coze.CozeApi) coze.BotApi {
+
 	return coze.NewBotApi(api.GetToken(), InterviewTableName)
 
 }
