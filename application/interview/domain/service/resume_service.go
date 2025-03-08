@@ -71,9 +71,7 @@ func (r *ResumeService) DeleteResume(id int64) gerr.Error {
 		return gerr.WithStack(codex.ResumeDeleteNotPermission)
 	}
 	// 删除oss文件
-	if err = resume.DeleteResume(r.oss); err != nil {
-		return err
-	}
+	go resume.DeleteResume(r.oss)
 	// 删除数据库信息
 	return r.resumeRepo.DeleteResume(r.ctx, id)
 }
