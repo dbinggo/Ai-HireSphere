@@ -28,6 +28,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/chat/agent",
 					Handler: interview.ChatAgentHandler(serverCtx),
 				},
+				{
+					// 查看面试准备情况
+					Method:  http.MethodPost,
+					Path:    "/check_interview",
+					Handler: interview.CheckInterviewOkHandler(serverCtx),
+				},
+				{
+					// 新建一场面试
+					Method:  http.MethodPost,
+					Path:    "/new_interview",
+					Handler: interview.CreateInterviewHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

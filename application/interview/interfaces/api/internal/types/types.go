@@ -7,6 +7,14 @@ type ChatAgentReq struct {
 	SessionID int64  `json:"session_id,optional"`
 }
 
+type CheckInterviewReq struct {
+	InterviewId int64 `json:"interview_id"` // 面试Id
+}
+
+type CheckInterviewResp struct {
+	State int `json:"state"` // 面试准备状态 0在准备中 1准备好了 2准备失败
+}
+
 type CheckResumeReq struct {
 	Condition string   `json:"condition"`
 	NeedNum   int      `json:"need_num"`
@@ -53,6 +61,17 @@ type GetResumeListReq struct {
 type GetResumeListResp struct {
 	CommonListResp
 	List []ResumeInfo `json:"list"`
+}
+
+type NewInterviewReq struct {
+	ResumeUrl string `json:"resume_url"` // 简历链接
+	Level     int    `json:"level"`      // 难度等级 1简单 2一般 3中等 4较难 5困难
+	Job       string `json:"job"`        // 岗位名称
+	Num       int    `json:"num"`        // 面试题数量
+}
+
+type NewInterviewResp struct {
+	InterviewId int64 `json:"interview_id"`
 }
 
 type ResumeInfo struct {

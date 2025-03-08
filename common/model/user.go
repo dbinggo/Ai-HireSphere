@@ -8,7 +8,7 @@ type TUser struct {
 	Avatar            string     `json:"avatar" gorm:"type:varchar(255)"`
 	Phone             string     `json:"phone" gorm:"uniqueIndex;type:varchar(64)"`
 	Role              string     `json:"role" gorm:"type:varchar(64)"` // 新增字段：用户角色，例如管理员、面试官等
-	Sex               int        `json:"sex" grrm:"type:int"`
+	Sex               int        `json:"sex" gorm:"type:int"`
 }
 
 func (u TUser) TableName() string {
