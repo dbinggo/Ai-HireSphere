@@ -38,7 +38,7 @@ func (g *GormOpts) SaveResume(ctx context.Context, resume *entity.ResumeEntity) 
 //	@return []entity.ResumeEntity
 //	@return gerr.Error
 func (g *GormOpts) ListResume(ctx context.Context, userId int64, page, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error) {
-	count, resumeModels, err := (&model.CommonAdapter[model.TResume]{}).List(ctx, g.db, pageSize, (page-1)*pageSize, "user_id = ? and folder_id = ?", userId, folderId)
+	count, resumeModels, err := (&model.CommonAdapter[model.TResume]{}).List(ctx, g.db, pageSize, (page-1)*pageSize, "user_id = ? and folder_id = ? and folder_id > -1", userId, folderId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, []entity.ResumeEntity{}, nil

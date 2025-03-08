@@ -5,11 +5,7 @@ import (
 )
 
 type Config struct {
-	Kid       string `json:",optional"`
-	Iss       string `json:",optional"`
-	PKeyPath  string `json:",optional"`
-	DatasetID string
-	OwnToken  string `json:",optional"`
+	OwnToken string `json:",optional"`
 }
 
 type CozeApi struct {

@@ -146,7 +146,7 @@ func CodeFromError(err error) CodeX {
 		return Deadline
 	}
 
-	return ServerErr
+	return add(500, err.Error())
 }
 
 // error转换为status

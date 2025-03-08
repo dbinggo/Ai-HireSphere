@@ -180,22 +180,26 @@ func (bot *BotApi) Chat(sessionID int64, message string) (ch chan BotStreamReply
 	}
 	ch = make(chan BotStreamReply)
 	go func() {
-		defer close(ch)
+		defer func() {
+			close(ch)
+		}()
 		var reply BotStreamReply
-		for reply.Data == "" ||
-			!(strings.Contains(reply.Event, "done") || strings.Contains(reply.Event, "conversation.chat.failed")) {
+		for reply.Data == "" || (!(strings.Contains(reply.Event, "done") &&
+			strings.Contains(reply.Event, "conversation.chat.failed"))) {
 			timer := time.NewTimer(time.Minute * 5)
 			select {
 			case msg := <-strCh:
+
+				//清空数据
+				reply = BotStreamReply{}
 				if strings.HasPrefix(msg, "event") {
 					reply.Event = strings.TrimPrefix(msg, "event:")
 				}
 				if strings.HasPrefix(msg, "data") {
 					reply.Data = strings.TrimPrefix(msg, "data:")
-					ch <- reply
-					//清空数据
-					reply = BotStreamReply{}
 				}
+				ch <- reply
+
 			case <-timer.C:
 				reply.Event = "conversation.chat.failed"
 				reply.Data = ErrTimeout

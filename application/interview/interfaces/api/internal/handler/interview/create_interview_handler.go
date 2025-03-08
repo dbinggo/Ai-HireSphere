@@ -13,14 +13,14 @@ import (
 
 func CreateInterviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ChatAgentReq
+		var req types.CreateInterview
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
 		ctx := r.Context()
-		l := interview.NewChatAgentLogic(ctx, svcCtx)
+		l := interview.NewCreateInterviewLogic(ctx, svcCtx)
 		stream, err := l.CreateInterview(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
@@ -30,7 +30,7 @@ func CreateInterviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		sse := ssex.Upgrade(ctx, w)
 		defer sse.Close()
 		for {
-			timer := time.NewTimer(time.Minute) //每次流式输出只等待1分钟
+			timer := time.NewTimer(time.Minute * 5) //每次流式输出只等待1分钟
 			select {
 			case <-ctx.Done():
 				return
@@ -39,6 +39,7 @@ func CreateInterviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				event.Event = msg.Event
 				event.Data = msg.Data
 				sse.WriteEvent(event)
+				timer.Reset(time.Minute * 5)
 				if !ok {
 					return
 				}

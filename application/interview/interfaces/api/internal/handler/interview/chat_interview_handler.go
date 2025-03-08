@@ -39,7 +39,7 @@ func ChatInterviewHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				event.Event = msg.Event
 				event.Data = msg.Data
 				sse.WriteEvent(event)
-				if !ok {
+				if !ok || event.Event == "done" {
 					return
 				}
 			case <-timer.C:

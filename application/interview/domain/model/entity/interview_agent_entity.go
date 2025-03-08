@@ -7,7 +7,7 @@ import (
 // 模型仓库
 
 const (
-	InterviewTableName = "7454197247615008820"
+	InterviewTableName = "7476756671063719986"
 )
 
 // 面试Agent

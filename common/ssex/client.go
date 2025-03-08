@@ -24,6 +24,7 @@ func Connect(req *http.Request) (chan string, error) {
 			line := scanner.Text()
 			message <- line
 		}
+		close(message)
 	}()
 
 	return message, nil
