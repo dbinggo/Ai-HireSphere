@@ -2,10 +2,9 @@ FROM 8.134.142.155:8888/ops/golang:1.23-builder AS builder
 
 LABEL stage=gobuilder
 
-ENV CGO_ENABLED=0
-ENV GOPROXY=https://goproxy.cn,https://goproxy.io,https://mirrors.aliyun.com/goproxy/,direct
+ENV CGO_ENABLED 0
+ENV GOPROXY https://goproxy.cn,direct
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
 
 WORKDIR /build
 
@@ -20,7 +19,7 @@ FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
-ENV TZ=Asia/Shanghai
+ENV TZ Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/interview-api /app/interview-api

@@ -1,21 +1,18 @@
-FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/golang:{{.Version}}build AS builder
+FROM 8.134.142.155:8888/ops/golang:1.23-builder AS builder
 
 LABEL stage=gobuilder
 
 ENV CGO_ENABLED 0
 {{if .Chinese}}ENV GOPROXY https://goproxy.cn,direct
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-{{end}}{{if .HasTimezone}}
-RUN apk update --no-cache && apk add --no-cache tzdata
 {{end}}
 WORKDIR /build
 
 ADD go.mod .
 ADD go.sum .
-RUN go mod download
+RUN for i in $(seq 1 3); do go mod download && break || sleep 5; done
 COPY . .
-{{if .Argument}}COPY {{.GoRelPath}}/etc /app/etc
-{{end}}RUN go build -ldflags="-s -w" -o /app/{{.ExeFile}} {{.GoMainFrom}}
+RUN go build -ldflags="-s -w" -o /app/{{.ExeFile}} {{.GoMainFrom}}
 
 
 FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
@@ -25,8 +22,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 ENV TZ {{.Timezone}}
 {{end}}
 WORKDIR /app
-COPY --from=builder /app/{{.ExeFile}} /app/{{.ExeFile}}{{if .Argument}}
-COPY --from=builder /app/etc /app/etc{{end}}
+COPY --from=builder /app/{{.ExeFile}} /app/{{.ExeFile}}
 {{if .HasPort}}
 EXPOSE {{.Port}}
 {{end}}

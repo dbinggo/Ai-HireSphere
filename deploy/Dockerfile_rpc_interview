@@ -6,16 +6,15 @@ ENV CGO_ENABLED 0
 ENV GOPROXY https://goproxy.cn,direct
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-
 WORKDIR /build
 
 ADD go.mod .
 ADD go.sum .
-RUN go mod download
+RUN for i in $(seq 1 3); do go mod download && break || sleep 5; done
 COPY . .
 RUN go build -ldflags="-s -w" -o /app/interview-rpc application/interview/interfaces/rpc/interview.go
 
-# test
+
 FROM registry.cn-guangzhou.aliyuncs.com/dbinggo-docker/alpine:latest
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
