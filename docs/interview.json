@@ -196,7 +196,7 @@
     "/v1/resume/evaluate": {
       "get": {
         "summary": "简历评估",
-        "operationId": "EvaluateResume",
+        "operationId": "EvaluateResumeHandler",
         "responses": {
           "200": {
             "description": "A successful response.",

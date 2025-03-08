@@ -42,7 +42,7 @@ service interview-api {
 	post /check (CheckResumeReq)
 
 	@doc "简历评估"
-	@handler EvaluateResume
+	@handler EvaluateResumeHandler
 	get /evaluate (EvaluateResumeReq)
 }
 
