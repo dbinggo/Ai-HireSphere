@@ -117,7 +117,8 @@ type (
 		FolderId int64 `form:"folder_id"` // 文件夹id
 	}
 	UploadResumeResp {
-		Address string `json:"address"`
+		ResumeId int64  `json:"resume_id"`
+		Address  string `json:"address"`
 	}
 	GetResumeListReq {
 		CommonListReq

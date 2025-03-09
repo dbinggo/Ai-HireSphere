@@ -46,9 +46,10 @@ func (l *UploadResumeLogic) UploadResume(r *http.Request, req *types.UploadReusm
 		return nil, err
 	}
 	defer file.Close()
-	url, err := l.svcCtx.ResumeAPP.UploadResume(l.ctx, file, header, req.FolderId)
+	url, resumeId, err := l.svcCtx.ResumeAPP.UploadResume(l.ctx, file, header, req.FolderId)
 
 	return &types.UploadResumeResp{
-		Address: url,
+		ResumeId: resumeId,
+		Address:  url,
 	}, err
 }

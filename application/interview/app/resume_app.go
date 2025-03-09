@@ -15,7 +15,7 @@ import (
 )
 
 type IResumeApp interface {
-	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error)
+	UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, int64, gerr.Error)
 	ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error)
 	DeleteResume(ctx context.Context, id int64) gerr.Error
 	CheckResume(ctx context.Context, condition string, needNum int, folderId int64) (chan coze.WorkFlowStreamResp, gerr.Error)
@@ -66,13 +66,13 @@ func (r *ResumeApp) GetChatHistory(ctx context.Context, id int64) ([]coze.BotMes
 	return service.NewChatService(ctx, r.Repo, entity.NewInterviewAgent(r.CozeApi)).GetChatHistory(id)
 }
 
-func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (string, gerr.Error) {
+func (r *ResumeApp) UploadResume(ctx context.Context, file multipart.File, handler *multipart.FileHeader, folderId int64) (url string, resume_id int64, err gerr.Error) {
 	// 调用服务
 	resume, err := service.NewResumeService(ctx, r.Oss, r.Repo, entity.NewInterviewAgent(r.CozeApi)).UploadResume(file, handler, folderId)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
-	return resume.Url, nil
+	return resume.Url, resume.Id, nil
 }
 
 func (r *ResumeApp) ListResume(ctx context.Context, userId int64, page int, pageSize int, folderId int64) (int64, []entity.ResumeEntity, gerr.Error) {

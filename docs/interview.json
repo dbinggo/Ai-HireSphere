@@ -731,12 +731,17 @@
     "UploadResumeResp": {
       "type": "object",
       "properties": {
+        "resume_id": {
+          "type": "integer",
+          "format": "int64"
+        },
         "address": {
           "type": "string"
         }
       },
       "title": "UploadResumeResp",
       "required": [
+        "resume_id",
         "address"
       ]
     },

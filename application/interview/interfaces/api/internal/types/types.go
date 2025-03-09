@@ -92,7 +92,8 @@ type UpdateResumeFolderReq struct {
 }
 
 type UploadResumeResp struct {
-	Address string `json:"address"`
+	ResumeId int64  `json:"resume_id"`
+	Address  string `json:"address"`
 }
 
 type UploadReusmeReq struct {
