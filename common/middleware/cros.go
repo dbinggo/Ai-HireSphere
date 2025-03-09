@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
 )
 
@@ -16,10 +15,12 @@ func CorsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
 		// 允许携带凭证（如 Cookie 等，根据实际需求决定是否设置）
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		// 设置允许暴露的响应头
+		w.Header().Set("Access-Control-Expose-Headers", "Content-Length, Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers")
 
 		if r.Method == http.MethodOptions {
 			// 对于 OPTIONS 请求，直接返回 200 状态码
-			httpx.WriteJson(w, http.StatusOK, map[string]interface{}{})
+			w.WriteHeader(http.StatusNoContent)
 			return
 		}
 
